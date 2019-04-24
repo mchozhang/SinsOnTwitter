@@ -1,3 +1,7 @@
-# Cluster and Cloud Computing Project
+# Matthew's CouchDB branch
 
-This is the repository for Group 68's Assignment 2.
+Todo:
+
+1. Understanding CouchDB Queries (Views and Mango)
+2. Set up a 3-node cluster with Docker
+3. Store tweets into CouchDB Cluster
