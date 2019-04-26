@@ -1,6 +1,7 @@
 import tweepy
 from tweepy import OAuthHandler
-
+import time
+import datetime
 
 from sin_listener import SinListener
 
@@ -10,6 +11,15 @@ class SinCollector:
     a class to collect data from Twitter, with tweepy
     the params are required for Twitter API and couchdb respectively
     """
+    # minimum wait time before restart the stream after an error
+    # each time an error encountered, the wait time will be doubled
+    MIN_WAIT_TIME = 2
+    # maximum wait time before restart the stream after an error
+    MAX_WAIT_TIME = 960
+    # after successfully run n sec, the wait time will be reset
+    WAIT_RESET_TIME = 300
+    # the filename for the log file
+    LOG_FILE = "sin_log.txt"
 
     def __init__(self, consumer_key, consumer_secret, access_token, access_secret,
                  database_url, database_user, database_pw, tweet_database_name):
@@ -52,5 +62,37 @@ class SinCollector:
         A website to make such boxes(choose geoJson): http://boundingbox.klokantech.com/
         The geoJson from above website: you should use the first(southwest) and third(northeast) pairs
         """
-        stream = tweepy.Stream(auth=self.auth, listener=self.stream_listener)
-        stream.filter(locations=locations)
+        # record the last time the streaming is started
+        last_working_time = time.time()
+        # the current wait time before restart the streaming after an error
+        wait_time = SinCollector.MIN_WAIT_TIME
+        while True:
+            try:
+                stream = tweepy.Stream(auth=self.auth, listener=self.stream_listener)
+                stream.filter(locations=locations)
+            except Exception as error:
+                # record the time when the error took place
+                error_occurred_time = time.time()
+
+                # write error information to error log
+                log = repr(error) + "\ntime found: " + str(datetime.datetime.now()) + "\nwaiting " +\
+                    str(wait_time) + " sec before restart the streaming.\n\n"
+                with open(SinCollector.LOG_FILE, "a+") as f:
+                    f.write(log)
+
+                # wait for n sec before restart the streaming
+                time.sleep(wait_time)
+
+                # reset the wait time if running successfully for long enough
+                if error_occurred_time - last_working_time > SinCollector.WAIT_RESET_TIME:
+                    wait_time = SinCollector.MIN_WAIT_TIME
+                else:
+                    # if not, double the wait time, until the max threshold
+                    wait_time = min(wait_time * 2, SinCollector.MAX_WAIT_TIME)
+
+                # record the starting time for this retry, to calculate the successful running time
+                last_working_time = time.time()
+                with open(SinCollector.LOG_FILE, "a+") as f:
+                    f.write("restarting the stream at " + str(datetime.datetime.now()) + "\n\n")
+                continue
+

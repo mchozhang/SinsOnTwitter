@@ -1,6 +1,7 @@
 from tweepy.streaming import StreamListener
 import couchdb
 import json
+import threading
 
 
 class SinListener(StreamListener):
@@ -15,20 +16,9 @@ class SinListener(StreamListener):
         self.tweet_database = self.database_server[tweet_database_name]
 
     def on_data(self, raw_data):
-        print(raw_data)
-
-        json_data = None
-        try:
-            json_data = json.loads(raw_data)
-        except Exception:
-            pass
-
-        if json_data:
-            # skip empty tweets and retweets
-            if "text" in json_data and "id" in json_data and not json_data["retweeted"]:
-                # store the data in couchdb with id as key
-                self.tweet_database[str(json_data["id"])] = json_data
-
+        # to avoid crash on burst of data velocity, make a new thread to deal with the data
+        th = threading.Thread(target=self.process_data, args=(raw_data,), daemon=True)
+        th.start()
         return True
 
     def on_status(self, status):
@@ -43,3 +33,18 @@ class SinListener(StreamListener):
         print("time out.")
         # return false will disconnect the stream
         return False
+
+    def process_data(self, raw_data):
+        print(raw_data)
+
+        json_data = None
+        try:
+            json_data = json.loads(raw_data)
+        except Exception:
+            pass
+
+        if json_data:
+            # skip empty tweets and retweets
+            if "text" in json_data and "id" in json_data and not json_data["retweeted"]:
+                # store the data in couchdb with id as key
+                self.tweet_database[str(json_data["id"])] = json_data
