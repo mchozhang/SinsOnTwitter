@@ -7,6 +7,10 @@
 # to check the db
 # pull the image first: docker pull couchdb:2.3.0
 
+# some useful commands to kill containers:
+#   kill all running containers: docker kill $(docker ps -q)
+#   delete all stopped containers: docker rm $(docker ps -a -q)
+
 # Set node IP addresses, electing the first as "master node" and admin credentials (make sure you have no other
 # Docker containers running):
 export declare nodes=(172.17.0.2 172.17.0.3 172.17.0.4)
@@ -18,7 +22,7 @@ export pass=admin
 sleep 1
 
 # create docker containers
-for node in ${nodes[@]}}; do docker create couchdb:2.3.0 -–ip=${node}; done
+for node in ${nodes[@]}}; do docker create couchdb:2.3.0 --ip=${node}; done
 sleep 3
 
 # Put in conts the Docker container IDs:
