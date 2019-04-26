@@ -35,8 +35,7 @@ class SinListener(StreamListener):
         return False
 
     def process_data(self, raw_data):
-        print(raw_data)
-
+        # print(raw_data)
         json_data = None
         try:
             json_data = json.loads(raw_data)

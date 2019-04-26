@@ -43,7 +43,7 @@ class SinCollector:
 
     def start_streaming_keywords(self, key_words: [str]):
         """
-        start the streaming with a keywords filter
+        a test function, start the streaming with a keywords filter
         :param key_words: a list of words you want to track
         """
         stream = tweepy.Stream(auth=self.auth, listener=self.stream_listener)

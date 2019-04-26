@@ -5,6 +5,9 @@
 
 <hr>
 
+ver0.6: made a script to run the streaming collecting in the background. Also minor bug fix in 
+the listener. See run_streaming.sh for details.
+
 ver0.5: refactored the stream listener, it now create new threads to write tweets into database.
 This increased the processing speed to max, in order to make sure we will not fall behind the 
 velocity of tweets (the connection may be closed by Twitter if we process too slow)
