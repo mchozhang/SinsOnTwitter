@@ -25,10 +25,20 @@ def test_streaming_location():
     sin_collector.start_streaming_location(AUSTRALIA_GEO)
 
 
+def test_get_place_id():
+    print(sin_collector.get_place_id("Australia", "country"))
+
+
+def test_search_location():
+    sin_collector.start_search_location("Australia", "country", "2019-04-21", "2019-04-25")
+
+
 def run_tests():
     # test_timeline()
     # test_streaming_keywords()
-    test_streaming_location()
+    # test_streaming_location()
+    # test_get_place_id()
+    test_search_location()
 
 
 run_tests()

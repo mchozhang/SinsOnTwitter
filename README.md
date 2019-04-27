@@ -5,6 +5,10 @@
 
 <hr>
 
+ver0.8: search api part done, started searching tweets from past week
+
+ver0.7: did large refactor to optimize code and reduced coupling
+
 ver0.6: made a script to run the streaming collecting in the background. Also minor bug fix in 
 the listener. See run_streaming.sh for details.
 
@@ -24,17 +28,7 @@ ver0.1: streaming working with keywords filtering
 
 <hr>
 
-done: geo filter on streaming,
-
-done: couchDB connection.
-
-done: moved tweepy inside the project for further debug and fix
-
-done: reproduce the Incomplete Read Error and try to find a fix (cannot fix, but found a workaround)
-
-<hr>
-
-todo: use search API to get tweets from last week or so
-
 todo: decide what to do with content duplicates for streaming. ID duplicates are automatically handles as I used ID as
 key for the database
+
+todo: clean up
