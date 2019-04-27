@@ -2,8 +2,30 @@
 
 <b>This branch hosts the python script collecting tweets, and store them into a couchDB database.</b>
 
+<hr>
+<h2>Use</h2>
+
+<b>Before use</b>: need to set constants in constants.py to match the Twitter API and database.
+
+<b>run_streaming.sh</b>: use this to start streaming tweets in the background.
+
+<b>run_searching.sh</b>: use this to start searching tweets in the background. <u>Need to configure 
+search query in collect_sin_search.py before start.</u>
 
 <hr>
+
+<h2>Warnings</h2>
+
+<ul>
+    <li>Tweets returned from streaming and search api have somewhat different json structures.</li>
+    <li>If you changed the code, run your test on a testing db before your connect it to the real db.</li>
+    <li>The search API is still not stable due to API rate limits and internal bugs in tweepy.Cursor.
+     Try not use it. </li>
+</ul>
+
+<hr>
+
+<h2>Update History</h2>
 
 ver0.8: search api part done, started searching tweets from past week
 
