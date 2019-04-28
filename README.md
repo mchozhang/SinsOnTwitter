@@ -45,7 +45,8 @@ for cont in "${containers[@]"; do docker rm --force ${cont}; done
 ```
 Todo:
 
-- [] Install DOCKER on instance.
+- [] Create a security group for networking between the instances, open up port 5984 to access fauxton, etc...
+- [] Create three instances acting as three different nodes.
+- [] Install DOCKER on eacg instance.
 - [] Change sudo permisions on instance (Avoid running docker commands on sudo all the time).
-- [] Modify/Check Bash Script to run on instance.
-- [] Move to three instance setup.
+- [] Run docker and run curl commands to setup couchdb cluster.
