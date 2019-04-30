@@ -14,6 +14,7 @@
 - [x] Change sudo permisions on instance (Avoid running docker commands on sudo all the time).
 - [x] Run docker and run curl commands to setup couchdb cluster.
 - [] Testing from external application.
+- [] Create ansible implementation of system.
 
 # VM Setup Procedure
 
@@ -179,7 +180,9 @@ This 3 VM setup was done for the three-node cluster setup
 	```bash
 	curl -XGET "http://${user}:${pass}@${masternode}:5984/_membership"
 	```
-6. Make requests to "http://SinsOnTwitter:group68@172.26.38.38:5984/" to create databases, get data etc...
+6. Make requests to "http://SinsOnTwitter:group68@172.26.38.38:5984/" to 
+create databases, get data etc... (NOTE you must be connected to unimelb 
+network for access)
 
 
 
