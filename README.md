@@ -26,9 +26,10 @@ past from the current time.If not given, current time is used.
 
 <b>use docker</b>:<br>
 to build the image: <br>
-<i>docker build --tag sin_collector68 .</i><br>
+<i>docker build --tag solitudeever/sin_collector68 .</i><br>
 to run the image:<br>
-<i>docker run --name sin_collector -d sin_collector68</i><br>
+<i>docker run --name sin_collector -d --network=host solitudeever/sin_collector68
+</i><br>
 to see all containers:<br>
 <i>docker ps -a</i><br>
 to kill it:<br>
