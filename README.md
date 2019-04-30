@@ -50,6 +50,7 @@ This 3 VM setup was done for the three-node cluster setup
 	- Reboot system: `sudo reboot`
 
 # CouchDb 3-Node Cluster Setup Procedure (to be added)
+1. Each Script has been created to setup a couchdb container on each vm (see folders).
 
 # Todo:
 
