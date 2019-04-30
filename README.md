@@ -3,9 +3,9 @@
 * CouchDB is used in our assignment to store tweets after streamed from twitter. 
 * Setup would be a three node cluster (running on one machine instance). 
 * Each node is running on a docker CouchDB container.
-* One Master Node.
+* One Master Node (for configuration). Two other slave nodes.
 
-# CouchDB Setup Procedure
+# CouchDB Setup Procedure (going to be changed and modified for 3 instance cluster)
 
 This setup is for a one machine instance three node cluster.
 
@@ -27,26 +27,11 @@ This setup is for a one machine instance three node cluster.
 
 - Now, if we create a database on one node, it will be automatically created on all nodes.
 
-# Cluster Commands
+# Todo:
 
-- Check Fauxton User Interface by "http://<IP_OF_ANY_NODE>/_utils"
-- Starting Cluster
-```bash
-for cont in "${containers[@]}"; do docker start ${cont}; done
-sleep 3
-```
-- Shutdown Cluster
-```bash
-for cont in "${containters[@]}"; do docker stop ${cont}; done
-```
-- Delete cluster containers
-```bash
-for cont in "${containers[@]"; do docker rm --force ${cont}; done
-```
-Todo:
-
-- [] Create a security group for networking between the instances, open up port 5984 to access fauxton, etc...
-- [] Create three instances acting as three different nodes.
-- [] Install DOCKER on eacg instance.
-- [] Change sudo permisions on instance (Avoid running docker commands on sudo all the time).
+- [x] Create a security group for networking between the instances (openning port 5984,5986,9100-9200 and 4369)
+- [x] Create three instances acting as three different nodes.
+- [x] Created and attached volumes (60 GB each) to each instance.
+- [x] Install DOCKER on each instance.
+- [x] Change sudo permisions on instance (Avoid running docker commands on sudo all the time).
 - [] Run docker and run curl commands to setup couchdb cluster.
