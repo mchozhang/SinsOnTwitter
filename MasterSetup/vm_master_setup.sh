@@ -16,7 +16,7 @@ sleep 3
 
 #Setting up configurations inside couchdb docker container
 docker exec couchdb bash -c "echo \"-setcookie couchdbcluster\" >> /opt/couchdb/etc/vm.args"
-docker exec couchdb bash -c "echo \"-name couchdb@172.26.38.38\" >> /opt/couchdb/etc/vm.args"
+docker exec couchdb bash -c "echo \"-name couchdb@127.0.0.1\" >> /opt/couchdb/etc/vm.args"
 docker exec couchdb bash -c "echo \"-kernel inet_dist_listen_min 9100\" >> /opt/couchdb/etc/vm.args"
 docker exec couchdb bash -c "echo \"-kernel inet_dist_listen_max 9200\" >> /opt/couchdb/etc/vm.args"
 
@@ -63,6 +63,16 @@ curl -XPOST "http://${user}:${pass}@${masternode}:5984/_cluster_setup" \
 #Removing nonode@nohost
 rev=`curl -XGET "http://${masternode}:5986/_nodes/nonode@nohost" --user "${user}:${pass}" | sed -e 's/[{}"]//g' | cut -f3 -d:`
 curl -X DELETE "http://${masternode}:5986/_nodes/nonode@nohost?rev=${rev}"  --user "${user}:${pass}"
+
+#Removing old configurations
+rev=`curl -XGET "http://${masternode}:5986/_nodes/couchdbone@172.26.38.38" --user "${user}:${pass}" | sed -e 's/[{}"]//g' | cut -f3 -d:`
+curl -X DELETE "http://${masternode}:5986/_nodes/couchdbone@172.26.38.38?rev=${rev}"  --user "${user}:${pass}"
+
+rev=`curl -XGET "http://${masternode}:5986/_nodes/couchdbtwo@172.26.37.231" --user "${user}:${pass}" | sed -e 's/[{}"]//g' | cut -f3 -d:`
+curl -X DELETE "http://${masternode}:5986/_nodes/couchdbtwo@172.26.37.231?rev=${rev}"  --user "${user}:${pass}"
+
+rev=`curl -XGET "http://${masternode}:5986/_nodes/couchdbthree@172.26.38.62" --user "${user}:${pass}" | sed -e 's/[{}"]//g' | cut -f3 -d:`
+curl -X DELETE "http://${masternode}:5986/_nodes/couchdbthree@172.26.38.62?rev=${rev}"  --user "${user}:${pass}"
 
 #Check to see membership details
 curl -XGET "http://${user}:${pass}@${masternode}:5984/_membership" | jq
