@@ -16,7 +16,7 @@ sleep 3
 
 #Setting up configurations inside couchdb docker container
 docker exec couchdb bash -c "echo \"-setcookie couchdbcluster\" >> /opt/couchdb/etc/vm.args"
-docker exec couchdb bash -c "echo \"-name couchdb@127.0.0.1\" >> /opt/couchdb/etc/vm.args"
+docker exec couchdb bash -c "echo \"-name couchdb@172.26.38.38\" >> /opt/couchdb/etc/vm.args"
 docker exec couchdb bash -c "echo \"-kernel inet_dist_listen_min 9100\" >> /opt/couchdb/etc/vm.args"
 docker exec couchdb bash -c "echo \"-kernel inet_dist_listen_max 9200\" >> /opt/couchdb/etc/vm.args"
 
