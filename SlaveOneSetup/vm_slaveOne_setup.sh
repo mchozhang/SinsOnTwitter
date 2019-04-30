@@ -12,7 +12,7 @@ docker run -d -p 5984:5984 -p 9100-9200:9100-9200 -p 5986:5986 -p 4369:4369 -e C
 sleep 3
 
 docker exec couchdb bash -c "echo \"-setcookie couchdbcluster\" >> /opt/couchdb/etc/vm.args"
-docker exec couchdb bash -c "echo \"-name couchdb@172.26.37.231\" >> /opt/couchdb/etc/vm.args"
+docker exec couchdb bash -c "echo \"-name couchdb@127.0.0.1\" >> /opt/couchdb/etc/vm.args"
 docker exec couchdb bash -c "echo \"-kernel inet_dist_listen_min 9100\" >> /opt/couchdb/etc/vm.args"
 docker exec couchdb bash -c "echo \"-kernel inet_dist_listen_max 9200\" >> /opt/couchdb/etc/vm.args"
 docker restart couchdb
