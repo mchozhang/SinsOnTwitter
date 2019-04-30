@@ -30,7 +30,7 @@ class SinCollector:
     FILTER_LOCATIONS = 1
     FILTER_KEYWORDS = 2
     # the maximum number of tweets for a search operation
-    MAX_NUM_TWEETS_TO_SEARCH = 10000000
+    MAX_NUM_TWEETS_TO_SEARCH = 10000000000
 
     def __init__(self, consumer_key, consumer_secret, access_token, access_secret,
                  database_url, database_user, database_pw, tweet_database_name):
@@ -170,7 +170,19 @@ class SinCollector:
             # skip empty tweets and retweets
             if ("text" in json_data or "full_text" in json_data) and "id" in json_data and not json_data["retweeted"]:
                 # store the data in couchdb with id as key
-                self.tweet_database[str(json_data["id"])] = json_data
+                try:
+                    self.tweet_database[str(json_data["id"])] = json_data
+                except couchdb.ResourceConflict:
+                    print("id:<" + str(json_data["id"]) + "> is already in the db.")
+
+    @staticmethod
+    def search_cursor(cursor):
+        while True:
+            try:
+                yield cursor.next()
+            except tweepy.RateLimitError:
+                print("rate limit reached. Sleeping for 15min and 5 sec.")
+                time.sleep(15 * 60 + 5)
 
     def start_search(self, query: str):
         """
@@ -180,8 +192,10 @@ class SinCollector:
         :param query: the query
         """
         counter = 1
-        for raw_data in tweepy.Cursor(self.app_api.search, q=query, tweet_mode="extended", result_type="recent",
-                                      include_entities=True).items(SinCollector.MAX_NUM_TWEETS_TO_SEARCH):
+        for raw_data in SinCollector.search_cursor(tweepy.Cursor(self.app_api.search, q=query, tweet_mode="extended",
+                                                                 result_type="recent", count=100,
+                                                                 include_entities=True).items(
+                                                                 SinCollector.MAX_NUM_TWEETS_TO_SEARCH)):
             # print("writing data:" + str(raw_data))
             # start separate threads to do IO
             th = threading.Thread(target=self.process_data, args=(json.dumps(raw_data._json),), daemon=True)
@@ -189,16 +203,17 @@ class SinCollector:
             print("written " + str(counter) + " results into db.")
             counter += 1
 
-    def start_search_location(self, place: str, type_of_place: str, start_date: str, end_date: str):
+    def start_search_location(self, place: str, type_of_place: str, end_date=None):
         """
         start searching for tweets from a specific location, in a specific time period
         note: you can only search for tweets from past week (unless you pay, that is).
         :param place: e.g. "Australia"
         :param type_of_place: e.g. "country", or "city"
-        :param start_date: yyyy-mm-dd: e.g. "2016-10-10"
-        :param end_date: yyyy-mm-dd: e.g. "2016-10-12"
+        :param end_date: yyyy-mm-dd: e.g. "2016-10-12", if not given, will use time from now
         :return:
         """
         place_id = self.get_place_id(place, type_of_place)
-        query = "place:" + str(place_id) + " since:" + start_date + " until:" + end_date
+        query = "place:" + str(place_id)
+        if end_date:
+            query = query + " until:" + end_date
         self.start_search(query)

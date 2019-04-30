@@ -5,12 +5,35 @@
 <hr>
 <h2>Use</h2>
 
-<b>Before use</b>: need to set constants in constants.py to match the Twitter API and database.
+<b>before use</b><br>
+need to set constants in constants.py to match the Twitter API and database
 
-<b>run_streaming.sh</b>: use this to start streaming tweets in the background.
+<b>run_streaming.sh</b><br>
+use this to start streaming tweets in the background. Will use default database 
+defined in constants.py
 
-<b>run_searching.sh</b>: use this to start searching tweets in the background. <u>Need to configure 
-search query in collect_sin_search.py before start.</u>
+<b>run_searching.sh</b><br>
+use this to start searching tweets in the background. <u>Need to configure 
+search query in collect_sin_search .py before start.</u> Will use default database defined in constants.py
+
+<b>run with arguments</b><br>
+you can run collect_sin_streaming.py with 
+4 arguments. E.g. <br>
+<i>collect_sin_streaming couchdb_url couchdb_user_name couchdb_password name_of_database_to_contain_data</i><br>
+collect_sin_search.py accept 5 arguments, the first 4 are the same as above. The fifth is a "until-date" 
+for the search. It has format of "yyyy-mm-dd". The serach will find all tweets from this date upto 7 days to the 
+past from the current time.If not given, current time is used.
+
+<b>use docker</b>:<br>
+to build the image: <br>
+<i>docker build --tag sin_collector68 .</i><br>
+to run the image:<br>
+<i>docker run --name sin_collector -d sin_collector68</i><br>
+to see all containers:<br>
+<i>docker ps -a</i><br>
+to kill it:<br>
+<i>docker kill sin_collector</i><br>
+
 
 <hr>
 
@@ -26,6 +49,11 @@ search query in collect_sin_search.py before start.</u>
 <hr>
 
 <h2>Update History</h2>
+
+ver1.0: clean up, bug fix, added more error handling.
+
+ver0.9: created dockerfile, scripts now accepting command line args for db 
+arguments. 
 
 ver0.8: search api part done, started searching tweets from past week
 
