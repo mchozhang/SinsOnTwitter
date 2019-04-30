@@ -24,7 +24,7 @@ export node_slave_two=172.26.38.62
 #--Perform CURL Setup Commands for cluster setup--
 
 #Bind the clustered interface to all IP addresses availble on this machine
-curl -XPUT "http://${user}:${pass}@${masternode}:5984/_node/couchdb@172.26.38.38/_config/chttpd/bind_address" --data '"0.0.0.0"'
+curl -X PUT "http://${user}:${pass}@localhost:5984/_node/_local/_config/chttpd/bind_address" -d '"0.0.0.0"'
 
 #---Begin cluster setup---
 
