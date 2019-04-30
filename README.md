@@ -5,6 +5,16 @@
 * Each node is running on a docker CouchDB container.
 * One Master Node (for configuration). Two other slave nodes.
 
+# Todo:
+
+- [x] Create a security group for networking between the instances (openning port 5984,5986,9100-9200 and 4369)
+- [x] Create three instances acting as three different nodes.
+- [x] Created and attached volumes (60 GB each) to each instance.
+- [x] Install DOCKER on each instance.
+- [x] Change sudo permisions on instance (Avoid running docker commands on sudo all the time).
+- [x] Run docker and run curl commands to setup couchdb cluster.
+- [] Testing from external application.
+
 # VM Setup Procedure
 
 This 3 VM setup was done for the three-node cluster setup
@@ -51,12 +61,3 @@ This 3 VM setup was done for the three-node cluster setup
 
 # CouchDb 3-Node Cluster Setup Procedure (to be added)
 1. Each Script has been created to setup a couchdb container on each vm (see folders).
-
-# Todo:
-
-- [x] Create a security group for networking between the instances (openning port 5984,5986,9100-9200 and 4369)
-- [x] Create three instances acting as three different nodes.
-- [x] Created and attached volumes (60 GB each) to each instance.
-- [x] Install DOCKER on each instance.
-- [x] Change sudo permisions on instance (Avoid running docker commands on sudo all the time).
-- [x] Run docker and run curl commands to setup couchdb cluster.
