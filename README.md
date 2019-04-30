@@ -88,12 +88,12 @@ This 3 VM setup was done for the three-node cluster setup
 		docker run -d -p 5984:5984 -p 9100-9200:9100-9200 -p 5986:5986 -p 4369:4369 -e COUCHDB_USER=SinsOnTwitter -e COUCHDB_PASSWORD=group68 -v /mnt/couchdb/data:/opt/couchdb/data --name couchdb couchdb:2.3.0
 		```
 
-		Command does:
-		* Run docker, publishing ports 5984, 5986, 4369 and 9100-9200,
-		* Redirect data from couchdb container to mounted volumne directory
-		* Add User and Password for docker (as we expose ports to world need to be secure)
-		* Run container as name "couchdb"
-		* Use image couchdb:2.3.0
+		- Command does:
+			* Run docker, publishing ports 5984, 5986, 4369 and 9100-9200,
+			* Redirect data from couchdb container to mounted volumne directory
+			* Add User and Password for docker (as we expose ports to world need to be secure)
+			* Run container as name "couchdb"
+			* Use image couchdb:2.3.0
 
 		- Edit configurations in vm.args:
 		```bash
@@ -104,11 +104,11 @@ This 3 VM setup was done for the three-node cluster setup
 		docker restart couchdb
 		``` 
 
-		Command does:
-		* `-setCookie couchdbcluster` is the password used when nodes connect to each other
-		* `-name couchdb@<IP_OF_MACHINE>` name of node and it's IP
-		* `-kernel inet_dist_listen_min 9100` lowest port number in range, communication between nodes
-		* `-kernel inet_dist_listen_max 9200` higher port number in range, communication between nodes
+		- Command does:
+			* `-setCookie couchdbcluster` is the password used when nodes connect to each other
+			* `-name couchdb@<IP_OF_MACHINE>` name of node and it's IP
+			* `-kernel inet_dist_listen_min 9100` lowest port number in range, communication between nodes
+			* `-kernel inet_dist_listen_max 9200` higher port number in range, communication between nodes
 		
 		- Bind the clustered interface to all IP addresses availble on this machine
 		```bash
@@ -120,12 +120,12 @@ This 3 VM setup was done for the three-node cluster setup
 		docker run -d -p 5984:5984 -p 9100-9200:9100-9200 -p 5986:5986 -p 4369:4369 -e COUCHDB_USER=SinsOnTwitter -e COUCHDB_PASSWORD=group68 -v /mnt/couchdb/data:/opt/couchdb/data --name couchdb couchdb:2.3.0
 		```
 
-		Command does:
-		* Run docker, publishing ports 5984, 5986, 4369 and 9100-9200,
-		* Redirect data from couchdb container to mounted volumne directory
-		* Add User and Password for docker (as we expose ports to world need to be secure)
-		* Run container as name "couchdb"
-		* Use image couchdb:2.3.0
+		- Command does:
+			* Run docker, publishing ports 5984, 5986, 4369 and 9100-9200,
+			* Redirect data from couchdb container to mounted volumne directory
+			* Add User and Password for docker (as we expose ports to world need to be secure)
+			* Run container as name "couchdb"
+			* Use image couchdb:2.3.0
 
 		- Edit configurations in vm.args:
 		```bash
@@ -135,11 +135,11 @@ This 3 VM setup was done for the three-node cluster setup
 		docker exec couchdb bash -c "echo \"-kernel inet_dist_listen_max 9200\" >> /opt/couchdb/etc/vm.args"
 		docker restart couchdb
 		``` 
-		Command does:
-		* `-setCookie couchdbcluster` is the password used when nodes connect to each other
-		* `-name couchdb@<IP_OF_MACHINE>` name of node and it's IP
-		* `-kernel inet_dist_listen_min 9100` lowest port number in range, communication between nodes
-		* `-kernel inet_dist_listen_max 9200` higher port number in range, communication between nodes
+		- Command does:
+			* `-setCookie couchdbcluster` is the password used when nodes connect to each other
+			* `-name couchdb@<IP_OF_MACHINE>` name of node and it's IP
+			* `-kernel inet_dist_listen_min 9100` lowest port number in range, communication between nodes
+			* `-kernel inet_dist_listen_max 9200` higher port number in range, communication between nodes
 		
 		- Bind the clustered interface to all IP addresses availble on this machine
 		```bash
