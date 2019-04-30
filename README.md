@@ -61,7 +61,12 @@ This 3 VM setup was done for the three-node cluster setup
 			```
 			* Exit and run `sudo mount --all`
 
-5. Configuring Docker 
+5. Install pip3
+	- Run `sudo apt-get update`
+	- Run `sudo apt install python3-pip`
+	- Run `pip3 --version` to check
+
+6. Configuring Docker 
 	- Run `sudo apt-get update`
 	- Run `sudo apt-get install docker.io`
 	- Run `sudo usermod -a -G docker $USER`
@@ -76,6 +81,7 @@ This 3 VM setup was done for the three-node cluster setup
 		* `sudo systemctl daemon-reload` (Restart to apply changes)
 		* `sudo systemctl restart docker` (Restart to apply changes)
 	- Reboot system: `sudo reboot`
+	- Run `docker --version` to check
 
 # CouchDB 3-Node Cluster Setup Procedure
 1. Each bash script has been created to setup a couchdb container on each vm (see folders)
