@@ -14,7 +14,7 @@ export node_slave_one=172.26.37.231
 export node_slave_two=172.26.38.62
 
 #Bind the clustered interface to all IP addresses availble on this machine
-curl -XPUT "http://${user}:${pass}@${node_slave_one}:5984/_node/couchdb@172.26.38.38/_config/chttpd/bind_address" --data '"0.0.0.0"'
+curl -X PUT "http://$user:$pass@127.0.0.1:5984/_node/_local/_config/chttpd/bind_address" -d '"0.0.0.0"'
 
 
 
