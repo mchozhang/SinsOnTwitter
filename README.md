@@ -5,27 +5,51 @@
 * Each node is running on a docker CouchDB container.
 * One Master Node (for configuration). Two other slave nodes.
 
-# CouchDB Setup Procedure (going to be changed and modified for 3 instance cluster)
+# VM Setup Procedure
 
-This setup is for a one machine instance three node cluster.
+This 3 VM setup was done for the three-node cluster setup
+1. Open communication between instances. (Using Security Groups )
+	- Open Ports 9100-9200, for communication between nodes
+	- Open Port 5984, open to world to interact with database
+	- Open Port 5986, for admin tasks such as node/shard management
+	- Open Port 4369, for Erlang port mapper daemon (epmd)
+2. Create three instances
+	- Names are: MasterNode, SlaveOne and SlaveTwo
+	- Uses Ubuntu 18.04
+	- Flavor: uom.mse.2c9g (2 VCPUs and 9GB RAM each)
+	- Networks: qh2-uom-internal
+	- Security Groups: ssh, 5984, http and internal
+3. Instance Setup (do this for each instance)
+	- Log in using ssh 
+	- Run: 
+	```bash
+	sudo nano /etc/environment
+	```
+	- and insert:
+	```bash
+	http_proxy="http://wwwproxy.unimelb.edu.au:8000"
+	https_proxy="http://wwwproxy.unimelb.edu.au:8000"
+	ftp_proxy="http://wwwproxy.unimelb.edu.au:8000"
+	no_proxy=localhost,127.0.0.1,127.0.1.1,Ubuntu
+	```
+	- Logout and log back in to apply changes
+4. Configuring Docker 
+	- Run `sudo apt-get update`
+	- Run `sudo apt-get install docker.io`
+	- Run `sudo usermod -a -G docker $USER`
+	- Set Docker for proxy
+		* `sudo mkdir -p /etc/systemd/system/docker.service.d`
+		* `sudo nano /etc/systemd/system/docker.service.d/http-proxy.conf`
+		* Add to http-proxy-conf:
+		```bash
+		[Service]
+		Environment="HTTP_PROXY=http://wwwproxy.unimelb.edu.au:8000/"
+		```
+		* `sudo systemctl daemon-reload` (Restart to apply changes)
+		* `sudo systemctl restart docker` (Restart to apply changes)
+	- Reboot system: `sudo reboot`
 
-1. Pull CouchDB image from dockerhub.
-2. Set three different IP addresses (for three different nodes).
-3. Set the first node as the MASTER node.
-4. Create three docker containers with their respective IP addresses.
-5. Start each container.
-6. Set couchDB configurations on each node by configuring each vm.args file
-	* Each node has a vm.args file that we need to modify it's configuration for cluster setup.
-	* Each node needs to know that they are in cluster mode (-setcookie couchdb_cluster).
-	* Each node needs a name defined and identified by it's ip address (eg -name couchdb@<IP-Address>).
-7. Restart each container.
-8. Set couchDB cluster configurations on each node using http requests:
-	* PUT request to create admin user and password.
-	* PUT request (with admin and user pass) to bind clustered interface to all IP addresses available on this machine.
-	   (eg: bind address to 0.0.0.0).
-	* POST requests (with admin and user pass) to configure cluster setup. 
-
-- Now, if we create a database on one node, it will be automatically created on all nodes.
+# CouchDb 3-Node Cluster Setup Procedure (to be added)
 
 # Todo:
 
@@ -34,4 +58,4 @@ This setup is for a one machine instance three node cluster.
 - [x] Created and attached volumes (60 GB each) to each instance.
 - [x] Install DOCKER on each instance.
 - [x] Change sudo permisions on instance (Avoid running docker commands on sudo all the time).
-- [] Run docker and run curl commands to setup couchdb cluster.
+- [x] Run docker and run curl commands to setup couchdb cluster.
