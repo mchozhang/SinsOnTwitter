@@ -26,10 +26,11 @@ docker restart couchdb
 sleep 5
 
 #Bind the clustered interface to all IP addresses availble on this machine
-curl -X PUT "http://${user}:${pass}@localhost:5984/_node/couchdb@${masternode}/_config/chttpd/bind_address" -d '"0.0.0.0"'
-curl -X PUT "http://${user}:${pass}@localhost:5984/_node/couchdb@${masternode}/_config/httpd/bind_address" -d '"0.0.0.0"'
+curl -X PUT "http://${user}:${pass}@localhost:5984/_node/_local/_config/chttpd/bind_address" -d '"0.0.0.0"'
+curl -X PUT "http://${user}:${pass}@localhost:5984/_node/_local/_config/httpd/bind_address" -d '"0.0.0.0"'
 
 #---Begin cluster setup---#
+: <<'END'
 
 #Slave One
 curl -XPOST "http://${user}:${pass}@${masternode}:5984/_cluster_setup" \
@@ -67,3 +68,4 @@ curl -X DELETE "http://${masternode}:5986/_nodes/nonode@nohost?rev=${rev}"  --us
 
 #Check to see membership details
 curl -XGET "http://${user}:${pass}@${masternode}:5984/_membership" | jq
+END
