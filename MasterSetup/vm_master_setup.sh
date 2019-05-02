@@ -10,7 +10,7 @@ export node_slave_two=172.26.38.62
 #Running docker container
 #Publishing on ports 5984, 9100-9200 , 5986 and 4369
 #Data storage at /mnt/couchdb/data
-docker run -d -p 5984:5984 -p 9100-9200:9100-9200 -p 5986:5986 -p 4369:4369 -e COUCHDB_USER=SinsOnTwitter -e COUCHDB_PASSWORD=group68 -v /mnt/couchdb/data:/opt/couchdb/data --name couchdb couchdb:2.3.0
+docker run -d -p 5984:5984 -p 9100-9200:9100-9200 -p 5986:5986 -p 4369:4369 -e COUCHDB_USER=SinsOnTwitter -e COUCHDB_PASSWORD=group68 -v /mnt/existing_data/data:/opt/couchdb/data --name couchdb couchdb:2.3.0
 
 sleep 3
 
