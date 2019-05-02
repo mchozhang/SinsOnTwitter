@@ -65,15 +65,5 @@ curl -XPOST "http://${user}:${pass}@${masternode}:5984/_cluster_setup" \
 rev=`curl -XGET "http://${masternode}:5986/_nodes/nonode@nohost" --user "${user}:${pass}" | sed -e 's/[{}"]//g' | cut -f3 -d:`
 curl -X DELETE "http://${masternode}:5986/_nodes/nonode@nohost?rev=${rev}"  --user "${user}:${pass}"
 
-#Removing old configurations
-rev=`curl -XGET "http://${masternode}:5986/_nodes/couchdbone@172.26.38.38" --user "${user}:${pass}" | sed -e 's/[{}"]//g' | cut -f3 -d:`
-curl -X DELETE "http://${masternode}:5986/_nodes/couchdbone@172.26.38.38?rev=${rev}"  --user "${user}:${pass}"
-
-rev=`curl -XGET "http://${masternode}:5986/_nodes/couchdbtwo@172.26.37.231" --user "${user}:${pass}" | sed -e 's/[{}"]//g' | cut -f3 -d:`
-curl -X DELETE "http://${masternode}:5986/_nodes/couchdbtwo@172.26.37.231?rev=${rev}"  --user "${user}:${pass}"
-
-rev=`curl -XGET "http://${masternode}:5986/_nodes/couchdbthree@172.26.38.62" --user "${user}:${pass}" | sed -e 's/[{}"]//g' | cut -f3 -d:`
-curl -X DELETE "http://${masternode}:5986/_nodes/couchdbthree@172.26.38.62?rev=${rev}"  --user "${user}:${pass}"
-
 #Check to see membership details
 curl -XGET "http://${user}:${pass}@${masternode}:5984/_membership" | jq
