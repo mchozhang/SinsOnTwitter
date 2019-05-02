@@ -20,4 +20,5 @@ docker restart couchdb
 sleep 5
 
 #Bind the clustered interface to all IP addresses availble on this machine
-curl -X PUT "http://SinsOnTwitter:group68@localhost:5984/_node/_local/_config/chttpd/bind_address" -d '"0.0.0.0"'
+curl -X PUT "http://${user}:${pass}@localhost:5984/_node/_local/_config/chttpd/bind_address" -d '"0.0.0.0"'
+curl -X PUT "http://${user}:${pass}@localhost:5984/_node/_local/_config/httpd/bind_address" -d '"0.0.0.0"'
