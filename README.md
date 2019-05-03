@@ -1,5 +1,13 @@
 # CouchDB for Sin Collection
 
+REQUEST LINKS:
+- [Long, Lat] : https://0c02c19f.ngrok.io/tweet_database/_design/get_tweet_design/_view/get_tweet_view
+
+- [Lat, Long] : https://0c02c19f.ngrok.io/tweet_database/_design/get_tweet_design/_view/get_tweet_geo
+
+- Database Fauxton Link (no need vpn): https://0c02c19f.ngrok.io/_utils
+
+
 * CouchDB is used in our assignment to store tweets after streamed from twitter. 
 * Setup would be a three node cluster (running on one machine instance). 
 * Each node is running on a docker CouchDB container.
