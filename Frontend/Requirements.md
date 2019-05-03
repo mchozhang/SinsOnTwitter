@@ -1,0 +1,19 @@
+# System Requirements
+
+## Snapshot
+![](assets/Requirements-ee5a1c8b.png)
+
+# Usage of Web Application
+## Step1: Query the "swear areas"
+Input 5 keywords in the searching window, query the percentage of tweets of areas based on keywords (swear words).
+
+## Step2: Query the AURIN data
+click button to get data from corresponding AURIN dataset
+
+# Response to Query
+
+## Chart Area
+Display the top 10 swear areas, i.e., the 10 areas where the percentage of swearing tweets is the highest. By side, display the data of AURIN data queried of corresponding area. 
+
+## Map Area
+Display the swearing areas in the form of heat map.
