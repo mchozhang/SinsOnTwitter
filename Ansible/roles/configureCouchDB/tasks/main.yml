@@ -25,4 +25,6 @@
     - curl -X PUT "http://SinsOnTwitter:group68@localhost:5984/_node/_local/_config/chttpd/bind_address" -d '"0.0.0.0"'
     - curl -X PUT "http://SinsOnTwitter:group68@localhost:5984/_node/_local/_config/httpd/bind_address" -d '"0.0.0.0"'
 
+- name: Echo Couchdb Curl Response (Check for successful setup)
+  command: curl -X GET "http://SinsOnTwitter:group68@localhost:5984/_up" | jq
 

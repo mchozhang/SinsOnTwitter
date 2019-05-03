@@ -6,7 +6,7 @@
   pre_tasks:
      - pause:
           prompt: "Making sure that instances are setup before accessing them..."
-          minutes: 2
+          minutes: 3
   roles:
      - role: vmSetup
      - role: installingSoftware
