@@ -1,0 +1,9 @@
+---
+- name: Wait 300 seconds for port 22 to become open and contain "OpenSSH"
+  wait_for:
+    port: 22
+    hosts: servers
+    state: started
+    search_regex: OpenSSH
+    delay: 10
+  connection: local

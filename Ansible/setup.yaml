@@ -1,0 +1,14 @@
+#Setting up and configuring each instance
+- name: Setting Up Each Instance
+  hosts: servers
+  gather_facts: no
+  sudo: yes
+  pre_tasks:
+     - pause:
+          prompt: "Making sure that instances are setup before accessing them..."
+          minutes: 2
+  roles:
+     - role: vmSetup
+     - role: installingSoftware
+     - role: configureDocker
+     - role: configureCouchDB

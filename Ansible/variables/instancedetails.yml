@@ -1,0 +1,54 @@
+# Common Vars
+availability_zone: melbourne-qh2-uom
+
+# Security Group
+security_groups:
+  - name: demo_ssh
+    description: "Demo security group for SSH access"
+    protocol: tcp
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 0.0.0.0/0
+  - name: demo_http
+    description: "Demo Security Group for HTTP"
+    protocol: tcp
+    port_range_min: 80
+    port_range_max: 80
+    remote_ip_prefix: 0.0.0.0/0
+  - name: Port 5984
+    description: "Open up port 5984 for couchdb access"
+    protocol: tcp
+    port_range_min: 5984
+    port_range_max: 5984
+    remote_ip_prefix: 0.0.0.0/0
+  - name: Port 5986
+    description: "Open up port 5986 for couchdb administrative tasks"
+    protocol: tcp
+    port_range_min: 5986
+    port_range_max: 5986
+    remote_ip_prefix: 0.0.0.0/0
+  - name: Port 4369
+    description: "Open up port 4369 for couchdb's erlang port"
+    protocol: tcp
+    port_range_min: 5986
+    port_range_max: 5986
+    remote_ip_prefix: 0.0.0.0/0
+  - name: Ports 9100-9200
+    description: "Open up ports 9100-9200 for interatction between couchdb nodes"
+    protocol: tcp
+    port_range_min: 9100
+    port_range_max: 9200
+    remote_ip_prefix: 0.0.0.0/0
+
+#Instances
+instance_list: 
+  - name: ansible_one
+    instance_name: ansible_one
+    instance_image: 955a0556-1224-4499-a895-87d54d5cbf32 #Ubuntu 18.04 Bionic amd64
+    instance_key_name: Group68KeyPair
+    instance_flavor: uom.general.1c4g  
+  - name: ansible_two
+    instance_name: ansible_two
+    instance_image: 955a0556-1224-4499-a895-87d54d5cbf32 #Ubuntu 18.04 Bionic amd64
+    instance_key_name: Group68KeyPair
+    instance_flavor: uom.general.1c4g  
