@@ -1,5 +1,5 @@
 FROM python:alpine3.7
-COPY . /app
+COPY .. /app
 WORKDIR /app
 RUN pip3 install -r requirements.txt
 RUN chmod +x ./collect_sin_streaming.py

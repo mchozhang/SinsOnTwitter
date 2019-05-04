@@ -10,8 +10,8 @@ import time
 import couchdb
 import threading
 
-from sin_listener import SinListener
-from log import Log
+from src.tweet_collector.sin_listener import SinListener
+from src.tweet_collector.log import Log
 
 
 class SinCollector:

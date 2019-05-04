@@ -3,8 +3,8 @@ a test file for SinCollector
 """
 
 
-from sin_collector import SinCollector
-from constants import *
+from src.tweet_collector.sin_collector import SinCollector
+from src.tweet_collector.constants import *
 
 
 sin_collector = SinCollector(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_SECRET,
