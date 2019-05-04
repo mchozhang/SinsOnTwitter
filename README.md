@@ -1,15 +1,13 @@
-# Sins on Twitter
-
-## project directory
-```bash
-├── deploy              // ansible and deploy scripts
-├── docker              // docker setup
-├── README.md           // readme
-├── requirements.txt    // python packages
+.
+├── Frontend
+├── README.md
+├── deploy
+├── docker
+├── docs
+│   ├── App\ Functions.md
+│   ├── App_frontend_design.png
+│   └── COMP90042\ Project2\ Report.docx
+├── requirements.txt
 └── src
-    ├── tweet_collector // tweets harverster
-    └── web             // flask web app
-       
-```
-
-
+    ├── tweet_collector
+    └── web
