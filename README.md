@@ -1,13 +1,13 @@
-.
-├── Frontend
-├── README.md
-├── deploy
-├── docker
-├── docs
-│   ├── App\ Functions.md
-│   ├── App_frontend_design.png
-│   └── COMP90042\ Project2\ Report.docx
-├── requirements.txt
+# Sins on Twitter
+
+## project directory
+```bash
+├── deploy              // ansible and deploy scripts
+├── docker              // docker setup
+├── README.md           // readme
+├── requirements.txt    // python packages
 └── src
-    ├── tweet_collector
-    └── web
+    ├── tweet_collector // tweets harverster
+    └── web             // flask web app
+       
+```
