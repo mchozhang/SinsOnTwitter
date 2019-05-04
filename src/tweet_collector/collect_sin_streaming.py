@@ -4,8 +4,8 @@ collect tweets from all Australia through streaming
 
 import sys
 
-from sin_collector import SinCollector
-from constants import *
+from src.tweet_collector.sin_collector import SinCollector
+from src.tweet_collector.constants import *
 
 sin_collector = None
 if len(sys.argv) <= 1:
