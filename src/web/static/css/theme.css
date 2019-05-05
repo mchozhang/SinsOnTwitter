@@ -1,1 +1,17 @@
+.sidebar {
+  width: 20rem !important;
+}
 
+.nav-item {
+  width: 20rem;
+}
+
+.sidebar .bootstrap-tagsinput {
+  width: 18rem;
+  margin-left: 1rem;
+}
+
+.bootstrap-tagsinput .badge {
+  margin-right: 5px;
+  background-color: #36b9cc;
+}
