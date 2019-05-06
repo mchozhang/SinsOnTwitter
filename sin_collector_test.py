@@ -53,6 +53,10 @@ def test_build_index():
     sin_collector.build_index_database()
 
 
+def test_views():
+    sin_collector.tweet_processor.make_counter_view()
+
+
 def run_tests():
     # test_timeline()
     # test_streaming_keywords()
@@ -61,6 +65,7 @@ def run_tests():
     # test_search_location()
     # test_iterate()
     test_build_index()
+    # test_views()
 
 
 start_time = datetime.datetime.now()

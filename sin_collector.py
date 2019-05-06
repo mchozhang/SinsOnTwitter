@@ -38,6 +38,9 @@ class SinCollector:
     # pattern that will be ignored when analysing the tweet text
     # "@[^ ] " here means something like "@another_user "
     IGNORE_PATTERN = re.compile("@[^ ]+ ")
+    # collecting mode
+    COLLECT_BY_SEARCHING = 1
+    COLLECT_BY_STREAMING = 2
 
     def __init__(self, consumer_key, consumer_secret, access_token, access_secret,
                  database_url, database_user, database_pw, tweet_database_name, index_database_name):
@@ -174,10 +177,11 @@ class SinCollector:
         """
         return self.api.geo_search(query=place, granularity=type_of_place)[0].id
 
-    def process_data(self, raw_data):
+    def process_data(self, raw_data, mode=COLLECT_BY_STREAMING):
         """
         process a raw_data containing a single json entry
         :param raw_data: raw data containing json
+        :param mode: collecting mode, search or streaming
         """
         json_data = None
         try:
@@ -197,8 +201,13 @@ class SinCollector:
                         print("id:<" + str(json_data["id"]) + "> is already in the db.")
                         return
                     else:
+                        if mode == SinCollector.COLLECT_BY_STREAMING:
+                            # pre-process the tweet to add new fields and build index
+                            # only do it during streaming. Searching is too fast! indexing cannot keep up
+                            self.tweet_processor.process_new_tweet(json_data)
+                        # write the tweet into tweet database
                         self.tweet_database[key] = json_data
-                    self.tweet_database[key] = json_data
+
                 except Exception as error:
                     Log.write_log(repr(error))
 
@@ -225,7 +234,9 @@ class SinCollector:
                                                                  SinCollector.MAX_NUM_TWEETS_TO_SEARCH)):
             # print("writing data:" + str(raw_data))
             # start separate threads to do IO
-            th = threading.Thread(target=self.process_data, args=(json.dumps(raw_data._json),), daemon=True)
+            # self.process_data(json.dumps(raw_data._json))
+            th = threading.Thread(target=self.process_data, args=(json.dumps(raw_data._json),
+                                                                  SinCollector.COLLECT_BY_SEARCHING, ), daemon=True)
             th.start()
             print("writing " + str(counter) + " results into db.")
             counter += 1

@@ -14,6 +14,7 @@
             <li>sudo apt install python3-pip</li>
             <li>pip3 install tweepy</li>
             <li>pip3 install CouchDB</li>
+            <li>pip3 install inflection</li>
             <li>pip3 install pyenchant</li>
             <li>pip3 install textblob</li>
             <li>python3 -m textblob.download_corpora</li>
@@ -45,8 +46,14 @@ arguments: <br>
     <li>python 3 collect_sin_search.py until_date db_url db_user db_pw</li>
 </ul>
 # until_date: must be in the form of yyyy-mm-dd<br><br>
+<em>process exisiting database with index and extra fileds</em>
+<ul>
+    <li>python 3 process_existing_tweet_db.py</li>
+    <li>python 3 process_existing_tweet_db.py db_url db_user db_pw</li>
+</ul>
 
 <b>use docker</b>:<br>
+<b>Note, the currently docker image is out of date, don't use it</b><br>
 to build the image: <br>
 <i>docker build --tag solitudeever/sin_collector68 .</i><br>
 to run the image:<br>
@@ -72,6 +79,8 @@ to kill it:<br>
 <hr>
 
 <h2>Update History</h2>
+
+ver2.1: modified code greatly, made streaming automatically update index
 
 ver2.0: added word index building and sentiment analysis 
 
@@ -102,3 +111,7 @@ ver0.3: connected to couchdb(url,username,pw,dbname), started collecting
 ver0.2: geo filtering done
 
 ver0.1: streaming working with keywords filtering
+
+<hr>
+
+todo: add lga information by editing tweet_processor.py
