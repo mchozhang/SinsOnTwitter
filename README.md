@@ -30,6 +30,9 @@ defined in constants.py
 use this to start searching tweets in the background. <u>Need to configure 
 search query in collect_sin_search .py before start.</u> Will use default database defined in constants.py
 
+<b>process_existing_tweet_db</b><br>
+use this to process the exisiting tweet database, to 1.build a word index database, 2.write extra information into tweets
+
 <b>run with arguments</b><br>
 you can run collect_sin_streaming.py and collect_sin_search with 
 arguments: <br>
@@ -45,7 +48,7 @@ arguments: <br>
     <li>python 3 collect_sin_search.py db_url db_user db_pw</li>
     <li>python 3 collect_sin_search.py until_date db_url db_user db_pw</li>
 </ul>
-# until_date: must be in the form of yyyy-mm-dd<br><br>
+* until_date: must be in the form of yyyy-mm-dd<br><br>
 <em>process exisiting database with index and extra fileds</em>
 <ul>
     <li>python 3 process_existing_tweet_db.py</li>
