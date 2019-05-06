@@ -5,10 +5,11 @@ a test file for SinCollector
 
 from sin_collector import SinCollector
 from constants import *
+import datetime
 
 
 sin_collector = SinCollector(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_SECRET,
-                             COUCHDB_URL, COUCHDB_USER, COUCHDB_PW, COUCHDB_NAME)
+                             COUCHDB_URL, COUCHDB_USER, COUCHDB_PW, TWEET_DB_NAME, INDEX_DB_NAME)
 
 
 def test_timeline():
@@ -30,7 +31,26 @@ def test_get_place_id():
 
 
 def test_search_location():
-    sin_collector.start_search_location("Australia", "country", "2019-04-21", "2019-04-25")
+    sin_collector.start_search_location("Australia", "country")
+
+
+def test_iterate():
+    db = sin_collector.tweet_database
+    for docid in db.view('_all_docs'):
+        print(docid["id"])
+        tweet = db[docid["id"]]
+        text = None
+        if "text" in tweet:
+            text = tweet["text"]
+        elif "full_text" in tweet:
+            text = tweet["full_text"]
+        else:
+            continue
+        print(text)
+
+
+def test_build_index():
+    sin_collector.build_index_database()
 
 
 def run_tests():
@@ -38,7 +58,11 @@ def run_tests():
     # test_streaming_keywords()
     # test_streaming_location()
     # test_get_place_id()
-    test_search_location()
+    # test_search_location()
+    # test_iterate()
+    test_build_index()
 
 
+start_time = datetime.datetime.now()
 run_tests()
+print("time spent: " + str(datetime.datetime.now() - start_time) + ".")
