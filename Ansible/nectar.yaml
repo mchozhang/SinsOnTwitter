@@ -8,6 +8,7 @@
    - role: hostPreInstall
    - role: createSecurityGroups
    - role: createInstances
+   - role: createVolumes
 
 
 
