@@ -39,17 +39,17 @@ The Ansible Script Steps to set up n nodes are as follows:
 	- openstacksdk
 
 3. Create Security Groups on Nectar (createSecurityGroups):
-	internal:
+	- internal:
 		- Open unfiltered communication between nodes in this security group.
-	ansible_couchDB:
+	- ansible_couchDB:
 		- Open up following ports for CouchDB configuration:
 			- Open Ports 9100-9200, for communication between nodes
 			- Open Port 5984, open to world to interact with database
 			- Open Port 5986, for admin tasks such as node/shard management
 			- Open Port 4369, for Erlang port mapper daemon (epmd)
-	ssh:
+	- ssh:
 		- SSH communication through port 22.
-	http:
+	- http:
 		- HTTP communication through port 80.
 
 4. Creating Volumes (createVolumes): 
