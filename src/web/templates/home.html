@@ -5,7 +5,7 @@
   <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('home') }}">
       <div class="sidebar-brand-icon rotate-n-15">
         <i class="fas fa-laugh-wink"></i>
       </div>
@@ -17,9 +17,14 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item active">
-      <a class="nav-link" href="index.html">
-        <i class="fas fa-fw fa-tachometer-alt"></i>
-        <span>Dashboard</span></a>
+
+      <a class="nav-link">
+        <i class="fas fa-fw fa-search"></i>
+        <span>Keywords</span>
+      </a>
+      <div>
+        <input type="text" value="lust, wraith, sloth" data-role="tagsinput"/>
+      </div>
     </li>
 
     <!-- Divider -->
@@ -66,7 +71,6 @@
         </div>
       </div>
     </li>
-
     <!-- Divider -->
     <hr class="sidebar-divider">
 
@@ -104,12 +108,6 @@
         <span>Charts</span></a>
     </li>
 
-    <!-- Nav Item - Tables -->
-    <li class="nav-item">
-      <a class="nav-link" href="tables.html">
-        <i class="fas fa-fw fa-table"></i>
-        <span>Tables</span></a>
-    </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
@@ -124,15 +122,15 @@
 {% endblock %}
 
 {% block content %}
-  <div class="Chart" style="width: 80%;height: 300px; position: relative; left: 20px;top: 20px;">
+
+  <div id="chartArea" style="width: 80%;height: 300px; position: relative; left: 20px;top: 20px;">
     <div id="title" style="">
       <tab>Twitter data Vs Aurin data</tab>
     </div>
-    <div id="central">
-      <canvas id="barChart" style="position: absolute;top: auto;width: auto;height: 90%;"> </canvas>
-      </div>
+    <div id="content" style="position: relative;width: 80%;height: 80%;">
+      <canvas id="barChart"></canvas>
     </div>
-
+  </div>
 
   <div class="map">
 
@@ -141,7 +139,7 @@
 {% endblock %}
 
 {% block javascript %}
-
   {{ super() }}
+
   <script src="../static/js/barChart.js"></script>
 {% endblock %}
