@@ -51,6 +51,9 @@ class TweetProcessor:
         self.extra_fields = {}
         self.tweet_db = tweet_db
         self.index_db = index_db
+        #store LGA info.
+        self.lga_coordinateholder={}
+        self.lga_codesAndnames={}
         self.ignore = ignore
         self.ascii_only = ascii_only
         self.dictionary = dictionary
@@ -79,6 +82,24 @@ class TweetProcessor:
             return {TweetProcessor.POLARITY: blob.sentiment.polarity,
                     TweetProcessor.SUBJECTIVITY: blob.sentiment.subjectivity}
 
+    def load_LGA_info(self):
+        with open("LGA_Codes_and_Names.csv","r",encoding='utf-8') as fd:
+           reader = csv.reader(fd)
+           for row in reader:
+              self.lga_codesAndnames[row[1]]=row[0]
+
+          #print(lga_codesAndnames)
+        
+        with open("aus_lga.geojson","rb") as f:
+            line=f.read()       
+            line=line.decode('utf-8')
+            y=json.loads(line)
+            c=y['features']
+            for i in range(len(c)):
+              self.lga_coordinateholder[c[i]['properties']['Name']]=c[i]['geometry']['coordinates'][0][0]                
+        print("LGA info loaded into memory")
+
+
     def load_index_db(self):
         """
         load index db into memory
@@ -101,6 +122,7 @@ class TweetProcessor:
                 self.index[word].add(tweet_id)
                 self.seen.add(tweet_id)
         print("loaded index database into memory.")
+        load_LGA_info()  '''pls modify this'''
 
     def get_blob(self, tweet):
         """
@@ -203,6 +225,44 @@ class TweetProcessor:
 
         # write into database
         self.write_into_db()
+
+
+    #below code finds the center of the four coordinates 
+    def findcenter_x(polyogon_coordinates):
+       coordinate0x=polyogon_coordinates[0][0]
+       coordinate1x=polyogon_coordinates[1][0]
+       coordinate2x=polyogon_coordinates[2][0]
+       coordinate3x=polyogon_coordinates[3][0]
+       return   coordinate0x + (coordinate1x-coordinate0x)/2  
+       # x= a+(b-a/2) 
+   
+   #below code finds the center of the four coordinates 
+   def findcenter_y(polyogon_coordinates):
+      coordinate0y=polyogon_coordinates[0][1]
+      coordinate1y=polyogon_coordinates[1][1]
+      coordinate2y=polyogon_coordinates[2][1]
+      coordinate3y=polyogon_coordinates[3][1]
+      return   coordinate0y + (coordinate2y-coordinate0y)/2
+      #y=a+(c-a/2)    
+
+   def point_inside_polygon(x,y,poly):
+
+    n = len(poly)
+    inside =False
+    
+    p1x,p1y = poly[0]
+    for i in range(n+1):
+        p2x,p2y = poly[i % n]
+        if y > min(p1y,p2y):
+            if y <= max(p1y,p2y):
+                if x <= max(p1x,p2x):
+                    if p1y != p2y:
+                        xinters = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
+                    if p1x == p2x or x <= xinters:
+                        inside = not inside
+        p1x,p1y = p2x,p2y
+
+    return inside
 
     def write_into_db(self):
         """
@@ -326,9 +386,32 @@ class TweetProcessor:
         sentiment_dict = self.get_sentiment_dict(blob)
         tweet[TweetProcessor.POLARITY] = sentiment_dict[TweetProcessor.POLARITY]
         tweet[TweetProcessor.SUBJECTIVITY] = sentiment_dict[TweetProcessor.SUBJECTIVITY]
+        
+
 
         # write LGA information
         # todo: add code here, to add LGA fields to the tweet. e.g.
+        try:
+          list_of_coordinates=tweet['place']['bounding_box']['coordinates'][0] #taking the 1st set of 4 coordinates
+        except:
+          print(tweet['id'])   '''make return here since we dont have a locaton'''
+          continue
+        for key, value in lga_coordinateholder.items():
+          flag=point_inside_polygon(findcenter_x(list_of_coordinates),findcenter_y(list_of_coordinates), lga_coordinateholder[key])
+          if(flag==True):
+            tweet[TweetProcessor.LGA_NAME]=key
+            '''if code present for the given LGA add else ignore '''
+            '''Can be modified to add null'''
+            if key in lga_codesAndnames:
+              tweet[TweetProcessor.LGA_CODE]=lga_codesAndnames[key]
+            db.save(tweet)   '''edit here'''
+            break
+            '''else:
+              tweet[TweetProcessor.LGA_CODE]='null'  '''
+                
+            
+
+
         # tweet[TweetProcessor.LGA_NAME] = "Melbourne"
         # tweet[TweetProcessor.LGA_CODE] = "123456"
 
