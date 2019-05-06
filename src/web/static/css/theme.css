@@ -15,3 +15,39 @@
   margin-right: 5px;
   background-color: #36b9cc;
 }
+
+.sidebar .dropdown {
+  margin-left: 1rem;
+}
+
+.sidebar .dropdown .btn-primary {
+  color: #4e73df;
+  background-color: #fff;
+  border-color: #fff;
+  width: 18rem
+}
+
+.sidebar .dropdown-menu {
+  width: 18rem;
+}
+
+.radio-group {
+  margin-left: 1rem;
+  width: 18rem;
+}
+
+.radio-group .radio {
+  display: block;
+}
+
+.radio-group label {
+  color: #ffffff;
+  font-size: 14px;
+  margin-top: 1px;
+  margin-left: 2px;
+}
+
+#searchBtn {
+  margin-left: 1rem;
+  width: 18rem;
+}
