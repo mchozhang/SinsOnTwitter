@@ -69,3 +69,6 @@ curl -X DELETE "http://${masternode}:5986/_nodes/nonode@nohost?rev=${rev}"  --us
 #Check to see membership details
 curl -XGET "http://${user}:${pass}@${masternode}:5984/_membership" | jq
 END
+
+
+

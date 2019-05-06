@@ -7,6 +7,7 @@
     flavor: '{{ item.instance_flavor }}'
     availability_zone: '{{ availability_zone }}'
     security_groups: '{{ sg_names }}'
+    volumes: '{{ os_vol_ids }}'
     auto_floating_ip: yes
     wait: yes
     timeout: 600

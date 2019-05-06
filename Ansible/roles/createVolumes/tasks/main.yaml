@@ -17,5 +17,6 @@
     os_vol_ids: '{{ os_vol_ids|default([]) + [ item.id ] }}'
   loop: '{{ os_vol.results }}'
 
-- debug:
+- name: Printing Created Volumes
+  debug:
     msg: "Volume {{ os_vol_ids }} has been created."
