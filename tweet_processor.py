@@ -262,7 +262,7 @@ class TweetProcessor:
                         inside = not inside
         p1x,p1y = p2x,p2y
 
-    return inside
+     return inside
 
     def write_into_db(self):
         """
@@ -403,11 +403,11 @@ class TweetProcessor:
                 if key in lga_codesAndnames:
                   tweet[TweetProcessor.LGA_CODE]=lga_codesAndnames[key]
                   db.save(tweet)   #edit here'''
-              break
+             break
              '''else:
                tweet[TweetProcessor.LGA_CODE]='null'  '''
         except:
-          print(tweet['id'])   '''make return here since we dont have a locaton'''
+          print(tweet['id'])   #make return here since we dont have a locaton
          # continue        
             
 
