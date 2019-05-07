@@ -1,22 +1,26 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def home():
-    return render_template("home.html")
+    crime_list = ['lust', 'wraith', 'sloth', 'gluttony']
+    return render_template("home.html", crime_list=crime_list)
 
 
-# add more pages
-@app.route("/about")
-def about():
-    return render_template("about.html")
-
-
-@app.route("/map")
-def map():
-    return render_template("map.html")
+@app.route('/search', methods=['POST'])
+def search():
+    try:
+        keyword_list = request.json["keywords"]
+        crime = request.json["crime"]
+        chart = request.json["chart"]
+        sentiment = request.json["sentiment"]
+        print(str(keyword_list))
+        print(crime + " " + chart + " " + sentiment)
+    except Exception as e:
+        print(e)
+    return jsonify()
 
 
 @app.route('/bar_chart')

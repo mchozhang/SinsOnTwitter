@@ -1,8 +1,13 @@
 {% extends "layout.html" %}
+{% block styles %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet">
+{% endblock %}
 
+<!-- Sidebar -->
 {% block side_bar %}
-  <!-- Sidebar -->
-  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="sidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('home') }}">
@@ -17,19 +22,17 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item active">
-
       <a class="nav-link">
         <i class="fas fa-fw fa-search"></i>
         <span>Keywords</span>
       </a>
       <div>
-        <input type="text" value="lust, wraith, sloth" data-role="tagsinput"/>
+        <input type="text" id="keywords" value="" data-role="tagsinput"/>
       </div>
     </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider">
-
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item active">
@@ -37,17 +40,11 @@
         <i class="fas fa-fw fa-address-card"></i>
         <span>Crime Type</span>
       </a>
-      <div class="dropdown mb-4">
-        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownCrimeButton" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-          Select Crime Type
-        </button>
-        <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownCrimeButton">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
-      </div>
+      <select class="custom-select" id="crime-select" name="crime-select">
+        {% for crime in crime_list %}#}
+          <option value="{{ crime }}" class="dropdown-item">{{ crime }}</option>
+        {% endfor %}
+      </select>
     </li>
 
     <li class="nav-item active">
@@ -55,7 +52,7 @@
         <i class="fas fa-fw fa-chart-area"></i>
         <span>Chart Type</span>
       </a>
-      <div class="radio-group">
+      <div class="radio-group" id="chart-radio">
         <div>
           <input type="radio" id="bar" name="chart" value="bar" checked>
           <label for="bar">Bar Chart</label>
@@ -74,7 +71,7 @@
         <i class="fas fa-fw fa-heartbeat"></i>
         <span>Sentiment Filter</span>
       </a>
-      <div class="radio-group">
+      <div class="radio-group" id="sentiment-radio">
         <div>
           <input type="radio" id="all" name="sentiment" value="all" checked>
           <label for="all">All</label>
@@ -94,16 +91,16 @@
       </div>
     </li>
 
-    <button class="btn btn-light" id="searchBtn">
+    <button class="btn btn-light" id="searchBtn" onclick="search()">
       Search
     </button>
   </ul>
-  <!-- End of Sidebar -->
 {% endblock %}
 
+<!-- Display Area -->
 {% block content %}
 
-  <div id="chartArea" style="width: 80%;height: 300px; position: relative; left: 20px;top: 20px;">
+  <div id="chartArea" style="width: 80%; height: 300px; position: relative; left: 20px;top: 20px;">
     <div id="title" style="">
       <tab>Twitter data Vs Aurin data</tab>
     </div>
@@ -120,6 +117,87 @@
 
 {% block javascript %}
   {{ super() }}
+  <script>
+    new Chart(document.getElementById("barChart"), {
+      type: 'bar',
+      data: {
+        // areas location
+        labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
 
-  <script src="../static/js/barChart.js"></script>
+        datasets: [{
+          label: "Dataset 1",
+          backgroundColor: "#3e95cd",
+          data: [2478, 5267, 734, 784, 433],
+          boarderWidth: 1
+        },
+          {
+            label: "Dataset 2",
+            backgroundColor: "#8e5ea2",
+            data: [2478, 5267, 734, 784, 433],
+            boarderWidth: 1
+          }
+        ]
+      },
+      options: {
+        maintainAspectRatio: false,
+        responsive: true,
+        legend: {display: false},
+        title: {
+          display: true,
+          text: 'Predicted world population (millions) in 2050'
+        }
+      }
+    });
+
+    /**
+     * click search button,
+     * submit form data by ajax
+     */
+    function search() {
+      let chartRadioGroup = $('#chart-radio');
+      let sentimentRadioGroup = $('#sentiment-radio');
+
+      let data = {
+        keywords: $("#keywords").tagsinput("items"),
+        crime: $("#crime-select").val(),
+        chart: getRadioVal(chartRadioGroup, 'chart'),
+        sentiment: getRadioVal(sentimentRadioGroup, 'sentiment'),
+      };
+
+      console.log(data);
+
+      let options = {
+        url: "{{ url_for('search') }}",
+        dataType: "json",
+        contentType: "application/json",
+        type: "post",
+        data: JSON.stringify(data),
+      };
+
+      let callback = function (responseText, statusText) {
+        console.log("success");
+      };
+
+      $.ajax(options).done(callback);
+    }
+
+    /**
+     * get value of the radio in the form
+     * @param form form object
+     * @param name name of the radio
+     * @returns value of the radio
+     */
+    function getRadioVal(form, name) {
+      let val;
+      let radios = $('[name=' + name + ']');
+
+      for (let i = 0, len = radios.length; i < len; i++) {
+        if (radios[i].checked) {
+          val = radios[i].value;
+          break;
+        }
+      }
+      return val;
+    }
+  </script>
 {% endblock %}
