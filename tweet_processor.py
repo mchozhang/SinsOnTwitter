@@ -393,22 +393,22 @@ class TweetProcessor:
         # todo: add code here, to add LGA fields to the tweet. e.g.
         try:
           list_of_coordinates=tweet['place']['bounding_box']['coordinates'][0] #taking the 1st set of 4 coordinates
+       
+          for key, value in lga_coordinateholder.items():
+             flag=point_inside_polygon(findcenter_x(list_of_coordinates),findcenter_y(list_of_coordinates), lga_coordinateholder[key])
+             if(flag==True):
+             tweet[TweetProcessor.LGA_NAME]=key
+             '''if code present for the given LGA add else ignore '''
+             '''Can be modified to add null'''
+             if key in lga_codesAndnames:
+              tweet[TweetProcessor.LGA_CODE]=lga_codesAndnames[key]
+              db.save(tweet)   '''edit here'''
+             break
+             '''else:
+               tweet[TweetProcessor.LGA_CODE]='null'  '''
         except:
           print(tweet['id'])   '''make return here since we dont have a locaton'''
-          continue
-        for key, value in lga_coordinateholder.items():
-          flag=point_inside_polygon(findcenter_x(list_of_coordinates),findcenter_y(list_of_coordinates), lga_coordinateholder[key])
-          if(flag==True):
-            tweet[TweetProcessor.LGA_NAME]=key
-            '''if code present for the given LGA add else ignore '''
-            '''Can be modified to add null'''
-            if key in lga_codesAndnames:
-              tweet[TweetProcessor.LGA_CODE]=lga_codesAndnames[key]
-            db.save(tweet)   '''edit here'''
-            break
-            '''else:
-              tweet[TweetProcessor.LGA_CODE]='null'  '''
-                
+         # continue        
             
 
 
