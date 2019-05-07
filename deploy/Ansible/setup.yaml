@@ -1,0 +1,16 @@
+#Setting up and configuring each instance
+- name: Setting Up Each Instance
+  hosts: servers
+  gather_facts: yes
+  sudo: yes
+  pre_tasks:
+     - pause:
+          prompt: "Making sure that instances are setup before accessing them..."
+          minutes: 5
+     - debug: var=ansible_default_ipv4.address
+  roles:
+     - role: vmSetup
+     - role: installingSoftware
+     - role: configureDocker
+     - role: configureCouchDB
+#To be added: configuringHarvester and running harvesters

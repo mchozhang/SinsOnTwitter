@@ -16,19 +16,11 @@
   background-color: #36b9cc;
 }
 
-.sidebar .dropdown {
-  margin-left: 1rem;
-}
-
-.sidebar .dropdown .btn-primary {
-  color: #4e73df;
+.sidebar select {
   background-color: #fff;
   border-color: #fff;
+  margin-left: 1rem;
   width: 18rem
-}
-
-.sidebar .dropdown-menu {
-  width: 18rem;
 }
 
 .radio-group {
@@ -50,4 +42,5 @@
 #searchBtn {
   margin-left: 1rem;
   width: 18rem;
+  color: #4e73df;
 }

@@ -1,0 +1,35 @@
+---
+- name: Appending Proxy Configurations to Environment File
+  become: yes
+  lineinfile:
+    line: "{{ item }}"
+    state: present
+    path: "/etc/environment"
+  with_items:
+    - http_proxy="http://wwwproxy.unimelb.edu.au:8000"
+    - https_proxy="http://wwwproxy.unimelb.edu.au:8000"
+    - ftp_proxy="http://wwwproxy.unimelb.edu.au:8000"
+    - no_proxy=localhost,127.0.0.1,127.0.1.1,Ubuntu
+
+- name: Formatting Volume
+  become: yes
+  command: mkfs.ext4 /dev/vdb
+
+- name: Ensuring Volume Persists After Reboot, Set Mount to /mnt
+  become: yes
+  lineinfile:
+    line: "{{ item }}"
+    state: present
+    path: "/etc/fstab"
+  with_items:
+    -  /dev/vdb  /mnt    auto    defaults,nofail   0  2
+    
+- name: Mount all Volumes in /etc/fstab
+  become: yes
+  command: mount --all
+
+- name: Reboot After Environment Proxy Setup
+  become: yes
+  reboot:
+    reboot_timeout: 300
+
