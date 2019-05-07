@@ -1,0 +1,34 @@
+---
+- name: Set Proper User Permissions for Docker 
+  become: yes
+  user: 
+    name: ubuntu
+    state: present
+    group: docker
+    groups: "docker"
+  #sudo usermod -aG docker $USER  
+
+- name: Set Docker For Proxy
+  become: yes
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+
+- name: Add docker proxy environment Configurations
+  become: yes
+  copy:
+    content: "[Service]\nEnvironment=\"HTTP_PROXY=http://wwwproxy.unimelb.edu.au:8000\""
+    dest: /etc/systemd/system/docker.service.d/http-proxy.conf
+
+- name: Reloading Daemon to apply changes
+  become: yes
+  command: systemctl daemon-reload
+
+- name: Restart Docker to apply changes
+  become: yes
+  command: systemctl restart docker
+
+- name: Reboot After Docker Setup
+  become: yes
+  reboot:
+    reboot_timeout: 300
