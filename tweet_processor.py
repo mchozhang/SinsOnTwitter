@@ -122,7 +122,7 @@ class TweetProcessor:
                 self.index[word].add(tweet_id)
                 self.seen.add(tweet_id)
         print("loaded index database into memory.")
-        load_LGA_info()  '''pls modify this'''
+        load_LGA_info()  #pls modify this
 
     def get_blob(self, tweet):
         """
@@ -237,21 +237,21 @@ class TweetProcessor:
        # x= a+(b-a/2) 
    
    #below code finds the center of the four coordinates 
-   def findcenter_y(polyogon_coordinates):
-      coordinate0y=polyogon_coordinates[0][1]
-      coordinate1y=polyogon_coordinates[1][1]
-      coordinate2y=polyogon_coordinates[2][1]
-      coordinate3y=polyogon_coordinates[3][1]
-      return   coordinate0y + (coordinate2y-coordinate0y)/2
-      #y=a+(c-a/2)    
+    def findcenter_y(polyogon_coordinates):
+       coordinate0y=polyogon_coordinates[0][1]
+       coordinate1y=polyogon_coordinates[1][1]
+       coordinate2y=polyogon_coordinates[2][1]
+       coordinate3y=polyogon_coordinates[3][1]
+       return   coordinate0y + (coordinate2y-coordinate0y)/2
+       #y=a+(c-a/2)    
 
-   def point_inside_polygon(x,y,poly):
+    def point_inside_polygon(x,y,poly):
 
-    n = len(poly)
-    inside =False
+     n = len(poly)
+     inside =False
     
-    p1x,p1y = poly[0]
-    for i in range(n+1):
+     p1x,p1y = poly[0]
+     for i in range(n+1):
         p2x,p2y = poly[i % n]
         if y > min(p1y,p2y):
             if y <= max(p1y,p2y):
@@ -397,13 +397,13 @@ class TweetProcessor:
           for key, value in lga_coordinateholder.items():
              flag=point_inside_polygon(findcenter_x(list_of_coordinates),findcenter_y(list_of_coordinates), lga_coordinateholder[key])
              if(flag==True):
-             tweet[TweetProcessor.LGA_NAME]=key
-             '''if code present for the given LGA add else ignore '''
-             '''Can be modified to add null'''
-             if key in lga_codesAndnames:
-              tweet[TweetProcessor.LGA_CODE]=lga_codesAndnames[key]
-              db.save(tweet)   '''edit here'''
-             break
+                tweet[TweetProcessor.LGA_NAME]=key
+                 #if code present for the given LGA add else ignore '''
+                  #Can be modified to add null'''
+                if key in lga_codesAndnames:
+                  tweet[TweetProcessor.LGA_CODE]=lga_codesAndnames[key]
+                  db.save(tweet)   #edit here'''
+              break
              '''else:
                tweet[TweetProcessor.LGA_CODE]='null'  '''
         except:
