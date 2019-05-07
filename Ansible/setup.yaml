@@ -1,6 +1,6 @@
 #Setting up and configuring each instance
-- name: Setting Up Each Instance
-  hosts: servers
+- name: Setting Up Slaves
+  hosts: dbslaves
   gather_facts: yes
   sudo: yes
   pre_tasks:
@@ -14,3 +14,13 @@
      - role: configureDocker
      - role: configureCouchDB
 #To be added: configuringHarvester and running harvesters
+
+- name: Setting Up Master
+  hosts: dbmain
+  gather_facts: yes
+  sudo: yes
+  roles:
+     - role: vmSetup
+     - role: installingSoftware
+     - role: configureDocker
+     - role: configureCouchDB

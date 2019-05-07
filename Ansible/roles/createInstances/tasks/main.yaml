@@ -7,7 +7,7 @@
     flavor: '{{ item.instance_flavor }}'
     availability_zone: '{{ availability_zone }}'
     security_groups: '{{ sg_names }}'
-    volumes: '{{ os_vol_ids }}'
+    #volumes: '{{ os_vol_ids }}'
     auto_floating_ip: yes
     wait: yes
     timeout: 600
@@ -16,8 +16,31 @@
   register: 'instances'
 
 - name: Put IP Address of instance into inventory file
+  become: yes
   lineinfile: 
     path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
     line: '{{ item.openstack.public_v4 }}' 
     insertafter: '\[servers\]'
   with_items: '{{ instances.results }}'
+
+- name: Choose First IP to be the Master Node
+  become: yes
+  lineinfile: 
+    path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
+    line: "{{ item.openstack.public_v4 }} "
+    insertafter: '\[dbmain\]'
+  when: item.item.instance_name == 'master_node'
+  with_items: '{{ instances.results }}'
+
+- name: Choose Other IPs to be the Slave Nodes
+  become: yes
+  lineinfile: 
+    path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
+    line: "{{ item.openstack.public_v4 }} "
+    insertafter: '\[dbslaves\]'
+    state: present
+  when: item.item.instance_name != 'master_node' and item.item.instance_name != 'web_node'
+  with_items: '{{ instances.results }}'
+
+
+

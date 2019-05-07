@@ -3,7 +3,9 @@ availability_zone: melbourne-qh2-uom
 
 #Volumes 
 volumes:
-  - vol_name: demo_vol_from_ansible
+  - vol_name: demo_vol_one
+    vol_size: 5
+  - vol_name: demo_vol_two
     vol_size: 5
 
 #Security Groups
@@ -41,14 +43,16 @@ couchDB_rules:
     remote_ip_prefix: 0.0.0.0/0
 
 #Instances To be Created 
+#(Add Instances here to be created)
 instance_list: 
-  - name: ansible_one
-    instance_name: ansible_one
+    # Choose one of them to be the master
+  - name: master_node
+    instance_name: master_node
     instance_image: 955a0556-1224-4499-a895-87d54d5cbf32 #Ubuntu 18.04 Bionic amd64
     instance_key_name: Group68KeyPair
-    instance_flavor: uom.mse.1c4g  
-  #- name: ansible_two
-  #  instance_name: ansible_two
-  #  instance_image: 955a0556-1224-4499-a895-87d54d5cbf32 #Ubuntu 18.04 Bionic amd64
-  #  instance_key_name: Group68KeyPair
-  #  instance_flavor: uom.general.1c4g  
+    instance_flavor: uom.general.1c4g  
+  - name: slave_one
+    instance_name: slave_one
+    instance_image: 955a0556-1224-4499-a895-87d54d5cbf32 #Ubuntu 18.04 Bionic amd64
+    instance_key_name: Group68KeyPair
+    instance_flavor: uom.general.1c4g  
