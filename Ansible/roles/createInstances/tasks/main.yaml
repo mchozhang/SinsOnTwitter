@@ -15,7 +15,7 @@
   with_items: '{{ instance_list }}'
   register: 'instances'
 
-- name: Put IP Address of instance into inventory file
+- name: Insert all instances IPs into inventory file
   become: yes
   lineinfile: 
     path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
@@ -23,24 +23,24 @@
     insertafter: '\[servers\]'
   with_items: '{{ instances.results }}'
 
-- name: Choose First IP to be the Master Node
+- name: Insert all database servers into dbservers variable in inventory file
   become: yes
   lineinfile: 
     path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
-    line: "{{ item.openstack.public_v4 }} "
-    insertafter: '\[dbmain\]'
-  when: item.item.instance_name == 'master_node'
-  with_items: '{{ instances.results }}'
+    line: "{{ item.openstack.public_v4 }} " 
+    insertafter: '\[dbservers\]'
+  when: "'db' in item.item.instance_name"
+  loop: '{{ instances.results }}'  
 
-- name: Choose Other IPs to be the Slave Nodes
-  become: yes
-  lineinfile: 
-    path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
-    line: "{{ item.openstack.public_v4 }} "
-    insertafter: '\[dbslaves\]'
-    state: present
-  when: item.item.instance_name != 'master_node' and item.item.instance_name != 'web_node'
-  with_items: '{{ instances.results }}'
+#- name: Insert WebServer to inventory file
+#  become: yes
+#  lineinfile: 
+#    path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
+#    line: '{{ item.openstack.public_v4 }}'
+#    insertafter: '\[webserver\] '
+#    state: present
+#  when: "'web' in item.item.instance_name"
+#  with_items: '{{ instances.results }}'
 
 
 

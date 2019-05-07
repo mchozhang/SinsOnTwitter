@@ -46,13 +46,13 @@ couchDB_rules:
 #(Add Instances here to be created)
 instance_list: 
     # Choose one of them to be the master
-  - name: master_node
-    instance_name: master_node
+  - name: db_master
+    instance_name: db_master
     instance_image: 955a0556-1224-4499-a895-87d54d5cbf32 #Ubuntu 18.04 Bionic amd64
     instance_key_name: Group68KeyPair
     instance_flavor: uom.general.1c4g  
-  - name: slave_one
-    instance_name: slave_one
+  - name: db_slave_one
+    instance_name: db_slave_one
     instance_image: 955a0556-1224-4499-a895-87d54d5cbf32 #Ubuntu 18.04 Bionic amd64
     instance_key_name: Group68KeyPair
     instance_flavor: uom.general.1c4g  

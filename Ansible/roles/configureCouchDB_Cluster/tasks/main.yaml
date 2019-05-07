@@ -1,0 +1,6 @@
+---
+#Start By Generating UUIDS
+#Put UUIDs into a variable file
+
+#Go through each dbserver and add them to the uuid
+#Add them to masteer by performing master configs...

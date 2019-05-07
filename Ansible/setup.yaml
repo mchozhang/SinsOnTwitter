@@ -1,8 +1,8 @@
 #Setting up and configuring each instance
-- name: Setting Up Slaves
-  hosts: dbslaves
-  gather_facts: yes
+- name: Common Tasks Between all Instances
+  hosts: servers
   sudo: yes
+  gather_facts: no
   pre_tasks:
      - pause:
           prompt: "Making sure that instances are setup before accessing them..."
@@ -12,15 +12,20 @@
      - role: vmSetup
      - role: installingSoftware
      - role: configureDocker
-     - role: configureCouchDB
-#To be added: configuringHarvester and running harvesters
 
-- name: Setting Up Master
-  hosts: dbmain
+#Setting Up CouchDB on all db servers
+- name: Setting Up CouchDB Slaves
+  hosts: dbservers
   gather_facts: yes
   sudo: yes
   roles:
-     - role: vmSetup
-     - role: installingSoftware
-     - role: configureDocker
-     - role: configureCouchDB
+     - role: configureCouchDB_Common
+
+#Preparing Cluster Setup by Running Commands on Master
+#Set the first IP in dbservers as the Master
+- name: Setting Up Master
+  hosts: dbservers[0]
+  gather_facts: yes
+  sudo: yes
+  roles:
+     #- role: configureCouchDB_Cluster
