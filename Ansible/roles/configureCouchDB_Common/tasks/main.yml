@@ -2,7 +2,7 @@
 - name: Running Docker CouchDb Container 
   command: "{{ item }}"
   with_items:
-    - docker run -d -p 5984:5984 -p 9100-9200:9100-9200 -p 5986:5986 -p 4369:4369 -e COUCHDB_USER=SinsOnTwitter -e COUCHDB_PASSWORD=group68 --name couchdb couchdb:2.3.0
+    - docker run -d -p 5984:5984 -p 9100-9200:9100-9200 -p 5986:5986 -p 4369:4369 -e COUCHDB_USER={{couchdb_user}} -e COUCHDB_PASSWORD={{couchdb_pass}} --name couchdb {{couchdb_image}}
 
 - name: Appending Configurations in vm.args
   command: "{{ item }}"
@@ -22,8 +22,8 @@
 - name: Bind Clustered Interface to all IP Addresses
   command: "{{ item }}"
   with_items:
-    - curl -X PUT "http://SinsOnTwitter:group68@localhost:5984/_node/_local/_config/chttpd/bind_address" -d '"0.0.0.0"'
-    - curl -X PUT "http://SinsOnTwitter:group68@localhost:5984/_node/_local/_config/httpd/bind_address" -d '"0.0.0.0"'
+    - curl -X PUT "http://{{couchdb_user}}:{{couchdb_pass}}@localhost:5984/_node/_local/_config/chttpd/bind_address" -d '"0.0.0.0"'
+    - curl -X PUT "http://{{couchdb_user}}:{{couchdb_pass}}@localhost:5984/_node/_local/_config/httpd/bind_address" -d '"0.0.0.0"'
 
 #- name: Adding Node to the Cluster
 #  command: curl -X PUT "http://SinsOnTwitter:group68@172.26.38.38:5986/_nodes/couchdb@{{ ansible_default_ipv4.address }}" -d {}

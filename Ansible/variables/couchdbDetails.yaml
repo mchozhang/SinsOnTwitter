@@ -1,0 +1,6 @@
+---
+couchdb_user: SinsOnTwitter
+couchdb_pass: group68
+masternode: "{{ groups['dbservers'][0] }}"
+couchdb_image: couchdb:2.3.0
+node_count: 3

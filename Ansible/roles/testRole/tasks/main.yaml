@@ -1,0 +1,4 @@
+---
+- name: Print Debug
+  debug:
+     msg: CouchDB Details are:'{{couchdb_user}}' and '{{couchdb_pass}}' and masternode='{{masternode}}'
