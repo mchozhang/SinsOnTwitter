@@ -2,11 +2,10 @@
 code to process tweets
 """
 
+
 from textblob import TextBlob
 import re
 import threading
-import csv
-import json
 
 
 class DatabaseNotFoundError(Exception):
@@ -16,22 +15,21 @@ class DatabaseNotFoundError(Exception):
 
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
+       
 
 
 class TweetProcessor:
     """
     a class to store temporary data of tweets and process them
     """
-    # tweet doc keys to be ignored
     KEYS_IGNORE = {"_id", "_rev"}
-
     # keys for extra fields to be added
     POLARITY = "polarity"
     SUBJECTIVITY = "subjectivity"
     LGA_NAME = "LGA_name"
     LGA_CODE = "LGA_code"
-    STATE_NAME = "state_name"
-    STATE_CODE = "state_code"
+    STATE_NAME="STATE_name"
+    STATE_CODE="STATE_code"
 
     # pattern of non-tweet ids, used to ignore other docs
     NON_TWEET_ID_PATTERN = re.compile("[^\d]")
@@ -56,12 +54,15 @@ class TweetProcessor:
         self.extra_fields = {}
         self.tweet_db = tweet_db
         self.index_db = index_db
-        # store LGA info
-        self.lga_coordinate_holder = {}
-        self.lga_codes_and_names = {}
+        #store LGA info.
+        self.lga_coordinateholder={}
+        self.statename_statecode={}
+        self.statename_lganame={}
+        self.lga_codesAndnames={}
         self.ignore = ignore
         self.ascii_only = ascii_only
         self.dictionary = dictionary
+        
         # make a lock object to be used in multi-threading
         self.lock = threading.Lock()
 
@@ -87,93 +88,30 @@ class TweetProcessor:
             return {TweetProcessor.POLARITY: blob.sentiment.polarity,
                     TweetProcessor.SUBJECTIVITY: blob.sentiment.subjectivity}
 
-    @staticmethod
-    def deep_copy_dict(from_dict: dict, to_dict: dict):
-        """
-        deep copy key/values from one dict to another
-        :param from_dict: source
-        :param to_dict: destination
-        """
-        if from_dict is None or to_dict is None:
-            return
-        for key, value in from_dict.items():
-            to_dict[key] = value
+    def load_LGA_info(self):
+        with open("LGA_Codes_and_Names.csv","r",encoding='utf-8') as fd:
+           reader = csv.reader(fd)
+           for row in reader:
+              self.lga_codesAndnames[row[1]]=row[0]
 
-    @staticmethod
-    def point_inside_polygon(x, y, poly):
-        """
-        check if a point is inside a polygon
-        code from http://www.ariel.com.au/a/python-point-int-poly.html
-        :param x: x of the point
-        :param y: y of the point
-        :param poly: a polygon in the form of [(x0,y0), (x1,y1), ...]
-        :return: boolean, if inside
-        """
-
-        n = len(poly)
-        inside = False
-        xinters = None
-
-        p1x, p1y = poly[0]
-        for i in range(n + 1):
-            p2x, p2y = poly[i % n]
-            if y > min(p1y, p2y):
-                if y <= max(p1y, p2y):
-                    if x <= max(p1x, p2x):
-                        if p1y != p2y:
-                            xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
-                        if p1x == p2x or x <= xinters:
-                            inside = not inside
-            p1x, p1y = p2x, p2y
-
-        return inside
-
-    @staticmethod
-    def find_center_x(polygon_coordinates):
-        """
-        find the centre x of a bounding box
-        :param polygon_coordinates: coordinates of the bounding box
-        :return: x of the centre
-        """
-        coordinate0x = polygon_coordinates[0][0]
-        coordinate1x = polygon_coordinates[1][0]
-        coordinate2x = polygon_coordinates[2][0]
-        coordinate3x = polygon_coordinates[3][0]
-        # x= a+(b-a/2)
-        return coordinate0x + (coordinate1x - coordinate0x) / 2
-
-    @staticmethod
-    def find_center_y(polygon_coordinates):
-        """
-        find the centre x of a bounding box
-        :param polygon_coordinates: coordinates of the bounding box
-        :return: y of the centre
-        """
-        coordinate0y = polygon_coordinates[0][1]
-        coordinate1y = polygon_coordinates[1][1]
-        coordinate2y = polygon_coordinates[2][1]
-        coordinate3y = polygon_coordinates[3][1]
-        # y=a+(c-a/2)
-        return coordinate0y + (coordinate2y - coordinate0y) / 2
-
-    def load_lga_info(self):
-        """
-        load lga information from file
-        """
-        with open("LGA_Codes_and_Names.csv", "r", encoding='utf-8') as fd:
-            reader = csv.reader(fd)
-            for row in reader:
-                self.lga_codes_and_names[row[1]] = row[0]
-        # print(self.lga_codes_and_names)
-
-        with open("aus_lga.geojson", "rb") as f:
-            line = f.read()
-            line = line.decode('utf-8')
-            y = json.loads(line)
-            c = y['features']
+          #print(lga_codesAndnames)
+        
+        with open("aus_lga.geojson","rb") as f:
+            line=f.read()       
+            line=line.decode('utf-8')
+            y=json.loads(line)
+            c=y['features']
             for i in range(len(c)):
-                self.lga_coordinate_holder[c[i]['properties']['Name']] = c[i]['geometry']['coordinates'][0][0]
+              self.lga_coordinateholder[c[i]['properties']['Name']]=c[i]['geometry']['coordinates'][0][0]                
         print("LGA info loaded into memory")
+
+        with open("LGA_StateMapping.csv","r",encoding='utf-8') as fd:
+           reader = csv.reader(fd)
+           for row in reader:
+              self.statename_lganame[row[2]]=row[0]  #{lganame:statename}
+              self.statename_statecode[row[0]]=row[1]  #{state_name:state_code}
+        print("Loaded States info")      
+
 
     def load_index_db(self):
         """
@@ -197,9 +135,7 @@ class TweetProcessor:
                 self.index[word].add(tweet_id)
                 self.seen.add(tweet_id)
         print("loaded index database into memory.")
-
-        # load lga information
-        self.load_lga_info()
+        load_LGA_info()  #pls modify this
 
     def get_blob(self, tweet):
         """
@@ -263,15 +199,9 @@ class TweetProcessor:
             # calculate and record sentiment
             self.extra_fields[tweet_id] = {}
             sentiment_dict = self.get_sentiment_dict(blob)
-            TweetProcessor.deep_copy_dict(sentiment_dict, self.extra_fields[tweet_id])
-
-            # calculate and record lga information
-            lga_dict = self.get_lga_dict(tweet)
-            TweetProcessor.deep_copy_dict(lga_dict, self.extra_fields[tweet_id])
-
-            # todo for myself: delete this after test
-            # self.extra_fields[tweet_id][TweetProcessor.POLARITY] = sentiment_dict[TweetProcessor.POLARITY]
-            # self.extra_fields[tweet_id][TweetProcessor.SUBJECTIVITY] = sentiment_dict[TweetProcessor.SUBJECTIVITY]
+            self.extra_fields[tweet_id][TweetProcessor.POLARITY] = sentiment_dict[TweetProcessor.POLARITY]
+            self.extra_fields[tweet_id][TweetProcessor.SUBJECTIVITY] = sentiment_dict[TweetProcessor.SUBJECTIVITY]
+            # todo: record lga information here, e.g.
             # self.extra_fields[tweet_id][TweetProcessor.LGA_NAME] = <the lga name for this tweet>
             # self.extra_fields[tweet_id][TweetProcessor.LGA_CODE] = <the lga code for this tweet>
 
@@ -309,6 +239,44 @@ class TweetProcessor:
         # write into database
         self.write_into_db()
 
+
+    #below code finds the center of the four coordinates 
+    def findcenter_x(polyogon_coordinates):
+       coordinate0x=polyogon_coordinates[0][0]
+       coordinate1x=polyogon_coordinates[1][0]
+       coordinate2x=polyogon_coordinates[2][0]
+       coordinate3x=polyogon_coordinates[3][0]
+       return   coordinate0x + (coordinate1x-coordinate0x)/2  
+       # x= a+(b-a/2) 
+   
+   #below code finds the center of the four coordinates 
+    def findcenter_y(polyogon_coordinates):
+       coordinate0y=polyogon_coordinates[0][1]
+       coordinate1y=polyogon_coordinates[1][1]
+       coordinate2y=polyogon_coordinates[2][1]
+       coordinate3y=polyogon_coordinates[3][1]
+       return   coordinate0y + (coordinate2y-coordinate0y)/2
+       #y=a+(c-a/2)    
+
+    def point_inside_polygon(x,y,poly):
+
+     n = len(poly)
+     inside =False
+    
+     p1x,p1y = poly[0]
+     for i in range(n+1):
+        p2x,p2y = poly[i % n]
+        if y > min(p1y,p2y):
+            if y <= max(p1y,p2y):
+                if x <= max(p1x,p2x):
+                    if p1y != p2y:
+                        xinters = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
+                    if p1x == p2x or x <= xinters:
+                        inside = not inside
+        p1x,p1y = p2x,p2y
+
+     return inside
+
     def write_into_db(self):
         """
         the file writing part of processing the existing tweet database
@@ -319,7 +287,7 @@ class TweetProcessor:
         counter = 0
         for word, id_set in self.index.items():
             counter += 1
-            th = threading.Thread(target=self.write_index_for_one_word, args=(word, id_set, counter,))
+            th = threading.Thread(target=self.write_index_for_one_word, args=(word, id_set, counter, ))
             threads.append(th)
             th.start()
 
@@ -334,7 +302,7 @@ class TweetProcessor:
             counter += 1
             # self.write_extra_fields_for_one_tweet(tweet_id, extra_fields_dict, counter)
             th = threading.Thread(target=self.write_extra_fields_for_one_tweet,
-                                  args=(tweet_id, extra_fields_dict, counter,))
+                                  args=(tweet_id, extra_fields_dict, counter, ))
             threads.append(th)
             th.start()
 
@@ -376,7 +344,7 @@ class TweetProcessor:
         write extra fields into the tweet database
         used for batch processing existing database! not for dealing with new tweets collected.
         :param tweet_id: id of the tweet
-        :param extra_fields_dict: the dict containing the extra fields and their values
+        :param extra_fields_dict: the dict containing the extra fields and there values
         :param counter: to show a counter in debug mode
         """
         with self.lock:
@@ -387,10 +355,11 @@ class TweetProcessor:
         if TweetProcessor.POLARITY in doc:
             self.debug_print(tweet_id + " already modified, skip. dealt with " + str(counter) + " tweets.")
             return
-
-        # write extra fields into doc
-        TweetProcessor.deep_copy_dict(extra_fields_dict, doc)
-
+        doc[TweetProcessor.POLARITY] = extra_fields_dict[TweetProcessor.POLARITY]
+        doc[TweetProcessor.SUBJECTIVITY] = extra_fields_dict[TweetProcessor.SUBJECTIVITY]
+        # todo: write lga information here! e.g.
+        # doc[TweetProcessor.LGA_NAME] = extra_fields_dict[TweetProcessor.LGA_NAME]
+        # doc[TweetProcessor.LGA_CODE] = extra_fields_dict[TweetProcessor.LGA_CODE]
         self.tweet_db.save(doc)
         self.debug_print(tweet_id + " added with extra fields. dealt with " + str(counter) + " tweets.")
 
@@ -428,26 +397,38 @@ class TweetProcessor:
 
         # calculate and record sentiment
         sentiment_dict = self.get_sentiment_dict(blob)
-        TweetProcessor.deep_copy_dict(sentiment_dict, tweet)
+        tweet[TweetProcessor.POLARITY] = sentiment_dict[TweetProcessor.POLARITY]
+        tweet[TweetProcessor.SUBJECTIVITY] = sentiment_dict[TweetProcessor.SUBJECTIVITY]
+        
+
 
         # write LGA information
-        lga_dict = self.get_lga_dict(tweet)
-        TweetProcessor.deep_copy_dict(lga_dict, tweet)
+        # todo: add code here, to add LGA fields to the tweet. e.g.
+        try:
+          list_of_coordinates=tweet['place']['bounding_box']['coordinates'][0] #taking the 1st set of 4 coordinates
+       
+          for key, value in lga_coordinateholder.items():
+             flag=point_inside_polygon(findcenter_x(list_of_coordinates),findcenter_y(list_of_coordinates), lga_coordinateholder[key])
+             if(flag==True):
+                tweet[TweetProcessor.LGA_NAME]=key
+                 #if code present for the given LGA add else ignore '''
+                  #Can be modified to add null'''
+                if key in lga_codesAndnames:
+                  tweet[TweetProcessor.LGA_CODE]=lga_codesAndnames[key]
+                  tweet[TweetProcessor.STATE_NAME]=statename_lganame[key]
+                  tweet[TweetProcessor.STATE_CODE]=statename_statecode[statename_lganame[key]]
+                  db.save(tweet)   #edit here'''
+             break
+             '''else:
+               tweet[TweetProcessor.LGA_CODE]='null'  '''
+        except:
+          print(tweet['id'])   #make return here since we dont have a locaton
+         # continue        
+            
 
-    @staticmethod
-    def get_lga_dict(tweet):
-        """
-        get a dict containing lga information for a given tweet doc
-        :param tweet: a tweet doc
-        :return: a dict with lga information
-        """
-        lga_dict = {}
-        # todo: do something here
 
-        # build the dict
-        lga_dict[TweetProcessor.STATE_NAME] = "" # replace this, to put state name
-        lga_dict[TweetProcessor.STATE_CODE] = "" # replace this, to put state code
-        lga_dict[TweetProcessor.LGA_NAME] = "" # replace this, to put lga name
-        lga_dict[TweetProcessor.LGA_CODE] = "" # replace this, to put lga code
+        # tweet[TweetProcessor.LGA_NAME] = "Melbourne"
+        # tweet[TweetProcessor.LGA_CODE] = "123456"
 
-        return lga_dict
+        # note: this is for dealing with a single tweet collected from streaming
+        # note: this is not for adding LGA information to existing tweet database!
