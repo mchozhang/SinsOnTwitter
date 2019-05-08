@@ -71,4 +71,7 @@ curl -XGET "http://${user}:${pass}@${masternode}:5984/_membership" | jq
 END
 
 
+#For ansible
+curl -XPOST "http://SinsOnTwitter:group68@{{ansible_default_ipv4.address}}:5984/_cluster_setup" --header "Content-Type: application/json" --data "{\"action\": \"enable_cluster\", \"bind_address\":\"0.0.0.0\", \"username\": \"SinsOnTwitter\", \"password\":\"group68}\", \"port\": \"5984\", \"node_count\": \"3\", \"remote_node\": \"{{ groups['dbservers'][1] }}\", \"remote_current_user\":\"SinsOnTwitter\", \"remote_current_password\":\"group68\"}"
 
+curl -XPOST "http://SinsOnTwitter:group68@{{ansible_default_ipv4.address}}:5984/_cluster_setup" --header "Content-Type: application/json" --data "{\"action\": \"add_node\", \"host\":\"{{ groups['dbservers'][1] }}\", \"port\": \"5984\", \"username\": \"SinsOnTwitter\", \"password\":\"group68\"}"

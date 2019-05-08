@@ -7,8 +7,6 @@ REQUEST LINKS:
 
 - Database Fauxton Link (no need vpn): https://0c02c19f.ngrok.io/_utils
 
-
-* CouchDB is used in our assignment to store tweets after streamed from twitter. 
 * Setup would be a three node cluster (running on one machine instance). 
 * Each node is running on a docker CouchDB container.
 * One Master Node (for configuration). Two other slave nodes.
@@ -22,7 +20,9 @@ REQUEST LINKS:
 - [x] Change sudo permisions on instance (Avoid running docker commands on sudo all the time).
 - [x] Run docker and run curl commands to setup couchdb cluster.
 - [x] Created Ansible Script to create CouchDB Instance.
-- [] Creating a script that also runs twitter harvesters.
+- [x] Creating a script that also runs twitter harvesters.
+- [] Include Script to run web server
+- [] Test overall script 
 
 # Ansible Script Procedure
 

@@ -7,7 +7,7 @@
     flavor: '{{ item.instance_flavor }}'
     availability_zone: '{{ availability_zone }}'
     security_groups: '{{ sg_names }}'
-    volumes: '{{ os_vol_ids }}'
+    #volumes: '{{ os_vol_ids }}'
     auto_floating_ip: yes
     wait: yes
     timeout: 600
@@ -15,9 +15,32 @@
   with_items: '{{ instance_list }}'
   register: 'instances'
 
-- name: Put IP Address of instance into inventory file
+- name: Insert all instances IPs into inventory file
+  become: yes
   lineinfile: 
     path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
     line: '{{ item.openstack.public_v4 }}' 
     insertafter: '\[servers\]'
   with_items: '{{ instances.results }}'
+
+- name: Insert all database servers into dbservers variable in inventory file
+  become: yes
+  lineinfile: 
+    path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
+    line: "{{ item.openstack.public_v4 }} " 
+    insertafter: '\[dbservers\]'
+  when: "'db' in item.item.instance_name"
+  loop: '{{ instances.results }}'  
+
+#- name: Insert WebServer to inventory file
+#  become: yes
+#  lineinfile: 
+#    path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
+#    line: '{{ item.openstack.public_v4 }}'
+#    insertafter: '\[webserver\] '
+#    state: present
+#  when: "'web' in item.item.instance_name"
+#  with_items: '{{ instances.results }}'
+
+
+
