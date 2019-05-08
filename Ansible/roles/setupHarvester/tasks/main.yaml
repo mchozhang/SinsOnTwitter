@@ -1,0 +1,48 @@
+---
+- name: Clone Repository
+  git:
+    repo: https://{{gitUsername}}:{{gitPassword}}@{{gitProjectURL}}
+    dest: /home/ubuntu/SinsOnTwitter/
+    version: '{{ branch }}'
+
+- name: Update System
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Install Enchant 
+  become: yes
+  apt:
+    name: enchant
+    state: latest
+
+- name: Install Required Modules
+  become: yes
+  command: '{{ item }}'
+  loop:
+    - pip3 install tweepy
+    - pip3 install CouchDB
+    - pip3 install inflection
+    - pip3 install pyenchant
+    - pip3 install textblob
+
+- name: Download NTLK Data
+  become: yes
+  command: python3 -m textblob.download_corpora
+
+#- name: Replace admin with Couchdb User  
+#  lineinfile:
+#    path: /home/ubuntu/SinsOnTwitter/constants.py
+#    regexp: 'COUCHDB_USER = "admin"'
+#    line: COUCHDB_USER = "{{couchdb_user}}"
+
+#- name: Replace admin with Couchdb_Pass  
+#  lineinfile:
+#    path: /home/ubuntu/SinsOnTwitter/constants.py
+#    regexp: 'COUCHDB_PW = "admin"'
+#    line: COUCHDB_PW = "{{couchdb_pass}}"
+
+- name: Run Twitter Harvesters in Background
+  become: yes
+  shell: nohup python3 /home/ubuntu/SinsOnTwitter/collect_sin_streaming.py {{couchdb_url}} {{couchdb_user}} {{couchdb_pass}} > /dev/null 2>&1 &
+

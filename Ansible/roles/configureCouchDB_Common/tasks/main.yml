@@ -24,7 +24,3 @@
   with_items:
     - curl -X PUT "http://{{couchdb_user}}:{{couchdb_pass}}@localhost:5984/_node/_local/_config/chttpd/bind_address" -d '"0.0.0.0"'
     - curl -X PUT "http://{{couchdb_user}}:{{couchdb_pass}}@localhost:5984/_node/_local/_config/httpd/bind_address" -d '"0.0.0.0"'
-
-#- name: Adding Node to the Cluster
-#  command: curl -X PUT "http://SinsOnTwitter:group68@172.26.38.38:5986/_nodes/couchdb@{{ ansible_default_ipv4.address }}" -d {}
-

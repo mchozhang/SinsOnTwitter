@@ -1,4 +1,5 @@
 ---
+#Add Same UUIDs across each node
 - name: Generate UUID from the main node and store in variable
   uri:
     url: "http://{{couchdb_user}}:{{couchdb_pass}}@{{masternode}}:5984/_uuids?count=2"

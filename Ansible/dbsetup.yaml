@@ -1,0 +1,39 @@
+---
+#Playbook that Sets up the CouchDB and twitter harvester instances
+- name: Setting Up Common Configurations on CouchDB Nodes
+  hosts: dbservers
+  vars_files:
+    - variables/couchdbDetails.yaml
+  gather_facts: yes
+  sudo: yes
+  roles:
+     - role: configureCouchDB_Common
+
+#Perform UUID curl commands to have same UUIDs for cookie authentication
+- name: Configuring UUIDs for each node
+  hosts: localhost #Running Curl Commands from local machine to get common UUIDs across
+  vars_files:
+    - variables/couchdbDetails.yaml
+  gather_facts: yes
+  roles:
+     - role: configureCouchDB_UUIDS
+
+#Set the first IP in dbservers as the Master and run cluster setup
+- name: Configuring Cluster Setup from Master Node
+  hosts: dbservers[0]
+  vars_files:
+    - variables/couchdbDetails.yaml
+  gather_facts: yes
+  sudo: yes
+  roles:
+     - role: configureCouchDB_Cluster
+
+#Setup and run Twitter Harvesters
+- name: Setup and Run Twitter Harvesters
+  hosts: dbservers
+  vars_files:
+    - variables/harvesterDetails.yaml
+  gather_facts: yes
+  sudo: yes
+  roles:
+    - role: setupHarvester

@@ -1,11 +1,12 @@
 ---
-#Preparing Cluster Setup by Running Commands on Master
-#Set the first IP in dbservers as the Master
-- name: Configuring Cluster Setup from Master Node
-  hosts: dbservers[0]
+#Setup and run Twitter Harvesters
+- name: Setup and Run Twitter Harvesters
+  hosts: dbservers
   vars_files:
-    - variables/couchdbDetails.yaml
+    - variables/harvesterDetails.yaml
   gather_facts: yes
   sudo: yes
   roles:
-     - role: configureCouchDB_Cluster
+    - role: setupHarvester
+
+  
