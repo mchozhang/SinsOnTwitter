@@ -166,14 +166,15 @@ class TweetProcessor:
                 self.lga_codes_and_names[row[1]] = row[0]
         # print(self.lga_codes_and_names)
 
-        with open("aus_lga.geojson", "rb") as f:
-            line = f.read()
-            line = line.decode('utf-8')
-            y = json.loads(line)
-            c = y['features']
-            for i in range(len(c)):
-                self.lga_coordinate_holder[c[i]['properties']['Name']] = c[i]['geometry']['coordinates'][0][0]
+        with open("aus_lga.geojson","rb") as f:
+            line=f.read()       
+            line=line.decode('utf-8')
+            load_line=json.loads(line)
+            list_of_lgajson=load_line['features']
+            for i in range(len(list_of_lgajson)):
+              self.lga_coordinateholder[list_of_lgajson[i]['properties']['Name']]=list_of_lgajson[i]['geometry']['coordinates'][0][0]                
         print("LGA info loaded into memory")
+
 
     def load_index_db(self):
         """
@@ -439,15 +440,26 @@ class TweetProcessor:
         """
         get a dict containing lga information for a given tweet doc
         :param tweet: a tweet doc
-        :return: a dict with lga information
-        """
-        lga_dict = {}
-        # todo: do something here
+        :return type: dictionary containing the required data{lganame,lgacode,statename,statecode},
+         can return None or {} incase of location not found"""
+        lga_dict={}
+        try:
+          tweet_coordinates=tweet['place']['bounding_box']['coordinates'][0] 
+          for key, value in lga_coordinateholder.items():    #lga set holds the coordinates for every lga
+             flag=point_inside_polygon(findcenter_x(tweet_coordinates),findcenter_y(tweet_coordinates), lga_coordinateholder[key])
+             if(flag):
+                lga_dict[TweetProcessor.LGA_NAME]=key
+                if key in lga_codesAndnames:
+                  lga_dict[TweetProcessor.LGA_CODE]=lga_codesAndnames[key]
+                  if key in statename_lganame:            #written so that no exceptions are thrown
+                    lga_dict[TweetProcessor.STATE_NAME]=statename_lganame[key]
+                    lga_dict[TweetProcessor.STATE_CODE]=statename_statecode[statename_lganame[key]]
+             return lga_dict              
+        except:
+          print(tweet['id'])
+          return None
 
-        # build the dict
-        lga_dict[TweetProcessor.STATE_NAME] = "" # replace this, to put state name
-        lga_dict[TweetProcessor.STATE_CODE] = "" # replace this, to put state code
-        lga_dict[TweetProcessor.LGA_NAME] = "" # replace this, to put lga name
-        lga_dict[TweetProcessor.LGA_CODE] = "" # replace this, to put lga code
 
-        return lga_dict
+         #from darren: please handle the 3 type of returns;{},None, {with correct info} if needed :P
+         #pls verify if the load lga info() is called from the correct place
+       
