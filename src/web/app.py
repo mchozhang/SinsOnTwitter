@@ -1,22 +1,55 @@
-from flask import Flask, render_template
+# -*- encoding: utf-8 -*-
+#
+# flask app
+
+from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def home():
-    return render_template("home.html")
+    """
+    home page
+    :return: html template
+    """
+    option_list = [
+        {"sin": "Lust", "states": ["New South Wales"], "databases": ["Rape", "Sexual Offences"]},
+        {"sin": "Wraith", "states": ["All", "New South Wales", "South Australia"], "databases": ["Violence", "Street Brawl"]},
+        {"sin": "Sloth", "states": ["Victoria", "Queensland"], "databases": ["Strike"]},
+        {"sin": "Greed", "states": ["Tasmania"], "databases": ["Robbery", "Theft"]},
+    ]
+    return render_template("home.html", option_list=option_list)
 
 
-# add more pages
-@app.route("/about")
-def about():
-    return render_template("about.html")
+@app.route('/sin', methods=['GET'])
+def get_options():
+    """
+    get state and aurin database name option by choosing sin
+    :return:
+    """
+    result = dict()
+    try:
+        sin = request.json["sin"]
+    except Exception as e:
+        print(e)
+    return jsonify(result)
 
 
-@app.route("/map")
-def map():
-    return render_template("map.html")
+@app.route('/search', methods=['POST'])
+def search():
+    try:
+        keyword_list = request.json["keywords"]
+        sin = request.json["sin"]
+        state = request.json["state"]
+        database_list = request.json["databases"]
+        chart = request.json["chart"]
+        print(str(keyword_list))
+        print(str(database_list))
+        print(sin + " " + chart + " " + state)
+    except Exception as e:
+        print(e)
+    return jsonify()
 
 
 @app.route('/bar_chart')
