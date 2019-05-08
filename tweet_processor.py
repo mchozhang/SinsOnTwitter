@@ -59,6 +59,8 @@ class TweetProcessor:
         # store LGA info
         self.lga_coordinate_holder = {}
         self.lga_codes_and_names = {}
+        self.statename_statecode={}
+        self.statename_lganame={}
         self.ignore = ignore
         self.ascii_only = ascii_only
         self.dictionary = dictionary
@@ -174,6 +176,13 @@ class TweetProcessor:
             for i in range(len(list_of_lgajson)):
               self.lga_coordinateholder[list_of_lgajson[i]['properties']['Name']]=list_of_lgajson[i]['geometry']['coordinates'][0][0]                
         print("LGA info loaded into memory")
+
+        with open("LGA_StateMapping.csv","r",encoding='utf-8') as fd:
+           reader = csv.reader(fd)
+           for row in reader:
+              self.statename_lganame[row[2]]=row[0]  #{lganame:statename}
+              self.statename_statecode[row[0]]=row[1]  #{state_name:state_code}
+        print("Loaded States info") 
 
 
     def load_index_db(self):
