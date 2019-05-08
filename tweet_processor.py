@@ -90,7 +90,7 @@ class TweetProcessor:
     @staticmethod
     def deep_copy_dict(from_dict: dict, to_dict: dict):
         """
-        deep copy key/values from one dict to another
+        copy key/values from one dict to another
         :param from_dict: source
         :param to_dict: destination
         """
@@ -445,9 +445,9 @@ class TweetProcessor:
         # todo: do something here
 
         # build the dict
-        lga_dict[TweetProcessor.STATE_NAME] = "" # replace this, to put state name
-        lga_dict[TweetProcessor.STATE_CODE] = "" # replace this, to put state code
-        lga_dict[TweetProcessor.LGA_NAME] = "" # replace this, to put lga name
-        lga_dict[TweetProcessor.LGA_CODE] = "" # replace this, to put lga code
+        lga_dict[TweetProcessor.STATE_NAME] = "1" # replace this, to put state name
+        lga_dict[TweetProcessor.STATE_CODE] = "2" # replace this, to put state code
+        lga_dict[TweetProcessor.LGA_NAME] = "3" # replace this, to put lga name
+        lga_dict[TweetProcessor.LGA_CODE] = "4" # replace this, to put lga code
 
         return lga_dict
