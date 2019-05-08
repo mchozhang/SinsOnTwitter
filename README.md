@@ -30,26 +30,26 @@ defined in constants.py
 use this to start searching tweets in the background. <u>Need to configure 
 search query in collect_sin_search .py before start.</u> Will use default database defined in constants.py
 
-<b>run with arguments</b><br>
+<b>run py scripts directly</b><br>
 you can run collect_sin_streaming.py and collect_sin_search with 
 arguments: <br>
 <em>streaming</em>
 <ul>
-    <li>python 3 collect_sin_streaming.py</li>
-    <li>python 3 collect_sin_streaming.py db_url db_user db_pw</li>
+    <li>python3 collect_sin_streaming.py</li>
+    <li>python3 collect_sin_streaming.py db_url db_user db_pw</li>
 </ul>
 <em>search</em>
 <ul>
-    <li>python 3 collect_sin_search.py</li>
-    <li>python 3 collect_sin_search.py until_date</li>
-    <li>python 3 collect_sin_search.py db_url db_user db_pw</li>
-    <li>python 3 collect_sin_search.py until_date db_url db_user db_pw</li>
+    <li>python3 collect_sin_search.py</li>
+    <li>python3 collect_sin_search.py until_date</li>
+    <li>python3 collect_sin_search.py db_url db_user db_pw</li>
+    <li>python3 collect_sin_search.py until_date db_url db_user db_pw</li>
 </ul>
 # until_date: must be in the form of yyyy-mm-dd<br><br>
 <em>process exisiting database with index and extra fileds</em>
 <ul>
-    <li>python 3 process_existing_tweet_db.py</li>
-    <li>python 3 process_existing_tweet_db.py db_url db_user db_pw</li>
+    <li>python3 process_existing_tweet_db.py</li>
+    <li>python3 process_existing_tweet_db.py db_url db_user db_pw</li>
 </ul>
 
 <b>use docker</b>:<br>
