@@ -1,8 +1,12 @@
 {% extends "layout.html" %}
+{% block styles %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet">
+{% endblock %}
 
+<!-- Sidebar -->
 {% block side_bar %}
-  <!-- Sidebar -->
-  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="sidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('home') }}">
@@ -17,45 +21,69 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item active">
-
       <a class="nav-link">
         <i class="fas fa-fw fa-search"></i>
         <span>Keywords</span>
       </a>
       <div>
-        <input type="text" value="lust, wraith, sloth" data-role="tagsinput"/>
+        <input type="text" id="keywords" value="" data-role="tagsinput"/>
       </div>
     </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider">
 
-
-    <!-- Nav Item - Pages Collapse Menu -->
+    <!-- sin selector -->
     <li class="nav-item active">
       <a class="nav-link">
         <i class="fas fa-fw fa-address-card"></i>
-        <span>Crime Type</span>
+        <span>Sin Type</span>
       </a>
-      <div class="dropdown mb-4">
-        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownCrimeButton" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-          Select Crime Type
-        </button>
-        <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownCrimeButton">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
+      <select class="custom-select" id="sin-select" name="crime-select" onchange="onSinSelectChange()">
+        {% for option in option_list %}
+          <option value="{{ option.sin }}" class="dropdown-item">{{ option.sin }}</option>
+        {% endfor %}
+      </select>
+    </li>
+
+    <!-- state selector -->
+    <li class="nav-item active">
+      <a class="nav-link">
+        <i class="fas fa-fw fa-globe-asia"></i>
+        <span>State in Australia</span>
+      </a>
+      <select class="custom-select" id="state-select" name="state-select">
+        {% for state in option_list[0].states %}
+          <option value="{{ state }}" class="dropdown-item">{{ state }}</option>
+        {% endfor %}
+      </select>
+    </li>
+
+    <!-- database selector -->
+    <li class="nav-item active">
+      <a class="nav-link">
+        <i class="fas fa-fw fa-database"></i>
+        <span>Data in Australia</span>
+      </a>
+      <div class="checkbox-group" id="database-checkboxs">
+        {% for database in option_list[0].databases %}
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="checkbox-{{ database }}" checked>
+            <label class="form-check-label" for="checkbox-{{ database }}">{{ database }}</label>
+          </div>
+        {% endfor %}
       </div>
     </li>
 
+    <hr class="sidebar-divider">
+
+    <!-- chart select -->
     <li class="nav-item active">
       <a class="nav-link">
         <i class="fas fa-fw fa-chart-area"></i>
         <span>Chart Type</span>
       </a>
-      <div class="radio-group">
+      <div class="radio-group" id="chart-radio">
         <div>
           <input type="radio" id="bar" name="chart" value="bar" checked>
           <label for="bar">Bar Chart</label>
@@ -66,44 +94,16 @@
         </div>
       </div>
     </li>
-    <!-- Divider -->
-    <hr class="sidebar-divider">
 
-    <li class="nav-item active">
-      <a class="nav-link">
-        <i class="fas fa-fw fa-heartbeat"></i>
-        <span>Sentiment Filter</span>
-      </a>
-      <div class="radio-group">
-        <div>
-          <input type="radio" id="all" name="sentiment" value="all" checked>
-          <label for="all">All</label>
-        </div>
-        <div>
-          <input type="radio" id="negative" name="sentiment" value="negative">
-          <label for="negative">Negative</label>
-        </div>
-        <div>
-          <input type="radio" id="neutral" name="sentiment" value="neutral">
-          <label for="neutral">Neutral</label>
-        </div>
-        <div>
-          <input type="radio" id="positive" name="sentiment" value="positive">
-          <label for="positive">Positive</label>
-        </div>
-      </div>
-    </li>
-
-    <button class="btn btn-light" id="searchBtn">
+    <button class="btn btn-light" id="searchBtn" onclick="search()">
       Search
     </button>
   </ul>
-  <!-- End of Sidebar -->
 {% endblock %}
 
+<!-- Display Area -->
 {% block content %}
-
-  <div id="chartArea" style="width: 80%;height: 300px; position: relative; left: 20px;top: 20px;">
+  <div id="chartArea" style="width: 80%; height: 300px; position: relative; left: 20px;top: 20px;">
     <div id="title" style="">
       <tab>Twitter data Vs Aurin data</tab>
     </div>
@@ -115,11 +115,142 @@
   <div class="map">
 
   </div>
-
 {% endblock %}
 
 {% block javascript %}
   {{ super() }}
+  <script>
+    new Chart(document.getElementById("barChart"), {
+      type: 'bar',
+      data: {
+        // areas location
+        labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
 
-  <script src="../static/js/barChart.js"></script>
+        datasets: [{
+          label: "Dataset 1",
+          backgroundColor: "#3e95cd",
+          data: [2478, 5267, 734, 784, 433],
+          boarderWidth: 1
+        },
+          {
+            label: "Dataset 2",
+            backgroundColor: "#8e5ea2",
+            data: [2478, 5267, 734, 784, 433],
+            boarderWidth: 1
+          }
+        ]
+      },
+      options: {
+        maintainAspectRatio: false,
+        responsive: true,
+        legend: {display: false},
+        title: {
+          display: true,
+          text: 'Predicted world population (millions) in 2050'
+        }
+      }
+    });
+
+    /**
+     * sin selector changed, dynamically change the state and database options
+     */
+    function onSinSelectChange() {
+      let options = {{ option_list|tojson }};
+      let selectedSin = $("#sin-select").val();
+      let stateSelector = $("#state-select");
+      let databaseCheckboxs = $("#database-checkboxs");
+
+      stateSelector.empty();
+      databaseCheckboxs.empty();
+      for (let i in options) {
+        let item = options[i];
+        if (item.sin === selectedSin) {
+          for (let j in item.states) {
+            let state = item.states[j];
+            stateSelector.append($('<option/>', {'value': state, 'text': state}));
+          }
+
+          for (let j in item.databases) {
+            let database = item.databases[j];
+
+            // use database name as element id
+            let checkbox = "<div class='form-check'>" +
+                            "<input type='checkbox' class='form-check-input' id='" + database + "' checked></input>" +
+                            "<label class='form-check-label' for='" + database + "'>" + database + "</label>" +
+                            "</div>";
+            databaseCheckboxs.append(checkbox);
+          }
+        }
+      }
+    }
+
+    /**
+     * click search button,
+     * submit form data by ajax
+     */
+    function search() {
+      let databaseGroup = $('#database-checkboxs');
+      let chartRadioGroup = $('#chart-radio');
+
+      let data = {
+        keywords: $("#keywords").tagsinput("items"),
+        sin: $("#sin-select").val(),
+        state: $("#state-select").val(),
+        databases: getSelectedCheckboxs(databaseGroup),
+        chart: getRadioValByName(chartRadioGroup, 'chart'),
+      };
+
+      console.log(data);
+
+      let options = {
+        url: "{{ url_for('search') }}",
+        dataType: "json",
+        contentType: "application/json",
+        type: "post",
+        data: JSON.stringify(data),
+      };
+
+      let callback = function (responseText, statusText) {
+        console.log("success");
+      };
+
+      $.ajax(options).done(callback);
+    }
+
+    /**
+     * get value of the radio in the form
+     * @param element radio group
+     * @param name name of the radio
+     * @returns value of the radio
+     */
+    function getRadioValByName(element, name) {
+      let val;
+      let radios = $('[name=' + name + ']');
+
+      for (let i = 0, len = radios.length; i < len; i++) {
+        if (radios[i].checked) {
+          val = radios[i].value;
+          break;
+        }
+      }
+      return val;
+    }
+
+    /**
+     * get the list of selected databases
+     * @param element checkbox group
+     * @returns {Array} list of database name
+     */
+    function getSelectedCheckboxs(element) {
+      let checkboxs = $('[type=checkbox]');
+      let selectedList= [];
+
+      for (let i = 0, len = checkboxs.length; i < len; i++) {
+        if (checkboxs[i].checked) {
+          selectedList.push($(checkboxs[i]).attr('id'));
+        }
+      }
+      return selectedList;
+    }
+  </script>
 {% endblock %}
