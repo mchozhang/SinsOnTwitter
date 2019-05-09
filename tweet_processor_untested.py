@@ -432,3 +432,28 @@ class TweetProcessor:
 
         # note: this is for dealing with a single tweet collected from streaming
         # note: this is not for adding LGA information to existing tweet database!
+
+
+
+       def get_lga_information(self, tweet):
+        try:
+          list_of_coordinates=tweet['place']['bounding_box']['coordinates'][0] 
+       
+          for key, value in lga_set.items():    #lga set holds the coordinates for every lga
+             flag=point_inside_polygon(findcenter_x(list_of_coordinates),findcenter_y(list_of_coordinates), lga_set[key])
+             if(flag==True):
+                tweet[TweetProcessor.LGA_NAME]=key
+                 #if code present for the given LGA add else ignore '''
+                  #Can be modified to add null'''
+                if key in lga_codesAndnames:
+                  tweet[TweetProcessor.LGA_CODE]=lga_codesAndnames[key]
+                  tweet[TweetProcessor.STATE_NAME]=statename_lganame[key]
+                  tweet[TweetProcessor.STATE_CODE]=statename_statecode[statename_lganame[key]]
+                  db.save(tweet)   #edit here'''
+             break
+             '''else:
+               tweet[TweetProcessor.LGA_CODE]='null'  '''
+        except:
+          print(tweet['id'])   #make return here since we dont have a locaton
+         # continue        
+            
