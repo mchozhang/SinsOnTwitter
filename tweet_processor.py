@@ -50,20 +50,30 @@ class TweetProcessor:
         """
         # store the index_db in memory
         self.index = {}
+
         # record tweet ids that are already in the index
         self.seen = set()
+
         # store extra fields to be added to existing tweets
         self.extra_fields = {}
+
         self.tweet_db = tweet_db
         self.index_db = index_db
+
         # store LGA info
         self.lga_coordinate_holder = {}
         self.lga_codes_and_names = {}
+
+        # for parsing text
         self.ignore = ignore
         self.ascii_only = ascii_only
         self.dictionary = dictionary
+
         # make a lock object to be used in multi-threading
         self.lock = threading.Lock()
+
+        # load lga information
+        self.load_lga_info()
 
     @staticmethod
     def debug_print(msg):
@@ -169,10 +179,11 @@ class TweetProcessor:
         with open("aus_lga.geojson", "rb") as f:
             line = f.read()
             line = line.decode('utf-8')
-            y = json.loads(line)
-            c = y['features']
-            for i in range(len(c)):
-                self.lga_coordinate_holder[c[i]['properties']['Name']] = c[i]['geometry']['coordinates'][0][0]
+            load_line = json.loads(line)
+            list_of_lgajson = load_line['features']
+            for i in range(len(list_of_lgajson)):
+                self.lga_coordinate_holder[list_of_lgajson[i]['properties']['Name']] = \
+                list_of_lgajson[i]['geometry']['coordinates'][0][0]
         print("LGA info loaded into memory")
 
     def load_index_db(self):
@@ -197,9 +208,6 @@ class TweetProcessor:
                 self.index[word].add(tweet_id)
                 self.seen.add(tweet_id)
         print("loaded index database into memory.")
-
-        # load lga information
-        self.load_lga_info()
 
     def get_blob(self, tweet):
         """
@@ -268,12 +276,6 @@ class TweetProcessor:
             # calculate and record lga information
             lga_dict = self.get_lga_dict(tweet)
             TweetProcessor.deep_copy_dict(lga_dict, self.extra_fields[tweet_id])
-
-            # todo for myself: delete this after test
-            # self.extra_fields[tweet_id][TweetProcessor.POLARITY] = sentiment_dict[TweetProcessor.POLARITY]
-            # self.extra_fields[tweet_id][TweetProcessor.SUBJECTIVITY] = sentiment_dict[TweetProcessor.SUBJECTIVITY]
-            # self.extra_fields[tweet_id][TweetProcessor.LGA_NAME] = <the lga name for this tweet>
-            # self.extra_fields[tweet_id][TweetProcessor.LGA_CODE] = <the lga code for this tweet>
 
     def build_index_from_existing_tweet_database(self):
         """
@@ -434,20 +436,31 @@ class TweetProcessor:
         lga_dict = self.get_lga_dict(tweet)
         TweetProcessor.deep_copy_dict(lga_dict, tweet)
 
-    @staticmethod
-    def get_lga_dict(tweet):
+    def get_lga_dict(self, tweet):
         """
         get a dict containing lga information for a given tweet doc
         :param tweet: a tweet doc
-        :return: a dict with lga information
+        :return type: dictionary containing the required data, can return None or {} in case of location not found
         """
         lga_dict = {}
-        # todo: do something here
+        try:
+            tweet_coordinates = tweet['place']['bounding_box']['coordinates'][0]
+            for key, value in self.lga_coordinate_holder.items():
+                # lga set holds the coordinates for every lga
+                flag = TweetProcessor.point_inside_polygon(TweetProcessor.find_center_x(tweet_coordinates),
+                                                           TweetProcessor.find_center_y(tweet_coordinates),
+                                                           self.lga_coordinate_holder[key])
+                if flag:
+                    lga_dict[TweetProcessor.LGA_NAME] = key
+                    if key in self.lga_codes_and_names:
+                        lga_dict[TweetProcessor.LGA_CODE] = self.lga_codes_and_names[key]
+                        if key in statename_lganame:  # written so that no exceptions are thrown
+                            lga_dict[TweetProcessor.STATE_NAME] = statename_lganame[key]
+                            lga_dict[TweetProcessor.STATE_CODE] = statename_statecode[statename_lganame[key]]
+                return lga_dict
+        except:
+            print(tweet['id'])
+            return None
 
-        # build the dict
-        lga_dict[TweetProcessor.STATE_NAME] = "1" # replace this, to put state name
-        lga_dict[TweetProcessor.STATE_CODE] = "2" # replace this, to put state code
-        lga_dict[TweetProcessor.LGA_NAME] = "3" # replace this, to put lga name
-        lga_dict[TweetProcessor.LGA_CODE] = "4" # replace this, to put lga code
-
-        return lga_dict
+        # from darren: please handle the 3 type of returns;{},None, {with correct info} if needed :P
+        # pls verify if the load lga info() is called from the correct place
