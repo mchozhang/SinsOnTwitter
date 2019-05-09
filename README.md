@@ -80,6 +80,8 @@ to kill it:<br>
 
 <h2>Update History</h2>
 
+ver2.2: integrated lga and state information recording for tweets
+
 ver2.1: modified code greatly, made streaming automatically update index
 
 ver2.0: added word index building and sentiment analysis 

@@ -63,6 +63,8 @@ class TweetProcessor:
         # store LGA info
         self.lga_coordinate_holder = {}
         self.lga_codes_and_names = {}
+        self.statename_statecode = {}
+        self.statename_lganame = {}
 
         # for parsing text
         self.ignore = ignore
@@ -186,6 +188,14 @@ class TweetProcessor:
                 list_of_lgajson[i]['geometry']['coordinates'][0][0]
         print("LGA info loaded into memory")
 
+        with open("LGA_StateMapping.csv","r",encoding='utf-8') as fd:
+           reader = csv.reader(fd)
+           for row in reader:
+              self.statename_lganame[row[2]]=row[0]  #{lganame:statename}
+              self.statename_statecode[row[0]]=row[1]  #{state_name:state_code}
+        print("Loaded States info")
+
+
     def load_index_db(self):
         """
         load index db into memory
@@ -297,10 +307,10 @@ class TweetProcessor:
             # get the text
             tweet = db[doc["id"]]
             if "_id" in tweet:
-                # self.parse_tweet(tweet)
-                th = threading.Thread(target=self.parse_tweet, args=(tweet,))
-                threads.append(th)
-                th.start()
+                self.parse_tweet(tweet)
+                # th = threading.Thread(target=self.parse_tweet, args=(tweet,))
+                # threads.append(th)
+                # th.start()
                 counter += 1
                 self.debug_print("parsed " + tweet["_id"] + ". Finished " + str(counter) + " entries.")
 
@@ -453,14 +463,16 @@ class TweetProcessor:
                 if flag:
                     lga_dict[TweetProcessor.LGA_NAME] = key
                     if key in self.lga_codes_and_names:
-                        lga_dict[TweetProcessor.LGA_CODE] = self.lga_codes_and_names[key]
-                        if key in statename_lganame:  # written so that no exceptions are thrown
-                            lga_dict[TweetProcessor.STATE_NAME] = statename_lganame[key]
-                            lga_dict[TweetProcessor.STATE_CODE] = statename_statecode[statename_lganame[key]]
-                return lga_dict
-        except:
-            print(tweet['id'])
+                        lga_code_raw = self.lga_codes_and_names[key]
+                        lga_dict[TweetProcessor.LGA_CODE] = str(int(float(lga_code_raw)))
+                        # written so that no exceptions are thrown
+                        if key in self.statename_lganame:
+                            lga_dict[TweetProcessor.STATE_NAME] = self.statename_lganame[key]
+                            lga_dict[TweetProcessor.STATE_CODE] = \
+                                self.statename_statecode[self.statename_lganame[key]]
+                            return lga_dict
+            return None
+        except Exception as error:
+            print(tweet['id'], repr(error))
             return None
 
-        # from darren: please handle the 3 type of returns;{},None, {with correct info} if needed :P
-        # pls verify if the load lga info() is called from the correct place
