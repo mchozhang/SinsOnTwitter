@@ -1,0 +1,56 @@
+---
+- name: Pull Repository of Application
+  git:
+    repo: https://relientm96:Dozu58debo*@github.com/mchozhang/SinsOnTwitter.git
+    dest: /home/ubuntu/SinsOnTwitter
+
+- name: Ensure all necessary requirements are installed
+  become: yes
+  command: pip3 install -r /home/ubuntu/SinsOnTwitter/requirements.txt
+
+- name: Download Ngrok
+  uri: 
+    url: "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip"
+    dest: /home/ubuntu
+
+- name: Install Unzip
+  become: yes
+  apt:
+    name: unzip 
+    state: latest
+
+- name: Unzip the zip ngrok file
+  command: sudo unzip /home/ubuntu/ngrok-stable-linux-amd64.zip
+
+- name: Ngrok Configuration
+  become: yes
+  command: ./ngrok authtoken 5EaTXpSScSBqeN6gL5di1_3cTVT1SYuoidjpQirZB8U
+
+- name: Create Ngrok Log file
+  become: yes
+  file:
+    path: /home/ubuntu/ngroklog.txt
+    state: touch
+
+- name: Create Bash File to Run Ngrok
+  become: yes
+  file:
+    path: /home/ubuntu/runNgrok.sh
+    state: touch
+
+- name: Insert bash command to run Ngrok in background
+  become: yes
+  lineinfile:
+    line: '{{item}}'
+    path: /home/ubuntu/runNgrok.sh
+  loop:
+    - ./ngrok http 5000 --log=stdout > /home/ubuntu/ngroklog.txt & 
+
+- name: Run Ngrok
+  become: yes
+  command: bash /home/ubuntu/runNgrok.sh
+
+- name: Run the web Application
+  become: yes
+  command: cd SinsOnTwitter/src/web/; nohup python3 /home/ubuntu/SinsOnTwitter/src/web/app.py > /dev/null 2>&1 &
+
