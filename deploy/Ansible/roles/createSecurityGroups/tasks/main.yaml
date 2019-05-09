@@ -1,10 +1,34 @@
 ---
-- name: Create a security group
+- name: Creating Security Groups from Variables File
   os_security_group:
     name: '{{ item.name }}'
     description: '{{ item.description }}'
     state: present
   loop: '{{ security_groups }}'
+
+- name: Adding Internal Rules to Ansible_Internal Group (except ICMP)
+  os_security_group_rule:
+    security_group: 'internal_ansible'
+    protocol: '{{ item.protocol }}'
+    direction: ingress
+    port_range_min: '{{ item.port_range_min }}'
+    port_range_max: '{{ item.port_range_max }}'
+    remote_group: '{{ item.remote_group }}'
+    state: present
+    ethertype: IPv4
+  loop: '{{ internal_rules }}'
+  when: "'icmp' not in item.protocol"
+
+- name: Add ICMP Rule to ansible_internal 
+  os_security_group_rule:
+    security_group: 'internal_ansible'
+    protocol: '{{ item.protocol }}'
+    direction: ingress
+    remote_group: '{{ item.remote_group }}'
+    state: present
+    ethertype: IPv4
+  loop: '{{ internal_rules }}'
+  when: "'icmp' in item.protocol"
 
 - name: Adding couchDB_rules to ansible_CouchDB group
   os_security_group_rule:

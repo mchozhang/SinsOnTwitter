@@ -4,8 +4,8 @@ collect tweets from all Australia through searching tweets from the past ~7 days
 
 import sys
 
-from src.tweet_collector.sin_collector import SinCollector
-from src.tweet_collector.constants import *
+from sin_collector import SinCollector
+from constants import *
 import re
 
 

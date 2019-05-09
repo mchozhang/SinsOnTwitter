@@ -3,19 +3,23 @@ availability_zone: melbourne-qh2-uom
 
 #Volumes 
 volumes:
-  - vol_name: demo_vol_from_ansible
+  - vol_name: demo_vol_one
+    vol_size: 5
+  - vol_name: demo_vol_two
     vol_size: 5
 
 #Security Groups
 security_groups:
-  - name: internal #Already Created Previously for static system
-    description: "Internal Access Between Nodes"
+  - name: internal_ansible 
+    description: "Unfiltered Communication between Nodes"
   - name: ssh
     description: "SSH Access via port 22"
   - name: http
     description: "HTTP Access via port 80"
   - name: ansible_CouchDB
     description: "Opening Ports for CouchDB Access"
+  - name: ansible_Web
+    description: "Open Port 5000 to access web application"
 
 #Rules for the couchdb_ports group
 couchDB_rules:
@@ -40,15 +44,33 @@ couchDB_rules:
     port_range_max: 9200
     remote_ip_prefix: 0.0.0.0/0
 
+#Rules for unfiltered communication between nodes
+internal_rules:
+  - name: Open all TCP 
+    protocol: tcp
+    remote_group: internal_ansible
+    port_range_min: 1
+    port_range_max: 65535
+  - name: Open all UDP
+    protocol: udp
+    remote_group: internal_ansible
+    port_range_min: 1
+    port_range_max: 65535
+  - name: Open all ICMP
+    protocol: icmp
+    remote_group: internal_ansible
+
 #Instances To be Created 
+#(Add Instances here to be created)
+# Master would be the last instance that has 'db'
 instance_list: 
-  - name: ansible_one
-    instance_name: ansible_one
-    instance_image: 955a0556-1224-4499-a895-87d54d5cbf32 #Ubuntu 18.04 Bionic amd64
+  - name: db_one
+    instance_name: db_one 
+    instance_image: 37788d15-12bd-488c-b15e-903d43eae051 #Ubuntu 18.04 Bionic amd64
     instance_key_name: Group68KeyPair
-    instance_flavor: uom.mse.1c4g  
-  #- name: ansible_two
-  #  instance_name: ansible_two
-  #  instance_image: 955a0556-1224-4499-a895-87d54d5cbf32 #Ubuntu 18.04 Bionic amd64
-  #  instance_key_name: Group68KeyPair
-  #  instance_flavor: uom.general.1c4g  
+    instance_flavor: uom.general.1c4g 
+  - name: db_two
+    instance_name: db_two
+    instance_image: 37788d15-12bd-488c-b15e-903d43eae051 #Ubuntu 18.04 Bionic amd64
+    instance_key_name: Group68KeyPair
+    instance_flavor: uom.general.1c4g
