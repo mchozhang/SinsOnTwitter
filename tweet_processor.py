@@ -43,6 +43,12 @@ class TweetProcessor:
     # if in debug mode. will print more output to stdout in debug mode
     DEBUG = True
 
+    # multi-thread switches, for debugging
+    # currently turned-off as it seems there are problems that occurs when large database + multi-threading
+    THREADING_PARSING = False
+    THREADING_WRITE_INDEX = False
+    THREADING_WRITE_TWEET = False
+
     def __init__(self, tweet_db, index_db, ignore, dictionary, ascii_only=True):
         """
         init functions
@@ -246,23 +252,21 @@ class TweetProcessor:
 
     def parse_tweet(self, tweet):
         """
-        update the index with one tweet entry, also calculate and record sentiment scores
+        update the index with one tweet entry, also calculate and record extra information
         this is for batch process of existing tweets, used more memory to speed up.
         to process a new tweet just collected, use the method process_new_tweet()
-        there will be duplication of code between the two methods
+        there will be some duplication of code between the two methods
         :param tweet: the tweet entry to be parsed
         """
         tweet_id = tweet["_id"]
         # skip non-tweet doc
         if re.match(TweetProcessor.NON_TWEET_ID_PATTERN, tweet_id):
             return
-        # skip tweets that have already been parsed
-        if tweet_id in self.seen and TweetProcessor.POLARITY in tweet:
-            return
 
         # get the text blob from tweet
         blob = self.get_blob(tweet)
 
+        # add it to index database if it's not there yet
         if tweet_id not in self.seen:
             # get a set of words from text (converted to lower case)
             word_set = set([w.lower() for w in blob.words])
@@ -280,12 +284,16 @@ class TweetProcessor:
                         self.index[word].add(tweet_id)
                 self.debug_print("added " + tweet_id + " to word [" + word + "].")
 
+        # initiate the dict
+        self.extra_fields[tweet_id] = {}
+
+        # add sentiment information if not added yet
         if TweetProcessor.POLARITY not in tweet:
             # calculate and record sentiment
-            self.extra_fields[tweet_id] = {}
             sentiment_dict = self.get_sentiment_dict(blob)
             TweetProcessor.deep_copy_dict(sentiment_dict, self.extra_fields[tweet_id])
 
+        # add lga information if not added yet
         if TweetProcessor.LGA_NAME not in tweet:
             # calculate and record lga information
             lga_dict = self.get_lga_dict(tweet)
@@ -311,10 +319,12 @@ class TweetProcessor:
             # get the text
             tweet = db[doc["id"]]
             if "_id" in tweet:
-                # self.parse_tweet(tweet)
-                th = threading.Thread(target=self.parse_tweet, args=(tweet,))
-                threads.append(th)
-                th.start()
+                if not TweetProcessor.THREADING_PARSING:
+                    self.parse_tweet(tweet)
+                else:
+                    th = threading.Thread(target=self.parse_tweet, args=(tweet,))
+                    threads.append(th)
+                    th.start()
                 counter += 1
                 self.debug_print("parsed " + tweet["_id"] + ". Finished " + str(counter) + " entries.")
 
@@ -330,31 +340,36 @@ class TweetProcessor:
         the file writing part of processing the existing tweet database
         """
         # write index
-        threads = []
+        threads_idx = []
         print("writing index database...")
         counter = 0
         for word, id_set in self.index.items():
             counter += 1
-            th = threading.Thread(target=self.write_index_for_one_word, args=(word, id_set, counter,))
-            threads.append(th)
-            th.start()
+            if not TweetProcessor.THREADING_WRITE_INDEX:
+                self.write_index_for_one_word(word, id_set, counter)
+            else:
+                th = threading.Thread(target=self.write_index_for_one_word, args=(word, id_set, counter,))
+                threads_idx.append(th)
+                th.start()
 
-        for thread in threads:
+        for thread in threads_idx:
             thread.join()
 
-        threads = []
+        threads_extra_field = []
         # write extra fields
         print("writing extra fields into tweet database...")
         counter = 0
         for tweet_id, extra_fields_dict in self.extra_fields.items():
             counter += 1
-            # self.write_extra_fields_for_one_tweet(tweet_id, extra_fields_dict, counter)
-            th = threading.Thread(target=self.write_extra_fields_for_one_tweet,
-                                  args=(tweet_id, extra_fields_dict, counter,))
-            threads.append(th)
-            th.start()
+            if not TweetProcessor.THREADING_WRITE_TWEET:
+                self.write_extra_fields_for_one_tweet(tweet_id, extra_fields_dict, counter)
+            else:
+                th = threading.Thread(target=self.write_extra_fields_for_one_tweet,
+                                      args=(tweet_id, extra_fields_dict, counter,))
+                threads_extra_field.append(th)
+                th.start()
 
-        for thread in threads:
+        for thread in threads_extra_field:
             thread.join()
 
     def write_index_for_one_word(self, word, id_set, counter):
