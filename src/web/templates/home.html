@@ -103,21 +103,21 @@
 
 <!-- Display Area -->
 {% block content %}
-  <div name = "visualize" style="width: 80%; position: relative; left: 20px;top: 20px;">
-  <div id="chartArea" style="height: 500px">
-    <div id="title" >
-      <tab>Twitter data Vs Aurin data</tab>
+  <div name="visualize" style="width: 80%; position: relative; left: 20px;top: 20px;">
+    <div id="chartArea" style="height: 500px">
+      <div id="title">
+        <tab>Twitter data Vs Aurin data</tab>
+      </div>
+      <div id="content" style="position: relative;width: 80%;height: 80%;left:30px ">
+        <canvas id="barChart"></canvas>
+      </div>
     </div>
-    <div id="content" style="position: relative;width: 80%;height: 80%;left:30px ">
-      <canvas id="barChart"></canvas>
-    </div>
-  </div>
 
- <div id="map" style="height: 50%" >
-   <div class="title" >
-    <tab style="display: block"> Map</tab>
-   </div>
-  </div>
+    <div id="map" style="height: 50%">
+      <div class="title">
+        <tab style="display: block"> Map</tab>
+      </div>
+    </div>
 
   </div>
 {% endblock %}
@@ -127,200 +127,190 @@
   {# ----------------------- Map visualization part -----------------------------------------#}
   <script type='text/javascript' src='http://www.google.com/jsapi'></script>
   <script type='text/javascript'>google.load('visualization', '1', {'packages': ['geochart']});
-google.setOnLoadCallback(drawVisualization);
+  google.setOnLoadCallback(drawVisualization);
 
-  function drawVisualization() {var data = new google.visualization.DataTable();
+  function drawVisualization() {
+      var data = new google.visualization.DataTable();
 
- data.addColumn('string', 'Country');
- data.addColumn('number', 'Value');
- data.addColumn({type:'string', role:'tooltip'});
- var ivalue = new Array();
 
- data.addRows([[{v:'AU-NSW',f:'New South Wales'},0,'Click to visit Wikipedia']]);
- ivalue['AU-NSW'] = 'http://en.wikipedia.org/wiki/New_South_Wales';
+      data.addColumn('string', 'Country');
+      data.addColumn('number', 'Value');
 
- data.addRows([[{v:'AU-QLD',f:'Queensland'},1,'Click to visit Wikipedia']]);
- ivalue['AU-QLD'] = 'http://en.wikipedia.org/wiki/Queensland';
 
- data.addRows([[{v:'AU-SA',f:'South Australia'},2,'Click to visit Wikipedia']]);
- ivalue['AU-SA'] = 'http://en.wikipedia.org/wiki/South_Australia';
+      data.addRows([
+          ['New South Wales',0.3],
+          ['Queensland', 0.4],
+          ['South Australia', 0.7],
+          ['Tasmania', 0.2],
+          ['Victoria', 0.4],
+          ['Western Australia', 0.5],
+          ['Northern Territory', 0.6]]);
 
- data.addRows([[{v:'AU-TAS',f:'Tasmania'},3,'Click to visit Wikipedia']]);
- ivalue['AU-TAS'] = 'http://en.wikipedia.org/wiki/Tasmania';
 
- data.addRows([[{v:'AU-VIC',f:'Victoria'},4,'Click to visit Wikipedia']]);
- ivalue['AU-VIC'] = 'http://en.wikipedia.org/wiki/Victoria_(Australia)';
 
- data.addRows([[{v:'AU-WA',f:'Western Australia'},5,'Click to visit Wikipedia']]);
- ivalue['AU-WA'] = 'http://en.wikipedia.org/wiki/Western_Australia';
+      var options = {
+          backgroundColor: {fill: '#FFFFFF', stroke: '#FFFFFF', strokeWidth: 0},
+          colorAxis: {
+              minValue: 0,
+              maxValue: 1,
+              colors: ['#e6ffe6', '#003300']
+          },
+          legend: 'Map of Sin On Twitter',
+          backgroundColor: {fill: '#FFFFFF', stroke: '#FFFFFF', strokeWidth: 0},
+          displayMode: 'region',
+          enableRegionInteractivity: 'true',
+          resolution: 'provinces',
+          sizeAxis: {minValue: 1, maxValue: 1, minSize: 10, maxSize: 10},
+          region: 'AU',
+          keepAspectRatio: true,
+          width: 2000,
+          height: 900,
+      };
+      var chart = new google.visualization.GeoChart(document.getElementById('map'));
 
- data.addRows([[{v:'AU-NT',f:'Northern Territory'},6,'Click to visit Wikipedia']]);
- ivalue['AU-NT'] = 'http://en.wikipedia.org/wiki/Northern_Territory';
-
- var options = {
- backgroundColor: {fill:'#FFFFFF',stroke:'#FFFFFF' ,strokeWidth:0 },
- colorAxis:  {minValue: 0, maxValue: 6,  colors: ['#EFEDF5','#EFEDF5','#EFEDF5','#EFEDF5','#BCBDDC','#BCBDDC','#EFEDF5',]},
- legend: 'none',
- backgroundColor: {fill:'#FFFFFF',stroke:'#FFFFFF' ,strokeWidth:0 },
- datalessRegionColor: '#f5f5f5',
- displayMode: 'regions',
- enableRegionInteractivity: 'true',
- resolution: 'provinces',
- sizeAxis: {minValue: 1, maxValue:1,minSize:10,  maxSize: 10},
- region:'AU',
- keepAspectRatio: true,
- width:2000,
- height:900,
- tooltip: {textStyle: {color: '#444444'}, trigger:'focus'}
- };
-  var chart = new google.visualization.GeoChart(document.getElementById('map'));
-  google.visualization.events.addListener(chart, 'select', function() {
-  var selection = chart.getSelection();
-  if (selection.length == 1) {
-  var selectedRow = selection[0].row;
-  var selectedRegion = data.getValue(selectedRow, 0);
-  if(ivalue[selectedRegion] != '') { window.open(ivalue[selectedRegion]);  }
+      chart.draw(data, options);
   }
-  });
- chart.draw(data, options);
- }
- </script>
+  </script>
 
 
 
   {#------------ Chart visualzation part---------------------------------------------- #}
   <script>
-    new Chart(document.getElementById("barChart"), {
-      type: 'bar',
-      data: {
-        // areas location
-        labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+      new Chart(document.getElementById("barChart"), {
+          type: 'bar',
+          data: {
+              // areas location
+              labels: ['New South Wales', 'Queensland', 'South Australia', 'Tasmania', 'Victoria', 'Western Australia', 'Northern Territory'],
 
-        datasets: [{
-          label: "Dataset 1",
-          backgroundColor: "#3e95cd",
-          data: [2478, 5267, 734, 784, 433],
-          boarderWidth: 1
-        },
-          {
-            label: "Dataset 2",
-            backgroundColor: "#8e5ea2",
-            dsinata: [2478, 5267, 734, 784, 433],
-            boarderWidth: 1
+
+              datasets: [{
+                  label: "Percentage of Swearing Tweets",
+                  backgroundColor: "#3e95cd",
+                  data: [12, 32, 54, 23, 43, 12, 9],
+                  boarderWidth: 1
+              },
+                  {
+                      label: "Violent Crime Rate",
+                      backgroundColor: "#8e5ea2",
+                      data: [23, 43, 11, 32, 13, 34, 21],
+                      boarderWidth: 1
+                  }
+              ]
+          },
+          options: {
+
+              mode: 'index',
+              label: true,
+              maintainAspectRatio: false,
+              responsive: true,
+              legend: {display: true},
+              title: {
+                  display: true,
+              }
+
           }
-        ]
-      },
-      options: {
-        maintainAspectRatio: false,
-        responsive: true,
-        legend: {display: false},
-        title: {
-          display: true,
-          text: 'Predicted world population (millions) in 2050'
-        }
-      }
-    });
+      });
 
-    /**
-     * sin selector changed, dynamically change the state and database options
-     */
-    function onSinSelectChange() {
-      let options = {{ option_list|tojson }};
-      let selectedSin = $("#sin-select").val();
-      let stateSelector = $("#state-select");
-      let databaseCheckboxs = $("#database-checkboxs");
+      /**
+       * sin selector changed, dynamically change the state and database options
+       */
+      function onSinSelectChange() {
+          let options = {{ option_list|tojson }};
+          let selectedSin = $("#sin-select").val();
+          let stateSelector = $("#state-select");
+          let databaseCheckboxs = $("#database-checkboxs");
 
-      stateSelector.empty();
-      databaseCheckboxs.empty();
-      for (let i in options) {
-        let item = options[i];
-        if (item.sin === selectedSin) {
-          for (let j in item.states) {
-            let state = item.states[j];
-            stateSelector.append($('<option/>', {'value': state, 'text': state}));
+          stateSelector.empty();
+          databaseCheckboxs.empty();
+          for (let i in options) {
+              let item = options[i];
+              if (item.sin === selectedSin) {
+                  for (let j in item.states) {
+                      let state = item.states[j];
+                      stateSelector.append($('<option/>', {'value': state, 'text': state}));
+                  }
+
+                  for (let j in item.databases) {
+                      let database = item.databases[j];
+
+                      // use database name as element id
+                      let checkbox = "<div class='form-check'>" +
+                          "<input type='checkbox' class='form-check-input' id='" + database + "' checked></input>" +
+                          "<label class='form-check-label' for='" + database + "'>" + database + "</label>" +
+                          "</div>";
+                      databaseCheckboxs.append(checkbox);
+                  }
+              }
           }
+      }
 
-          for (let j in item.databases) {
-            let database = item.databases[j];
+      /**
+       * click search button,
+       * submit form data by ajax
+       */
+      function search() {
+          let databaseGroup = $('#database-checkboxs');
+          let chartRadioGroup = $('#chart-radio');
 
-            // use database name as element id
-            let checkbox = "<div class='form-check'>" +
-                            "<input type='checkbox' class='form-check-input' id='" + database + "' checked></input>" +
-                            "<label class='form-check-label' for='" + database + "'>" + database + "</label>" +
-                            "</div>";
-            databaseCheckboxs.append(checkbox);
+          let data = {
+              keywords: $("#keywords").tagsinput("items"),
+              sin: $("#sin-select").val(),
+              state: $("#state-select").val(),
+              databases: getSelectedCheckboxs(databaseGroup),
+              chart: getRadioValByName(chartRadioGroup, 'chart'),
+          };
+
+          console.log(data);
+
+          let options = {
+              url: "{{ url_for('search') }}",
+              dataType: "json",
+              contentType: "application/json",
+              type: "post",
+              data: JSON.stringify(data),
+          };
+
+          let callback = function (responseText, statusText) {
+              console.log("success");
+          };
+
+          $.ajax(options).done(callback);
+      }
+
+      /**
+       * get value of the radio in the form
+       * @param element radio group
+       * @param name name of the radio
+       * @returns value of the radio
+       */
+      function getRadioValByName(element, name) {
+          let val;
+          let radios = $('[name=' + name + ']');
+
+          for (let i = 0, len = radios.length; i < len; i++) {
+              if (radios[i].checked) {
+                  val = radios[i].value;
+                  break;
+              }
           }
-        }
+          return val;
       }
-    }
 
-    /**
-     * click search button,
-     * submit form data by ajax
-     */
-    function search() {
-      let databaseGroup = $('#database-checkboxs');
-      let chartRadioGroup = $('#chart-radio');
+      /**
+       * get the list of selected databases
+       * @param element checkbox group
+       * @returns {Array} list of database name
+       */
+      function getSelectedCheckboxs(element) {
+          let checkboxs = $('[type=checkbox]');
+          let selectedList = [];
 
-      let data = {
-        keywords: $("#keywords").tagsinput("items"),
-        sin: $("#sin-select").val(),
-        state: $("#state-select").val(),
-        databases: getSelectedCheckboxs(databaseGroup),
-        chart: getRadioValByName(chartRadioGroup, 'chart'),
-      };
-
-      console.log(data);
-
-      let options = {
-        url: "{{ url_for('search') }}",
-        dataType: "json",
-        contentType: "application/json",
-        type: "post",
-        data: JSON.stringify(data),
-      };
-
-      let callback = function (responseText, statusText) {
-        console.log("success");
-      };
-
-      $.ajax(options).done(callback);
-    }
-
-    /**
-     * get value of the radio in the form
-     * @param element radio group
-     * @param name name of the radio
-     * @returns value of the radio
-     */
-    function getRadioValByName(element, name) {
-      let val;
-      let radios = $('[name=' + name + ']');
-
-      for (let i = 0, len = radios.length; i < len; i++) {
-        if (radios[i].checked) {
-          val = radios[i].value;
-          break;
-        }
+          for (let i = 0, len = checkboxs.length; i < len; i++) {
+              if (checkboxs[i].checked) {
+                  selectedList.push($(checkboxs[i]).attr('id'));
+              }
+          }
+          return selectedList;
       }
-      return val;
-    }
-
-    /**
-     * get the list of selected databases
-     * @param element checkbox group
-     * @returns {Array} list of database name
-     */
-    function getSelectedCheckboxs(element) {
-      let checkboxs = $('[type=checkbox]');
-      let selectedList= [];
-
-      for (let i = 0, len = checkboxs.length; i < len; i++) {
-        if (checkboxs[i].checked) {
-          selectedList.push($(checkboxs[i]).attr('id'));
-        }
-      }
-      return selectedList;
-    }
   </script>
 {% endblock %}
