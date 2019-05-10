@@ -1,7 +1,7 @@
 # Sins on Twitter
 
 ## Website Link
-https://0bad130b.ngrok.io/
+http://0bad130b.ngrok.io
 
 ## project directory
 ```bash
