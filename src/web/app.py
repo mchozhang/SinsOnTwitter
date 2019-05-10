@@ -4,7 +4,7 @@
 
 from flask import Flask, render_template, jsonify, request
 
-app = Flask(__name__)
+app = Flask(__name__,instance_relative_config=True)
 
 
 @app.route('/')
@@ -15,7 +15,7 @@ def home():
     """
     option_list = [
         {"sin": "Lust", "states": ["New South Wales"], "databases": ["Rape", "Sexual Offences"]},
-        {"sin": "Wraith", "states": ["All", "New South Wales", "South Australia"], "databases": ["Violence", "Street Brawl"]},
+        {"sin": "Wrath", "states": ["All", "New South Wales", "South Australia"], "databases": ["Violence", "Street Brawl"]},
         {"sin": "Sloth", "states": ["Victoria", "Queensland"], "databases": ["Strike"]},
         {"sin": "Greed", "states": ["Tasmania"], "databases": ["Robbery", "Theft"]},
     ]
@@ -51,10 +51,16 @@ def search():
         print(e)
     return jsonify()
 
+@app.route('/geoChart')
+def geoChart():
+    return render_template("geoChart.html", key="AIzaSyCCenQXMA4w-cRUrMjs8AhK3_CqHy-E-SI")
 
 @app.route('/bar_chart')
 def bar():
     return render_template("home.html", content="this is a testing")
+
+
+
 
 
 labels = [

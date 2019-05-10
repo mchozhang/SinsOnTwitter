@@ -103,8 +103,9 @@
 
 <!-- Display Area -->
 {% block content %}
-  <div id="chartArea" style="width: 80%; height: 300px; position: relative; left: 20px;top: 20px;">
-    <div id="title" style="">
+  <div name = "visualize" style="width: 80%; position: relative; left: 20px;top: 20px;">
+  <div id="chartArea" style="height: 500px">
+    <div id="title" >
       <tab>Twitter data Vs Aurin data</tab>
     </div>
     <div id="content" style="position: relative;width: 80%;height: 80%;left:30px ">
@@ -112,13 +113,82 @@
     </div>
   </div>
 
-  <div class="map">
+ <div id="map" style="height: 50%" >
+   <div class="title" >
+    <tab style="display: block"> Map</tab>
+   </div>
+  </div>
 
   </div>
 {% endblock %}
 
 {% block javascript %}
   {{ super() }}
+  {# ----------------------- Map visualization part -----------------------------------------#}
+  <script type='text/javascript' src='http://www.google.com/jsapi'></script>
+  <script type='text/javascript'>google.load('visualization', '1', {'packages': ['geochart']});
+google.setOnLoadCallback(drawVisualization);
+
+  function drawVisualization() {var data = new google.visualization.DataTable();
+
+ data.addColumn('string', 'Country');
+ data.addColumn('number', 'Value');
+ data.addColumn({type:'string', role:'tooltip'});
+ var ivalue = new Array();
+
+ data.addRows([[{v:'AU-NSW',f:'New South Wales'},0,'Click to visit Wikipedia']]);
+ ivalue['AU-NSW'] = 'http://en.wikipedia.org/wiki/New_South_Wales';
+
+ data.addRows([[{v:'AU-QLD',f:'Queensland'},1,'Click to visit Wikipedia']]);
+ ivalue['AU-QLD'] = 'http://en.wikipedia.org/wiki/Queensland';
+
+ data.addRows([[{v:'AU-SA',f:'South Australia'},2,'Click to visit Wikipedia']]);
+ ivalue['AU-SA'] = 'http://en.wikipedia.org/wiki/South_Australia';
+
+ data.addRows([[{v:'AU-TAS',f:'Tasmania'},3,'Click to visit Wikipedia']]);
+ ivalue['AU-TAS'] = 'http://en.wikipedia.org/wiki/Tasmania';
+
+ data.addRows([[{v:'AU-VIC',f:'Victoria'},4,'Click to visit Wikipedia']]);
+ ivalue['AU-VIC'] = 'http://en.wikipedia.org/wiki/Victoria_(Australia)';
+
+ data.addRows([[{v:'AU-WA',f:'Western Australia'},5,'Click to visit Wikipedia']]);
+ ivalue['AU-WA'] = 'http://en.wikipedia.org/wiki/Western_Australia';
+
+ data.addRows([[{v:'AU-NT',f:'Northern Territory'},6,'Click to visit Wikipedia']]);
+ ivalue['AU-NT'] = 'http://en.wikipedia.org/wiki/Northern_Territory';
+
+ var options = {
+ backgroundColor: {fill:'#FFFFFF',stroke:'#FFFFFF' ,strokeWidth:0 },
+ colorAxis:  {minValue: 0, maxValue: 6,  colors: ['#EFEDF5','#EFEDF5','#EFEDF5','#EFEDF5','#BCBDDC','#BCBDDC','#EFEDF5',]},
+ legend: 'none',
+ backgroundColor: {fill:'#FFFFFF',stroke:'#FFFFFF' ,strokeWidth:0 },
+ datalessRegionColor: '#f5f5f5',
+ displayMode: 'regions',
+ enableRegionInteractivity: 'true',
+ resolution: 'provinces',
+ sizeAxis: {minValue: 1, maxValue:1,minSize:10,  maxSize: 10},
+ region:'AU',
+ keepAspectRatio: true,
+ width:2000,
+ height:900,
+ tooltip: {textStyle: {color: '#444444'}, trigger:'focus'}
+ };
+  var chart = new google.visualization.GeoChart(document.getElementById('map'));
+  google.visualization.events.addListener(chart, 'select', function() {
+  var selection = chart.getSelection();
+  if (selection.length == 1) {
+  var selectedRow = selection[0].row;
+  var selectedRegion = data.getValue(selectedRow, 0);
+  if(ivalue[selectedRegion] != '') { window.open(ivalue[selectedRegion]);  }
+  }
+  });
+ chart.draw(data, options);
+ }
+ </script>
+
+
+
+  {#------------ Chart visualzation part---------------------------------------------- #}
   <script>
     new Chart(document.getElementById("barChart"), {
       type: 'bar',
@@ -135,7 +205,7 @@
           {
             label: "Dataset 2",
             backgroundColor: "#8e5ea2",
-            data: [2478, 5267, 734, 784, 433],
+            dsinata: [2478, 5267, 734, 784, 433],
             boarderWidth: 1
           }
         ]
