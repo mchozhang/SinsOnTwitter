@@ -1,8 +1,8 @@
 """
 collect tweets from all Australia through streaming
 command line arguments:
-    -> python 3 collect_sin_streaming.py
-    -> python 3 collect_sin_streaming.py db_url db_user db_pw
+    -> python3 collect_sin_streaming.py
+    -> python3 collect_sin_streaming.py db_url db_user db_pw
 """
 
 import sys

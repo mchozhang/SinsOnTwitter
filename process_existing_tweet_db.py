@@ -3,8 +3,8 @@ process existing tweet database:
 1. do word indexing, build the index database
 2. write extra fields into the existing tweets, e.g. sentiment and lga information
 command line arguments:
-    -> python 3 process_existing_tweet_db.py
-    -> python 3 process_existing_tweet_db.py db_url db_user db_pw
+    -> python3 process_existing_tweet_db.py
+    -> python3 process_existing_tweet_db.py db_url db_user db_pw
 """
 
 
