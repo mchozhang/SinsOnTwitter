@@ -319,12 +319,15 @@ class TweetProcessor:
             # get the text
             tweet = db[doc["id"]]
             if "_id" in tweet:
-                if not TweetProcessor.THREADING_PARSING:
-                    self.parse_tweet(tweet)
-                else:
-                    th = threading.Thread(target=self.parse_tweet, args=(tweet,))
-                    threads.append(th)
-                    th.start()
+                try:
+                    if not TweetProcessor.THREADING_PARSING:
+                        self.parse_tweet(tweet)
+                    else:
+                        th = threading.Thread(target=self.parse_tweet, args=(tweet,))
+                        threads.append(th)
+                        th.start()
+                except Exception:
+                    continue
                 counter += 1
                 self.debug_print("parsed " + tweet["_id"] + ". Finished " + str(counter) + " entries.")
 
@@ -345,12 +348,15 @@ class TweetProcessor:
         counter = 0
         for word, id_set in self.index.items():
             counter += 1
-            if not TweetProcessor.THREADING_WRITE_INDEX:
-                self.write_index_for_one_word(word, id_set, counter)
-            else:
-                th = threading.Thread(target=self.write_index_for_one_word, args=(word, id_set, counter,))
-                threads_idx.append(th)
-                th.start()
+            try:
+                if not TweetProcessor.THREADING_WRITE_INDEX:
+                    self.write_index_for_one_word(word, id_set, counter)
+                else:
+                    th = threading.Thread(target=self.write_index_for_one_word, args=(word, id_set, counter,))
+                    threads_idx.append(th)
+                    th.start()
+            except Exception:
+                continue
 
         for thread in threads_idx:
             thread.join()
@@ -361,14 +367,16 @@ class TweetProcessor:
         counter = 0
         for tweet_id, extra_fields_dict in self.extra_fields.items():
             counter += 1
-            if not TweetProcessor.THREADING_WRITE_TWEET:
-                self.write_extra_fields_for_one_tweet(tweet_id, extra_fields_dict, counter)
-            else:
-                th = threading.Thread(target=self.write_extra_fields_for_one_tweet,
-                                      args=(tweet_id, extra_fields_dict, counter,))
-                threads_extra_field.append(th)
-                th.start()
-
+            try:
+                if not TweetProcessor.THREADING_WRITE_TWEET:
+                    self.write_extra_fields_for_one_tweet(tweet_id, extra_fields_dict, counter)
+                else:
+                    th = threading.Thread(target=self.write_extra_fields_for_one_tweet,
+                                          args=(tweet_id, extra_fields_dict, counter,))
+                    threads_extra_field.append(th)
+                    th.start()
+            except Exception:
+                continue
         for thread in threads_extra_field:
             thread.join()
 
