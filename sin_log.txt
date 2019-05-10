@@ -1,6 +1,0 @@
-2019-05-07 00:42:21.533217:
-Exception('Wrong number of arguments. See ReadMe.',)
-
-2019-05-07 00:57:13.743278:
-RuntimeError("can't start new thread",)
-
