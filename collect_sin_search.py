@@ -1,10 +1,10 @@
 """
 collect tweets from all Australia through searching tweets from the past ~7 days
 command line arguments:
-    -> python 3 collect_sin_search.py
-    -> python 3 collect_sin_search.py until_date
-    -> python 3 collect_sin_search.py db_url db_user db_pw
-    -> python 3 collect_sin_search.py until_date db_url db_user db_pw
+    -> python3 collect_sin_search.py
+    -> python3 collect_sin_search.py until_date
+    -> python3 collect_sin_search.py db_url db_user db_pw
+    -> python3 collect_sin_search.py until_date db_url db_user db_pw
 """
 
 import sys

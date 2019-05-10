@@ -1,5 +1,9 @@
 """
-code to process tweets
+code to process tweets:
+1. build an index database: {word: ids of tweets that have this word}
+2. write extra fields into each tweet of the existing tweet database:
+    -> sentiment: polarity and subjectivity
+    -> geo: lga name, lga code, state name, state code
 """
 
 from textblob import TextBlob
@@ -185,16 +189,15 @@ class TweetProcessor:
             list_of_lgajson = load_line['features']
             for i in range(len(list_of_lgajson)):
                 self.lga_coordinate_holder[list_of_lgajson[i]['properties']['Name']] = \
-                list_of_lgajson[i]['geometry']['coordinates'][0][0]
+                    list_of_lgajson[i]['geometry']['coordinates'][0][0]
         print("LGA info loaded into memory")
 
-        with open("LGA_StateMapping.csv","r",encoding='utf-8') as fd:
-           reader = csv.reader(fd)
-           for row in reader:
-              self.statename_lganame[row[2]]=row[0]  #{lganame:statename}
-              self.statename_statecode[row[0]]=row[1]  #{state_name:state_code}
+        with open("LGA_StateMapping.csv", "r", encoding='utf-8') as fd:
+            reader = csv.reader(fd)
+            for row in reader:
+                self.statename_lganame[row[2]] = row[0]  # {lganame:statename}
+                self.statename_statecode[row[0]] = row[1]  # {state_name:state_code}
         print("Loaded States info")
-
 
     def load_index_db(self):
         """
@@ -283,6 +286,7 @@ class TweetProcessor:
             sentiment_dict = self.get_sentiment_dict(blob)
             TweetProcessor.deep_copy_dict(sentiment_dict, self.extra_fields[tweet_id])
 
+        if TweetProcessor.LGA_NAME not in tweet:
             # calculate and record lga information
             lga_dict = self.get_lga_dict(tweet)
             TweetProcessor.deep_copy_dict(lga_dict, self.extra_fields[tweet_id])
@@ -307,10 +311,10 @@ class TweetProcessor:
             # get the text
             tweet = db[doc["id"]]
             if "_id" in tweet:
-                self.parse_tweet(tweet)
-                # th = threading.Thread(target=self.parse_tweet, args=(tweet,))
-                # threads.append(th)
-                # th.start()
+                # self.parse_tweet(tweet)
+                th = threading.Thread(target=self.parse_tweet, args=(tweet,))
+                threads.append(th)
+                th.start()
                 counter += 1
                 self.debug_print("parsed " + tweet["_id"] + ". Finished " + str(counter) + " entries.")
 
@@ -475,4 +479,3 @@ class TweetProcessor:
         except Exception as error:
             print(tweet['id'], repr(error))
             return None
-
