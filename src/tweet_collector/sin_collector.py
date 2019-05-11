@@ -14,8 +14,8 @@ import enchant
 from textblob import TextBlob
 from tweet_processor import TweetProcessor
 
-from sin_listener import SinListener
-from log import Log
+from src.tweet_collector.sin_listener import SinListener
+from src.tweet_collector.log import Log
 
 
 class SinCollector:

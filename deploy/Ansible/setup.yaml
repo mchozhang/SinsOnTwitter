@@ -1,0 +1,15 @@
+---
+#Playbook that Sets up common setup for all instances
+- name: Common Setup Tasks Between all Instances
+  hosts: servers 
+  sudo: yes
+  gather_facts: no
+  pre_tasks:
+     - pause:
+          prompt: "Making sure that instances are setup before accessing them..."
+          minutes: 5
+     - debug: var=ansible_default_ipv4.address
+  roles:
+     - role: vmSetup
+     - role: installingSoftware
+     - role: configureDocker

@@ -1,0 +1,59 @@
+.sidebar {
+  width: 20rem !important;
+}
+
+.nav-item {
+  width: 20rem;
+  margin-bottom: 1.5rem;
+}
+
+.sidebar .nav-item .nav-link {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+}
+
+.sidebar .bootstrap-tagsinput {
+  width: 18rem;
+  margin-left: 1rem;
+}
+
+.bootstrap-tagsinput .badge {
+  margin-right: 5px;
+  background-color: #36b9cc;
+}
+
+.sidebar select {
+  background-color: #fff;
+  border-color: #fff;
+  margin-left: 1rem;
+  width: 18rem
+}
+
+.radio-group, .checkbox-group {
+  margin-left: 1rem;
+  width: 18rem;
+}
+
+.radio-group .radio {
+  display: block;
+}
+
+.radio-group label {
+  color: #ffffff;
+  font-size: 14px;
+  margin-top: 1px;
+  margin-left: 2px;
+}
+
+.checkbox-group label {
+  color: #ffffff;
+  font-size: 14px;
+  margin-top: 1px;
+  margin-left: 2px;
+}
+
+#searchBtn {
+  margin-left: 1rem;
+  width: 18rem;
+  color: #4e73df;
+}

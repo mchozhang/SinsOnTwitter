@@ -1,0 +1,76 @@
+# Common Vars
+availability_zone: melbourne-qh2-uom
+
+#Volumes 
+volumes:
+  - vol_name: demo_vol_one
+    vol_size: 5
+  - vol_name: demo_vol_two
+    vol_size: 5
+
+#Security Groups
+security_groups:
+  - name: internal_ansible 
+    description: "Unfiltered Communication between Nodes"
+  - name: ssh
+    description: "SSH Access via port 22"
+  - name: http
+    description: "HTTP Access via port 80"
+  - name: ansible_CouchDB
+    description: "Opening Ports for CouchDB Access"
+  - name: ansible_Web
+    description: "Open Port 5000 to access web application"
+
+#Rules for the couchdb_ports group
+couchDB_rules:
+  - name: ansible_Port 5984
+    protocol: tcp
+    port_range_min: 5984
+    port_range_max: 5984
+    remote_ip_prefix: 0.0.0.0/0
+  - name: ansible_Port 4369
+    protocol: tcp
+    port_range_min: 4369
+    port_range_max: 4369
+    remote_ip_prefix: 0.0.0.0/0
+  - name: ansible_Port 4369
+    protocol: tcp
+    port_range_min: 5986
+    port_range_max: 5986
+    remote_ip_prefix: 0.0.0.0/0
+  - name: ansible_Ports 9100-9200
+    protocol: tcp
+    port_range_min: 9100
+    port_range_max: 9200
+    remote_ip_prefix: 0.0.0.0/0
+
+#Rules for unfiltered communication between nodes
+internal_rules:
+  - name: Open all TCP 
+    protocol: tcp
+    remote_group: internal_ansible
+    port_range_min: 1
+    port_range_max: 65535
+  - name: Open all UDP
+    protocol: udp
+    remote_group: internal_ansible
+    port_range_min: 1
+    port_range_max: 65535
+  - name: Open all ICMP
+    protocol: icmp
+    remote_group: internal_ansible
+
+#Instances To be Created 
+#(Add Instances here to be created)
+# Master would be the last instance that has 'db'
+instance_list: 
+  - name: db_one
+    instance_name: db_one 
+    instance_image: 37788d15-12bd-488c-b15e-903d43eae051 #Ubuntu 18.04 Bionic amd64
+    instance_key_name: Group68KeyPair
+    instance_flavor: uom.general.1c4g 
+  - name: db_two
+    instance_name: db_two
+    instance_image: 37788d15-12bd-488c-b15e-903d43eae051 #Ubuntu 18.04 Bionic amd64
+    instance_key_name: Group68KeyPair
+    instance_flavor: uom.general.1c4g
