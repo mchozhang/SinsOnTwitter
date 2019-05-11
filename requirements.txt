@@ -1,5 +1,0 @@
-inflection
-tweepy
-CouchDB
-textblob
-pyenchant
