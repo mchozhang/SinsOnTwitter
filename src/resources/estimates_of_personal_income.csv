@@ -1,0 +1,90 @@
+p80_to_p20_ratio, income_aud, sa4_name16, sa4_code_2016, income_share_top_10pc, p80_to_p50_ratio
+4.88,5926875846,"Capital Region","101",30.1,1.87
+4.71,8363718300,"Central Coast","102",30.3,1.85
+5.27,5231792723,"Central West","103",30.4,1.93
+5.73,2792750080,"Coffs Harbour - Grafton","104",31.7,1.89
+5.03,2701145474,"Far West and Orana","105",30.1,1.85
+5.33,7527653798,"Hunter Valley exc Newcastle","106",31.0,2.02
+5.12,8044706131,"Illawarra","107",30.0,1.94
+6.17,4062694009,"Mid North Coast","108",32.3,1.9
+4.98,2866826757,"Murray","109",30.5,1.81
+5.53,4116347187,"New England and North West","110",32.1,1.83
+4.94,10723837568,"Newcastle and Lake Macquarie","111",31.0,1.87
+5.47,5215691961,"Richmond - Tweed","112",32.5,1.87
+4.63,3993841209,"Riverina","113",29.9,1.77
+5.49,3414560163,"Southern Highlands and Shoalhaven","114",33.7,1.97
+5.32,8734472490,"Sydney - Baulkham Hills and Hawkesbury","115",34.6,1.98
+3.73,8242774945,"Sydney - Blacktown","116",25.1,1.64
+5.2,12022134229,"Sydney - City and Inner South","117",35.7,1.9
+5.51,15003970671,"Sydney - Eastern Suburbs","118",45.6,2.02
+4.49,14138682805,"Sydney - Inner South West","119",30.1,1.83
+5.09,11510179311,"Sydney - Inner West","120",35.8,1.96
+6.35,23105694772,"Sydney - North Sydney and Hornsby","121",44.0,2.16
+5.56,11840499933,"Sydney - Northern Beaches","122",40.2,2.07
+3.81,6902519771,"Sydney - Outer South West","123",26.5,1.69
+4.05,8683324383,"Sydney - Outer West and Blue Mountains","124",27.0,1.71
+4.55,10482664907,"Sydney - Parramatta","125",28.4,1.8
+5.66,6921978771,"Sydney - Ryde","126",36.9,2.01
+3.9,8330842954,"Sydney - South West","127",26.4,1.68
+4.71,8543017874,"Sydney - Sutherland","128",33.1,1.87
+4.75,3733788853,"Ballarat","201",30.3,1.79
+4.89,3704818674,"Bendigo","202",29.9,1.79
+4.94,7485571473,"Geelong","203",31.3,1.86
+5.03,4016604936,"Hume","204",29.1,1.79
+5.54,6418707348,"Latrobe - Gippsland","205",32.0,1.94
+4.92,23869115986,"Melbourne - Inner","206",37.5,1.87
+6.27,15397051396,"Melbourne - Inner East","207",40.7,2.12
+5.32,17002560160,"Melbourne - Inner South","208",38.5,1.99
+4.31,13619139258,"Melbourne - North East","209",29.9,1.77
+4.24,8656573016,"Melbourne - North West","210",28.5,1.75
+4.51,15089279915,"Melbourne - Outer East","211",29.9,1.8
+4.23,18047484073,"Melbourne - South East","212",29.0,1.74
+3.99,17667509600,"Melbourne - West","213",27.1,1.7
+4.58,7839722008,"Mornington Peninsula","214",31.7,1.83
+5.13,3482636568,"North West","215",30.6,1.78
+4.98,2942040471,"Shepparton","216",29.3,1.78
+5.53,2969291931,"Warrnambool and South West","217",30.4,1.84
+4.31,7328833872,"Brisbane - East","301",31.2,1.8
+4.27,6811892132,"Brisbane - North","302",29.5,1.75
+4.87,11072199412,"Brisbane - South","303",31.8,1.84
+5.77,7611079402,"Brisbane - West","304",37.8,1.96
+5.46,12051225276,"Brisbane Inner City","305",39.6,1.97
+4.57,6480915409,"Cairns","306",30.6,1.83
+5.71,3107236896,"Darling Downs - Maranoa","307",32.2,1.89
+5.27,8013185083,"Central Queensland","308",29.4,2.04
+4.56,15586396973,"Gold Coast","309",33.4,1.87
+3.99,7325179647,"Ipswich","310",26.6,1.67
+3.74,7529881517,"Logan - Beaudesert","311",26.6,1.66
+5.15,6858489571,"Mackay - Isaac - Whitsunday","312",29.1,2.1
+4.53,5422678063,"Moreton Bay - North","313",29.0,1.78
+4.12,5896292861,"Moreton Bay - South","314",29.2,1.75
+5.01,2147829848,"Queensland - Outback","315",29.3,1.95
+5.33,8984189348,"Sunshine Coast","316",33.7,1.96
+4.64,4114225935,"Toowoomba","317",30.3,1.79
+4.06,7203733132,"Townsville","318",28.2,1.73
+6.05,5720324620,"Wide Bay","319",31.7,1.92
+5.11,11136403104,"Adelaide - Central and Hills","401",36.7,1.91
+3.7,9725285505,"Adelaide - North","402",25.7,1.64
+4.32,10454349098,"Adelaide - South","403",29.8,1.76
+4.19,6229964366,"Adelaide - West","404",29.0,1.75
+5.26,2577212045,"Barossa - Yorke - Mid North","405",30.3,1.85
+4.85,2384575092,"South Australia - Outback","406",29.0,1.91
+5.08,4039903745,"South Australia - South East","407",30.1,1.77
+5.66,5704266542,"Bunbury","501",31.8,2.09
+6.28,3100516278,"Mandurah","502",32.1,2.23
+6.92,11122347520,"Perth - Inner","503",43.6,2.26
+4.34,8609263214,"Perth - North East","504",29.7,1.8
+4.7,20901915702,"Perth - North West","505",32.1,1.88
+4.64,17559016694,"Perth - South East","506",31.0,1.83
+5.11,15995159178,"Perth - South West","507",33.3,1.94
+5.75,3937093767,"Western Australia - Wheat Belt","509",32.2,1.99
+4.99,3580896050,"Western Australia - Outback (North)","510",27.7,1.9
+5.02,4318967734,"Western Australia - Outback (South)","511",29.1,1.97
+4.31,5992008823,"Hobart","601",30.1,1.77
+4.71,3338262508,"Launceston and North East","602",30.6,1.79
+5.42,739729159,"South East","603",30.6,1.82
+4.77,2556044301,"West and North West","604",28.8,1.81
+3.54,5317203919,"Darwin","701",28.0,1.63
+4.21,1796887512,"Northern Territory - Outback","702",27.2,1.75
+3.91,15950413768,"Australian Capital Territory","801",28.2,1.66
+4.69,73478349,"Other Territories","901",25.1,1.62
