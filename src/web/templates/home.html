@@ -28,8 +28,11 @@
       <div>
         <input type="text" id="keywords" value="" data-role="tagsinput"/>
       </div>
-    </li>
 
+    </li>
+    <button class="btn btn-light" id="searchBtn" onclick="search()">
+      Search
+    </button>
     <!-- Divider -->
     <hr class="sidebar-divider">
 
@@ -68,7 +71,7 @@
       <div class="checkbox-group" id="database-checkboxs">
         {% for database in option_list[0].databases %}
           <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="checkbox-{{ database }}" checked>
+            <input type="radio" class="form-check-input" id="checkbox-{{ database }}" name="database">
             <label class="form-check-label" for="checkbox-{{ database }}">{{ database }}</label>
           </div>
         {% endfor %}
@@ -95,21 +98,18 @@
       </div>
     </li>
 
-    <button class="btn btn-light" id="searchBtn" onclick="search()">
-      Search
-    </button>
   </ul>
 {% endblock %}
 
 <!-- Display Area -->
 {% block content %}
   <div name="visualize" style="width: 80%; position: relative; left: 20px;top: 20px;">
-    <div id="chartArea" style="height: 500px">
+    <div id="chartArea" style="height: 400px">
       <div id="title">
         <tab>Twitter data Vs Aurin data</tab>
       </div>
       <div id="content" style="position: relative;width: 80%;height: 80%;left:30px ">
-        <canvas id="barChart"></canvas>
+        <canvas id="chartCanvas"></canvas>
       </div>
     </div>
 
@@ -125,11 +125,11 @@
 {% block javascript %}
   {{ super() }}
   {# ----------------------- Map visualization part -----------------------------------------#}
-  <script type='text/javascript' src='http://www.google.com/jsapi'></script>
-  <script type='text/javascript'>google.load('visualization', '1', {'packages': ['geochart']});
-  google.setOnLoadCallback(drawVisualization);
+  <script src='http://www.google.com/jsapi'></script>
+  <script>google.load('visualization', '1', {'packages': ['geochart']});
+  google.setOnLoadCallback(drawMap);
 
-  function drawVisualization() {
+  function drawMap() {
       var data = new google.visualization.DataTable();
 
 
@@ -138,14 +138,13 @@
 
 
       data.addRows([
-          ['New South Wales',0.3],
+          ['New South Wales', 0.3],
           ['Queensland', 0.4],
           ['South Australia', 0.7],
           ['Tasmania', 0.2],
           ['Victoria', 0.4],
           ['Western Australia', 0.5],
           ['Northern Territory', 0.6]]);
-
 
 
       var options = {
@@ -163,54 +162,108 @@
           sizeAxis: {minValue: 1, maxValue: 1, minSize: 10, maxSize: 10},
           region: 'AU',
           keepAspectRatio: true,
-          width: 2000,
-          height: 900,
+          width: 1000,
+          height: 450,
       };
       var chart = new google.visualization.GeoChart(document.getElementById('map'));
 
       chart.draw(data, options);
   }
   </script>
-
-
-
   {#------------ Chart visualzation part---------------------------------------------- #}
   <script>
-      new Chart(document.getElementById("barChart"), {
-          type: 'bar',
-          data: {
-              // areas location
-              labels: ['New South Wales', 'Queensland', 'South Australia', 'Tasmania', 'Victoria', 'Western Australia', 'Northern Territory'],
+      /**
+       * draw chart, either bar chart or radar chart
+       */
+      function drawChart() {
 
+          let radarRadio = $('#radar');
+          let barRadio = $('#bar');
+     if (barRadio.is(':checked')) {
 
-              datasets: [{
-                  label: "Percentage of Swearing Tweets",
-                  backgroundColor: "#3e95cd",
-                  data: [12, 32, 54, 23, 43, 12, 9],
-                  boarderWidth: 1
-              },
-                  {
-                      label: "Violent Crime Rate",
-                      backgroundColor: "#8e5ea2",
-                      data: [23, 43, 11, 32, 13, 34, 21],
-                      boarderWidth: 1
-                  }
-              ]
-          },
-          options: {
+              console.log("Barchart")
+              drawBarChart();
 
-              mode: 'index',
-              label: true,
-              maintainAspectRatio: false,
-              responsive: true,
-              legend: {display: true},
-              title: {
-                  display: true,
-              }
-
+          } else if (radarRadio.is(':checked')) {
+              console.log("radioChart")
+              drawRadar();
           }
-      });
+      }
 
+      /**
+       * draw radar chart
+       *
+       ***/
+      function drawRadar() {
+          var myRadarChart = new Chart('chartCanvas', {
+                  type: 'radar',
+                  data: {
+                      labels: ['Running', 'Swimming', 'Eating', 'Cycling'],
+                      datasets: [{
+                          data: [20, 10, 4, 2]
+                      }]
+                  },
+                  options: {
+                      scale: {
+                          // Hides the scale
+                          display: false
+                      }
+                  }
+              })
+          ;
+
+
+      }
+
+      /**
+       * Draw Barchart
+       */
+      function drawBarChart() {
+          console.log("draw bar chart")
+          new Chart(document.getElementById("chartCanvas"), {
+              type: 'bar',
+              data: {
+                  // areas location
+                  labels: ['New South Wales', 'Queensland', 'South Australia', 'Tasmania', 'Victoria', 'Western Australia', 'Northern Territory'],
+
+
+                  datasets: [{
+                      label: "Percentage of Swearing Tweets",
+                      backgroundColor: "#3e95cd",
+                      data: [12, 32, 54, 23, 43, 12, 9],
+                      boarderWidth: 1
+                  },
+                      {
+                          label: "Violent Crime Rate",
+                          backgroundColor: "#8e5ea2",
+                          data: [23, 43, 11, 32, 13, 34, 21],
+                          boarderWidth: 1
+                      }
+                  ]
+              },
+              options: {
+
+                  mode: 'index',
+                  label: true,
+                  maintainAspectRatio: false,
+                  responsive: true,
+                  legend: {display: true},
+                  title: {
+                      display: true,
+                  }
+
+              }
+          });
+
+
+      }
+
+
+  </script>
+
+  {# Get data #}
+
+  <script>
       /**
        * sin selector changed, dynamically change the state and database options
        */
@@ -235,7 +288,7 @@
 
                       // use database name as element id
                       let checkbox = "<div class='form-check'>" +
-                          "<input type='checkbox' class='form-check-input' id='" + database + "' checked></input>" +
+                          "<input type='radio' class='form-check-input' id='" + database + "'></input>" +
                           "<label class='form-check-label' for='" + database + "'>" + database + "</label>" +
                           "</div>";
                       databaseCheckboxs.append(checkbox);
@@ -243,6 +296,7 @@
               }
           }
       }
+
 
       /**
        * click search button,
@@ -260,7 +314,6 @@
               chart: getRadioValByName(chartRadioGroup, 'chart'),
           };
 
-          console.log(data);
 
           let options = {
               url: "{{ url_for('search') }}",
@@ -271,13 +324,14 @@
           };
 
           let callback = function (responseText, statusText) {
-              console.log("success");
+              drawChart();
           };
 
           $.ajax(options).done(callback);
       }
 
       /**
+       * get value of the radio in the form
        * get value of the radio in the form
        * @param element radio group
        * @param name name of the radio
@@ -312,5 +366,7 @@
           }
           return selectedList;
       }
+
+
   </script>
 {% endblock %}
