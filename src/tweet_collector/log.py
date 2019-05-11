@@ -5,7 +5,6 @@ import datetime
 
 
 class Log:
-
     # the filename for the log file
     LOG_FILE = "sin_log.txt"
 
