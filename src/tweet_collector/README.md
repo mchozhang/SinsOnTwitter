@@ -6,7 +6,21 @@
 <h2>Use</h2>
 
 <b>before use</b><br>
-need to set constants in constants.py to match the Twitter API and database
+<ol>
+    <li>need to set constants in constants.py to match the Twitter API and database</li>
+    <li>need to install libraries, if not going the docker way:
+        <ol>
+            <li>sudo apt update</li>
+            <li>sudo apt install python3-pip</li>
+            <li>pip3 install tweepy</li>
+            <li>pip3 install CouchDB</li>
+            <li>pip3 install inflection</li>
+            <li>pip3 install pyenchant</li>
+            <li>pip3 install textblob</li>
+            <li>python3 -m textblob.download_corpora</li>
+        </ol>
+    </li>
+</ol>
 
 <b>run_streaming.sh</b><br>
 use this to start streaming tweets in the background. Will use default database 
@@ -16,15 +30,30 @@ defined in constants.py
 use this to start searching tweets in the background. <u>Need to configure 
 search query in collect_sin_search .py before start.</u> Will use default database defined in constants.py
 
-<b>run with arguments</b><br>
-you can run collect_sin_streaming.py with 
-4 arguments. E.g. <br>
-<i>collect_sin_streaming couchdb_url couchdb_user_name couchdb_password name_of_database_to_contain_data</i><br>
-collect_sin_search.py accept 5 arguments, the first 4 are the same as above. The fifth is a "until-date" 
-for the search. It has format of "yyyy-mm-dd". The serach will find all tweets from this date upto 7 days to the 
-past from the current time.If not given, current time is used.
+<b>run py scripts directly</b><br>
+you can run collect_sin_streaming.py and collect_sin_search with 
+arguments: <br>
+<em>streaming</em>
+<ul>
+    <li>python3 collect_sin_streaming.py</li>
+    <li>python3 collect_sin_streaming.py db_url db_user db_pw</li>
+</ul>
+<em>search</em>
+<ul>
+    <li>python3 collect_sin_search.py</li>
+    <li>python3 collect_sin_search.py until_date</li>
+    <li>python3 collect_sin_search.py db_url db_user db_pw</li>
+    <li>python3 collect_sin_search.py until_date db_url db_user db_pw</li>
+</ul>
+# until_date: must be in the form of yyyy-mm-dd<br><br>
+<em>process exisiting database with index and extra fileds</em>
+<ul>
+    <li>python3 process_existing_tweet_db.py</li>
+    <li>python3 process_existing_tweet_db.py db_url db_user db_pw</li>
+</ul>
 
 <b>use docker</b>:<br>
+<b>Note, the currently docker image is out of date, don't use it</b><br>
 to build the image: <br>
 <i>docker build --tag solitudeever/sin_collector68 .</i><br>
 to run the image:<br>
@@ -50,6 +79,14 @@ to kill it:<br>
 <hr>
 
 <h2>Update History</h2>
+
+ver2.2: integrated lga and state information recording for tweets
+
+ver2.1: modified code greatly, made streaming automatically update index
+
+ver2.0: added word index building and sentiment analysis 
+
+ver1.1: changed argument order and error handling for collect_sin_search.py and collect_sin_streaming.py
 
 ver1.0: clean up, bug fix, added more error handling.
 
@@ -79,7 +116,4 @@ ver0.1: streaming working with keywords filtering
 
 <hr>
 
-todo: decide what to do with content duplicates for streaming. ID duplicates are automatically handles as I used ID as
-key for the database
-
-todo: clean up
+todo: add lga information by editing tweet_processor.py
