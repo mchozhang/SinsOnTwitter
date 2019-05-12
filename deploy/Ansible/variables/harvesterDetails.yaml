@@ -1,9 +1,0 @@
----
-gitProjectURL: github.com/mchozhang/SinsOnTwitter/
-branch: sin_collector
-gitUsername: relientm96
-gitPassword: Dozu58debo*
-
-couchdb_user: SinsOnTwitter
-couchdb_pass: group68
-couchdb_url: http://127.0.0.1:5984/
