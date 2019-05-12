@@ -1,11 +1,13 @@
 # Deploying instances and security groups
 - name: Creating Instances On Nectar
   hosts: localhost
+  sudo: yes
   vars_files:
     - variables/instancedetails.yml
   gather_facts: true
   roles:
-   #- role: hostPreInstall
+   - role: hostPreInstall
+   - role: createKeyPair
    - role: createSecurityGroups
    #- role: createVolumes
    - role: createInstances
