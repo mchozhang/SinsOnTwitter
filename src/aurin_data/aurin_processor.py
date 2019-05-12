@@ -69,6 +69,7 @@ if __name__ == "__main__":
             doc["lga_name"] = lga_name
             doc["lga_code"] = lga_code
             doc["sloth_rate"] = sloth_rate
+            doc["population"] = lga_mapper.get_lga_population(lga_name)
             doc["state_name"] = lga_mapper.get_state_name(lga_name)
             doc["state_code"] = lga_mapper.get_state_code(lga_name)
             db.save(doc)
@@ -109,6 +110,7 @@ if __name__ == "__main__":
             doc["violence_ratio"] = violence_ratio
             doc["lga_code"] = lga_code
             doc["lga_name"] = lga_name
+            doc["population"] = lga_mapper.get_lga_population(lga_name)
             doc["state_name"] = lga_mapper.get_state_name(lga_name)
             doc["state_code"] = lga_mapper.get_state_code(lga_name)
             db.save(doc)
@@ -133,6 +135,7 @@ if __name__ == "__main__":
             doc["robbery_and_extortion_offences"] = robbery_and_extortion_offences
             doc["lga_code"] = lga_code
             doc["lga_name"] = lga_name
+            doc["population"] = lga_mapper.get_lga_population(lga_name)
             doc["state_name"] = lga_mapper.get_state_name(lga_name)
             doc["state_code"] = state_code
             db.save(doc)
