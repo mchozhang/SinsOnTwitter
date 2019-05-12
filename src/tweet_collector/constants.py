@@ -14,7 +14,8 @@ ACCESS_SECRET = "gvS8dNimn9aXEy4XlRGUixYelR6g6tqRyDVAgCe39wCnM"
 COUCHDB_URL = "http://127.0.0.1:5984"
 COUCHDB_USER = "admin"
 COUCHDB_PW = "admin"
-COUCHDB_NAME = "tweet_database"
+TWEET_DB_NAME = "tweet_database"
+INDEX_DB_NAME = "index_database"
 
 # a box area containing australia
 AUSTRALIA_GEO = [112.9026518794, -43.9546378928, 153.8021234811, -11.8154315647]

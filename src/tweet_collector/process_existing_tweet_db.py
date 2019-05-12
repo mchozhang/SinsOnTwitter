@@ -1,9 +1,12 @@
 """
-collect tweets from all Australia through streaming
+process existing tweet database:
+1. do word indexing, build the index database
+2. write extra fields into the existing tweets, e.g. sentiment and lga information
 command line arguments:
-    -> python3 collect_sin_streaming.py
-    -> python3 collect_sin_streaming.py db_url db_user db_pw
+    -> python3 process_existing_tweet_db.py
+    -> python3 process_existing_tweet_db.py db_url db_user db_pw
 """
+
 
 import sys
 
@@ -31,7 +34,7 @@ try:
                                  db_url, db_user, db_pw, TWEET_DB_NAME, INDEX_DB_NAME)
 
     if sin_collector:
-        sin_collector.start_streaming_location(AUSTRALIA_GEO)
+        sin_collector.build_index_database()
     else:
         raise Exception("collector creation failed.")
 except Exception as error:
