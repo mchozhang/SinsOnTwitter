@@ -16,8 +16,8 @@
 
 - name: Add in First UUID
   command: curl -X PUT http://{{couchdb_user}}:{{couchdb_pass}}@{{item}}:5984/_node/couchdb@{{item}}/_config/couchdb/uuid -d '"{{uuid_one}}"'
-  loop: "{{ groups['dbservers'] }}"
+  loop: "{{ groups['workerservers'] }}"
 
 - name: Add in Second UUID
   command: curl -X PUT http://{{couchdb_user}}:{{couchdb_pass}}@{{item}}:5984/_node/couchdb@{{item}}/_config/couch_httpd_auth/secret -d '"{{uuid_two}}"'
-  loop: "{{ groups['dbservers'] }}"
+  loop: "{{ groups['workerservers'] }}"

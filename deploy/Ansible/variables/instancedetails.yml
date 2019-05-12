@@ -1,14 +1,25 @@
+#Set Current User Name (Linux User)
+local_user: relientm96
+
 # Common Vars
 availability_zone: melbourne-qh2-uom
 
+# Key Pair Name
+ansible_key_name: key_from_ansible
+
 #Volumes 
+# List of volumes to be created,
+# --- vol_name: name of volume
+# --- vol_size: in GB
 volumes:
   - vol_name: demo_vol_one
     vol_size: 5
   - vol_name: demo_vol_two
     vol_size: 5
 
-#Security Groups
+#---Security Groups Configuration---#
+
+#List of Security Groups to create on Nectar
 security_groups:
   - name: internal_ansible 
     description: "Unfiltered Communication between Nodes"
@@ -21,7 +32,9 @@ security_groups:
   - name: ansible_Web
     description: "Open Port 5000 to access web application"
 
-#Rules for the couchdb_ports group
+#----List of Custom Rules for a specified Security Group----#
+
+#Rules for the couchdb_ports group (CouchDB Ports and Firewall Configurations)
 couchDB_rules:
   - name: ansible_Port 5984
     protocol: tcp
@@ -60,17 +73,22 @@ internal_rules:
     protocol: icmp
     remote_group: internal_ansible
 
-#Instances To be Created 
-#(Add Instances here to be created)
-# Master would be the last instance that has 'db'
+#----Instances To be Created----#
+#(Add Instances to list here to be created)
+
+# Worker Servers
+# -- Worker servers must have the substring "worker" in instance_name
+# -- Master would be the last instance on the list
+
+# Web Servers
+# -- Web Servers must have the name "web_server"
+
 instance_list: 
-  - name: db_one
-    instance_name: db_one 
-    instance_image: 37788d15-12bd-488c-b15e-903d43eae051 #Ubuntu 18.04 Bionic amd64
-    instance_key_name: Group68KeyPair
-    instance_flavor: uom.general.1c4g 
-  - name: db_two
-    instance_name: db_two
-    instance_image: 37788d15-12bd-488c-b15e-903d43eae051 #Ubuntu 18.04 Bionic amd64
-    instance_key_name: Group68KeyPair
+  - name: worker_one
+    instance_name: worker_one 
+    instance_image: afccf48a-9426-4618-86dc-0ceb636f0169 #Ubuntu 18.04 Bionic amd64
+    instance_flavor: uom.general.1c4g
+  - name: worker_two_web 
+    instance_name: worker_two_web
+    instance_image: afccf48a-9426-4618-86dc-0ceb636f0169 #Ubuntu 18.04 Bionic amd64
     instance_flavor: uom.general.1c4g
