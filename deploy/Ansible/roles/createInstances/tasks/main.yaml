@@ -1,9 +1,14 @@
 ---
+- name: Print Out the Details of the Instances Details to be Created
+  debug:
+    msg: 'Creating: {{ item }}'
+  loop: '{{ instance_list }}'
+
 - name: Create all instances
   os_server:
     name: '{{ item.instance_name }}'
     image: '{{ item.instance_image }}'
-    key_name: '{{ item.instance_key_name }}'
+    key_name: '{{ ansible_key_name }}'
     flavor: '{{ item.instance_flavor }}'
     availability_zone: '{{ availability_zone }}'
     security_groups: '{{ sg_names }}'
@@ -15,32 +20,24 @@
   with_items: '{{ instance_list }}'
   register: 'instances'
 
-- name: Insert all instances IPs into inventory file
+- name: Insert WebServer to inventory file
   become: yes
   lineinfile: 
-    path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
-    line: '{{ item.openstack.public_v4 }}' 
-    insertafter: '\[servers\]'
+    path: inventory.ini
+    line: "{{ item.openstack.public_v4 }}"
+    insertafter: '\[webserver\]'
+    state: present
+  when: "'web' in item.item.instance_name"
   with_items: '{{ instances.results }}'
 
-- name: Insert all database servers into dbservers variable in inventory file
+- name: Insert all Worker servers into workerservers variable in inventory file
   become: yes
   lineinfile: 
-    path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
+    path: inventory.ini
     line: "{{ item.openstack.public_v4 }} " 
-    insertafter: '\[dbservers\]'
-  when: "'db' in item.item.instance_name"
+    insertafter: '\[workerservers\]'
+  when: "'worker' in item.item.instance_name"
   loop: '{{ instances.results }}'  
-
-#- name: Insert WebServer to inventory file
-#  become: yes
-#  lineinfile: 
-#    path: /mnt/c/DOCUMENTS/Masters Sem 2/Cluster and Cloud Computing/Assignment2/SinsOnTwitter/Ansible/inventory.ini
-#    line: '{{ item.openstack.public_v4 }}'
-#    insertafter: '\[webserver\] '
-#    state: present
-#  when: "'web' in item.item.instance_name"
-#  with_items: '{{ instances.results }}'
 
 
 

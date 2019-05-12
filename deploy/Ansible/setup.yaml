@@ -1,14 +1,14 @@
 ---
 #Playbook that Sets up common setup for all instances
 - name: Common Setup Tasks Between all Instances
-  hosts: servers 
+  hosts: workerservers:webserver
   sudo: yes
   gather_facts: no
+  vars_files:
+     - variables/gitDetails.yaml
   pre_tasks:
-     - pause:
-          prompt: "Making sure that instances are setup before accessing them..."
-          minutes: 5
-     - debug: var=ansible_default_ipv4.address
+     - name: Wait 600 seconds for target connection to become reachable/usable
+       wait_for_connection:
   roles:
      - role: vmSetup
      - role: installingSoftware

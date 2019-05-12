@@ -6,8 +6,6 @@ from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__, instance_relative_config=True)
 
-SIN_LIST = []
-
 
 @app.route('/')
 def home():
@@ -40,6 +38,7 @@ def home():
             "Estimated Number of People Who Did Low or No Exercise – ASR per 100 Population"]}]},
 
     ];
+
 
     return render_template("home.html", option_list=option_list)
 
@@ -136,6 +135,7 @@ def search():
     return jsonify(return_data)
 
 
+
 @app.route('/geoChart')
 def geoChart():
     return render_template("geoChart.html", key="AIzaSyCCenQXMA4w-cRUrMjs8AhK3_CqHy-E-SI")
@@ -146,61 +146,6 @@ def bar():
     return render_template("home.html", content="this is a testing")
 
 
-def connect_db():
-    return;
-
-
-def get_twitter_data(sin, keyword_list, state):
-    """
-
-    :param sin:
-    :param keyword_list: a  list of keywordList to search tweets
-    :param state: state name
-    :return: get TwitterData result, for example, percentage of number of swearing tweets in the state
-     {"sin": "Lust", "state": "New South Wales", "percentage of sin twitter": 0.19]
-     ... },
-    """
-    return;
-
-
-def get_aurin_data(database, field):
-    """
-
-    :param database: database_id
-    :param field: the field to view
-    :return: the statisc number of each state
-    {"state":"New South Wales", "value of field": 0.23}
-    """
-    return;
-
-
-def get_aurin_databases():
-    """
-    get the list of aurin
-    :param sin:
-    :return: what databases are there for each sin, for example,
-       {"sin": "Lust", "states": ["New South Wales"], "databases_name": ["Rape", "Sexual Offences"]},
-       ...}
-    """
-    return;
-
-
-labels = [
-    'JAN', 'FEB', 'MAR', 'APR',
-    'MAY', 'JUN', 'JUL', 'AUG',
-    'SEP', 'OCT', 'NOV', 'DEC'
-]
-
-values = [
-    967.67, 1190.89, 1079.75, 1349.19,
-    2328.91, 2504.28, 2873.83, 4764.87,
-    4349.29, 6458.30, 9907, 16297
-]
-
-colors = [
-    "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA",
-    "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
-    "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
 
 if __name__ == '__main__':
     app.run()

@@ -1,56 +1,52 @@
 ---
-- name: Pull Repository of Application
-  git:
-    repo: https://relientm96:Dozu58debo*@github.com/mchozhang/SinsOnTwitter.git
-    dest: /home/ubuntu/SinsOnTwitter
-
-- name: Ensure all necessary requirements are installed
-  become: yes
-  command: pip3 install -r /home/ubuntu/SinsOnTwitter/requirements.txt
-
-- name: Download Ngrok
-  uri: 
-    url: "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip"
-    dest: /home/ubuntu
-
-- name: Install Unzip
+- name: Update Machine 
   become: yes
   apt:
-    name: unzip 
+    update_cache: yes
+
+- name: Install Apache2
+  become: yes
+  apt:
+    name: apache2
     state: latest
 
-- name: Unzip the zip ngrok file
-  command: sudo unzip /home/ubuntu/ngrok-stable-linux-amd64.zip
-
-- name: Ngrok Configuration
+- name: Install WSGI
   become: yes
-  command: ./ngrok authtoken 5EaTXpSScSBqeN6gL5di1_3cTVT1SYuoidjpQirZB8U
-
-- name: Create Ngrok Log file
+  command: apt-get install libapache2-mod-wsgi-py3 python-dev -y
+  
+- name: Install Flask
   become: yes
-  file:
-    path: /home/ubuntu/ngroklog.txt
-    state: touch
+  command: pip3 install Flask
 
-- name: Create Bash File to Run Ngrok
+- name: Create Directory in /var/www containing the directory FlaskApp
   become: yes
-  file:
-    path: /home/ubuntu/runNgrok.sh
-    state: touch
+  command: mkdir -p /var/www/FlaskApp
 
-- name: Insert bash command to run Ngrok in background
+- name: Create Directory in /var/wwww/FlaskApp/FlaskApp containing our website files
   become: yes
-  lineinfile:
-    line: '{{item}}'
-    path: /home/ubuntu/runNgrok.sh
-  loop:
-    - ./ngrok http 5000 --log=stdout > /home/ubuntu/ngroklog.txt & 
+  command: mkdir -p /var/www/FlaskApp/FlaskApp
 
-- name: Run Ngrok
+- name: Copy Website files from Repository to /var/www/FlaskApp/FlaskApp
   become: yes
-  command: bash /home/ubuntu/runNgrok.sh
+  command: cp -a /home/ubuntu/SinsOnTwitter/src/. /var/www/FlaskApp/FlaskApp
 
-- name: Run the web Application
+- name: Template the app.wsgi file to web server
   become: yes
-  command: cd SinsOnTwitter/src/web/; nohup python3 /home/ubuntu/SinsOnTwitter/src/web/app.py > /dev/null 2>&1 &
+  template:
+    src: templates/app.wsgi
+    dest: /var/www/FlaskApp/FlaskApp/web/app.wsgi
+
+- name: Template FlaskApp.conf file to /etc/apache2/sites-available/
+  become: yes
+  template:
+    src: templates/FlaskApp.conf
+    dest: /etc/apache2/sites-available/FlaskApp.conf
+
+- name: Enable Site
+  become: yes
+  command: a2ensite FlaskApp.conf
+
+- name: Restart Apache Service to Apply Changes
+  become: yes
+  command: systemctl reload apache2
 

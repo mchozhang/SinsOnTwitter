@@ -1,0 +1,41 @@
+#Creates a Key Pair and stores it in localhost 
+---
+- name: Creating a Key Pair
+  os_keypair:
+    state: present
+    name: '{{ ansible_key_name }}'
+    wait: yes
+    timeout: 180
+  register: generatedKeyPair
+
+- name: Check that if the key currently exists
+  stat:
+    path: '{{ ansible_key_name }}.pem'
+  register: stat_output
+
+- name: Print out Generated Key Pair
+  debug:
+    msg: '{{ generatedKeyPair }}'  
+  
+- name: Save generatedKeyPair on local machine
+  copy:
+    content: '{{generatedKeyPair.key.private_key}}'
+    dest: '{{ ansible_key_name }}.pem'
+    mode: 700
+  when: stat_output.stat.exists == false
+
+- name: Write the name of the newly generated key into the inventory file
+  lineinfile:
+    dest: inventory.ini
+    insertafter: '\[all:vars\]'
+    line: "ansible_ssh_private_key_file='{{ ansible_key_name }}.pem'"
+    state: present
+  when: stat_output.stat.exists == false
+
+- name: Change Permissions of Key File to 700
+  become: yes
+  command: '{{ item }}'
+  loop:
+    - chown -R {{ local_user }}:{{ local_user }} {{ ansible_key_name }}.pem
+    - chmod 700 {{ ansible_key_name }}.pem
+  when: stat_output.stat.exists == false
