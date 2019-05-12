@@ -1,15 +1,7 @@
 # CouchDB for Sin Collection
 
 REQUEST LINKS:
-- [Long, Lat] : https://0c02c19f.ngrok.io/tweet_database/_design/get_tweet_design/_view/get_tweet_view
-
-- [Lat, Long] : https://0c02c19f.ngrok.io/tweet_database/_design/get_tweet_design/_view/get_tweet_geo
-
 - Database Fauxton Link (no need vpn): https://0c02c19f.ngrok.io/_utils
-
-* Setup would be a three node cluster (running on one machine instance). 
-* Each node is running on a docker CouchDB container.
-* One Master Node (for configuration). Two other slave nodes.
 
 # Todo:
 
@@ -21,11 +13,42 @@ REQUEST LINKS:
 - [x] Run docker and run curl commands to setup couchdb cluster.
 - [x] Created Ansible Script to create CouchDB Instance.
 - [x] Creating a script that also runs twitter harvesters.
-- [] Include Script to run web server
-- [] Test overall script 
+- [X] Include Script to run web server
+- [X] Test overall script 
+- [] Write Deployment Steps in Report
+
+# Deployment Setup (Runing This Provisioning on your computer)
+1. Ensure that ansible is installed on your linux machine
+2. Adjust/Set the following parameters in the variables folder (do not change anything else):
+	- couchdbDetails.yaml
+		- Set desired user and password
+		- Set desired couchDB version (leave it as couchdb for 'latest')
+		- Set desired node count in couchdb cluster
+	- twitterDetails.yaml
+		- Set your twitter API Credentials (from your twitter developer account)
+	- instancedetails.yml
+		- Set the local_user field to the user of your local linux machine (for file permission changes)
+		- Set the ssh key name to be created to ansible_key_name
+		(NOTE make sure that this key does not exist in Nectar, or it will return an empty private key)
+		- Set the desired volumes to be created to volumes list
+		- Add the desired security groups you would want to add to each instance on the security_groups list
+		(Currently, our script creates security groups that are required in our system, you can more security groups into your instances as long as you define their configuration in roles/createSecurityGroups)
+		- Configure the instances you want to create (append to list if you want more)
+			* To create worker servers (Harvesters and CouchDB) make sure substring "worker" exists in instance_name (eg worker_one, node_worker...)
+			* To create web servers make sure substring "web" exists in instance_name
+			  (eg web_server, web_one)
+			* Set your desired instance_image ID 
+			* Set your desired instance_flavor
+3. Once all variables/parameters are set, run `sudo bash run.sh` and enter your sudo and openstack password
+4. Check that everything is installed (ip addresses can be found in the inventory.ini file):
+	- Worker Severs:
+		* Check Membership Details to confirm cluster setup (all_nodes match cluster_nodes):
+		`curl -XGET "http://<WORKER_NODE_IP>:5984/_membership"`
+		* Check that harvester is running by loging into fauxton (http://<Worker_NODE_IP>:5984/_utils) and check that tweet_database and index_database are being populated.
+	- Web Server:
+		* Checkout web application through (http://<Web_Server_IP>:5984/app)
 
 # Ansible Script Procedure
-
 The Ansible Script Steps to set up n nodes are as follows:
 
 1. Set the Number of nodes you want to add by configuring the variables/instancecdetails.yml file

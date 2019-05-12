@@ -76,9 +76,9 @@ internal_rules:
 #----Instances To be Created----#
 #(Add Instances to list here to be created)
 
-# Database Servers
-# -- Database servers must have the substring "db" in instance_name
-# -- Master would be the last instance on the list that has 'db'
+# Worker Servers
+# -- Worker servers must have the substring "worker" in instance_name
+# -- Master would be the last instance on the list
 
 # Web Servers
 # -- Web Servers must have the name "web_server"
