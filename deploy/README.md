@@ -7,7 +7,7 @@ REQUEST LINKS:
 
 # System Architecture
 
-![alt text](/images/systemarchitecture.png | width=100)
+![alt text](images/systemarchitecture.png)
 
 # Todo:
 
