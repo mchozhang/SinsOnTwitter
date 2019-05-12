@@ -1,9 +1,10 @@
 #CouchDB Variables used in roles that configures couchDB
-
 ---
+
+#CouchDB Cluster Details (Adjust these)
 couchdb_user: SinsOnTwitter
-couchdb_pass: group68
-masternode: "{{ groups['workerservers'][0] }}"
 couchdb_image: couchdb:2.3.0
 node_count: 3
+
+masternode: "{{ groups['workerservers'][0] }}"
 couchdb_url: http://127.0.0.1:5984/ 

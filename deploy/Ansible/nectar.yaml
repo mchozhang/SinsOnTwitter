@@ -3,7 +3,7 @@
   hosts: localhost
   sudo: yes
   vars_files:
-    - variables/instancedetails.yml
+    - variables/instancedetails.yaml
   gather_facts: true
   roles:
    - role: hostPreInstall

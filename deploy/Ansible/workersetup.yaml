@@ -4,6 +4,7 @@
   hosts: workerservers
   vars_files:
     - variables/couchdbDetails.yaml
+    - variables/passwords.yaml
   gather_facts: yes
   sudo: yes
   roles:
@@ -14,28 +15,40 @@
   hosts: localhost #Running Curl Commands from local machine to get common UUIDs across
   vars_files:
     - variables/couchdbDetails.yaml
+    - variables/passwords.yaml
   gather_facts: yes
   roles:
      - role: configureCouchDB_UUIDS
 
 #Set the first IP in dbservers as the Master and run cluster setup
 - name: Configuring Cluster Setup from Master Node
-  hosts: workerservers[0]
+  hosts: workerservers[0] #We choose this as master node
   vars_files:
     - variables/couchdbDetails.yaml
+    - variables/passwords.yaml
   gather_facts: yes
   sudo: yes
   roles:
      - role: configureCouchDB_Cluster
 
-#Setup and run Twitter Harvesters
+#Setup and run Twitter Harvester on Master Node
 - name: Setup and Run Twitter Harvesters
-  hosts: workerservers
+  hosts: workerservers[0] #We choose this as master node
   vars_files:
     - variables/couchdbDetails.yaml
     - variables/gitDetails.yaml
-    - variables/twitterDetails.yaml
+    - variables/passwords.yaml
   gather_facts: yes
   sudo: yes
   roles:
     - role: setupHarvester
+
+#Set Web Servers on each worker node
+- name: Setup Web Servers
+  hosts: workerservers
+  gather_facts: yes
+  vars_files:
+    - variables/gitDetails.yaml
+    - variables/passwords.yaml
+  roles:
+    - role: setupWebServer
