@@ -17,7 +17,7 @@ REQUEST LINKS:
 - [X] Test overall script 
 - [] Write Deployment Steps in Report
 
-# Deployment Setup (Runing This Provisioning on your computer)
+# Deployment Setup (running orchestration setup from scratch)
 1. Ensure that ansible is installed on your linux machine
 2. Adjust/Set the following parameters in the variables folder (do not change anything else):
 	- couchdbDetails.yaml
