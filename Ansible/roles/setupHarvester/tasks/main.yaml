@@ -1,10 +1,4 @@
 ---
-- name: Clone Repository
-  git:
-    repo: https://{{gitUsername}}:{{gitPassword}}@{{gitProjectURL}}
-    dest: /home/ubuntu/SinsOnTwitter/
-    version: '{{ branch }}'
-
 - name: Update System
   become: yes
   apt:
@@ -16,21 +10,45 @@
     name: enchant
     state: latest
 
+- name: Create nltk_data directory in /home/ubuntu
+  file:
+    path: /home/ubuntu/nltk_data
+    state: directory
+
 - name: Install Required Modules
   become: yes
-  command: '{{ item }}'
+  pip: 
+    name: '{{ item }}'
+    executable: pip3
   loop:
-    - pip3 install tweepy
-    - pip3 install CouchDB
-    - pip3 install inflection
-    - pip3 install pyenchant
-    - pip3 install textblob
+    - tweepy
+    - CouchDB
+    - inflection
+    - pyenchant
+    - textblob
 
-- name: Download NTLK Data
+- name: Download textblob corpus data
   become: yes
   command: python3 -m textblob.download_corpora
+  register: whatishere
+  environment:
+    NLTK_DATA: /home/ubuntu/nltk_data
+
+- name: Print out output
+  debug:
+    msg: "{{ whatishere }}"
+
+- name: Remove default constants.py file to apply Twitter Credentials in variables/twitterdetails.yaml
+  become: yes
+  command: rm /home/ubuntu/SinsOnTwitter/src/tweet_collector/constants.py
+
+- name: Template the new constants.py with new twitter Credentials
+  become: yes
+  template:
+    src: templates/constants.py
+    dest: /home/ubuntu/SinsOnTwitter/src/tweet_collector/constants.py
 
 - name: Run Twitter Harvesters in Background
   become: yes
-  shell: nohup python3 /home/ubuntu/SinsOnTwitter/collect_sin_streaming.py {{couchdb_url}} {{couchdb_user}} {{couchdb_pass}} > /dev/null 2>&1 &
+  shell: nohup python3 /home/ubuntu/SinsOnTwitter/src/tweet_collector/collect_sin_streaming.py {{couchdb_url}} {{couchdb_user}} {{couchdb_pass}} > /dev/null 2>&1 &
 
