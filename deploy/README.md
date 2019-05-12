@@ -3,6 +3,7 @@
 REQUEST LINKS:
 - Database Fauxton Link (no need vpn): https://0c02c19f.ngrok.io/_utils
 - For front-end just use "http://localhost:5984/tweet_database/_design/<DESIGN_DOC_NAME>/_view/<VIEW_NAME>" (as each website lives on a CouchDB cluster node)
+- Ansible Vault Password: group68
 
 # System Architecture
 
