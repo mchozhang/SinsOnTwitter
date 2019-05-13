@@ -80,13 +80,13 @@ def search():
             "vic":
                 {"percentage_of_tweets": 0.19, "aurin_data": 0.2},
             "nsw":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.1},
+                {"percentage_of_tweets": 0.15, "aurin_data": 0.1},
             "que":
                 {"percentage_of_tweets": 0.5, "aurin_data": 0.3},
             "tas":
                 {"percentage_of_tweets": 0.2, "aurin_data": 0.3},
             "west_au":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.5},
+                {"percentage_of_tweets": 0.65, "aurin_data": 0.5},
             "south_au":
                 {"percentage_of_tweets": 0.09, "aurin_data": 0.8}},
 
@@ -94,13 +94,13 @@ def search():
             "vic":
                 {"percentage_of_tweets": 0.19, "aurin_data": 0.4},
             "nsw":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.23},
+                {"percentage_of_tweets": 0.625, "aurin_data": 0.23},
             "que":
                 {"percentage_of_tweets": 0.5, "aurin_data": 0.6},
             "tas":
                 {"percentage_of_tweets": 0.2, "aurin_data": 0.21},
             "west_au":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.56},
+                {"percentage_of_tweets": 0.35, "aurin_data": 0.56},
             "south_au":
                 {"percentage_of_tweets": 0.09, "aurin_data": 0.11}},
         "Sloth":
@@ -108,11 +108,11 @@ def search():
                 "vic":
                     {"percentage_of_tweets": 0.19, "aurin_data": 0.2},
                 "nsw":
-                    {"percentage_of_tweets": 0.5, "aurin_data": 0.03},
+                    {"percentage_of_tweets": 0.15, "aurin_data": 0.03},
                 "que":
                     {"percentage_of_tweets": 0.5, "aurin_data": 0.32},
                 "tas":
-                    {"percentage_of_tweets": 0.2, "aurin_data": 0.67},
+                    {"percentage_of_tweets": 0.22, "aurin_data": 0.67},
                 "west_au":
                     {"percentage_of_tweets": 0.5, "aurin_data": 0.5},
                 "south_au":
@@ -121,13 +121,13 @@ def search():
             "vic":
                 {"percentage_of_tweets": 0.19, "aurin_data": 0.62},
             "nsw":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.16},
+                {"percentage_of_tweets": 0.65, "aurin_data": 0.16},
             "que":
                 {"percentage_of_tweets": 0.5, "aurin_data": 0.43},
             "tas":
-                {"percentage_of_tweets": 0.2, "aurin_data": 0.6},
+                {"percentage_of_tweets": 0.24, "aurin_data": 0.6},
             "west_au":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.52},
+                {"percentage_of_tweets": 0.05, "aurin_data": 0.52},
             "south_au":
                 {"percentage_of_tweets": 0.09, "aurin_data": 0.13}}
     }

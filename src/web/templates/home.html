@@ -112,19 +112,19 @@
       <div id="content" style="position: relative;width: 50%;height: 80%;left:30px">
 
         <canvas id="barChartCanvas"
-                style="position: absolute;width: 378px; top: 0px ;height: 400px;left: 150px;display: block;"></canvas>
+                style="position: absolute;width: 378px; top: -40px ;height: 400px;left: 150px;display: block;"></canvas>
 
         <canvas id="radarChartCanvas"
-                style="position: absolute;width: 378px; top: 0px ;height: 400px;left: 100px;display: block;"></canvas>
+                style="position: absolute;width: 378px; top: -40px ;height: 400px;left: 100px;display: block;"></canvas>
 
       </div>
 
     </div>
 
     <div>
-      <tab style="display: block"> Sin Map</tab>
+      <tab id="map-header" style="display: block;position: absolute;top:50%"> Sin Map</tab>
     </div>
-    <div style="position: absolute;width: 100%;top: 60%;left: 0px;">
+    <div style="position: absolute;width: 100%;top: 55%;left: 0px;">
       <div id="map">
       </div>
       <div class="title">
@@ -151,6 +151,7 @@
       },);
 
       function drawMap() {
+          $("#map-header").val("Sin Map - " + request_sin);
           let map_data = [];
           console.log("requ_sin", request_sin);
           for (let state in STATES_DICT) {
