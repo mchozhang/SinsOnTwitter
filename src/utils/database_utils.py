@@ -1,7 +1,9 @@
+"""
+utility to get data from database by specifying keywords, state and polarity
+"""
+
 import couchdb
-# from .config import *
-from config import *
-import time
+from .config import *
 
 # couch = couchdb.Server('http://localhost:5984/')
 # couch.resource.credentials = ("admin", "admin")
@@ -18,6 +20,7 @@ def get_tweet_rate(keywords, state, polarity):
     get the rate of tweets relevant with the keywords
     :param keywords: list of keywords
     :param state: state name
+    :param polarity: maximum sentimental value, in range of (-1, 1)
     :return: rate in percentage
     """
     tweet_id_list = get_tweets_by_words(keywords)
@@ -81,17 +84,3 @@ def get_view_url(state):
         return VIEW_STATE_TASMANIA
 
     return VIEW_TWEET_INFO
-
-
-if __name__ == "__main__":
-    words = ["sleep"]
-    get_tweet_rate(words, "New South Wales", 1)
-    # get_tweet_rate(words, "Victoria")
-
-    # a = get_tweets_by_words(words)
-    # b = get_tweets_by_words(["mad"])
-    # c = get_tweets_by_words(["crazy"])
-
-    # print(len(a))
-    # print(len(b))
-    # print(len(c))
