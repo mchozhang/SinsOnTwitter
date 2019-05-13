@@ -109,13 +109,24 @@
       <div id="title">
         <tab>Twitter data Vs Aurin data</tab>
       </div>
-      <div id="content" style="position: relative;width: 80%;height: 80%;left:30px ">
-        <canvas id="chartCanvas"></canvas>
+      <div id="content" style="position: relative;width: 50%;height: 80%;left:30px">
+
+        <canvas id="barChartCanvas"
+                style="position: absolute;width: 378px; top: 0px ;height: 400px;left: 150px;display: block;"></canvas>
+
+        <canvas id="radarChartCanvas"
+                style="position: absolute;width: 378px; top: 0px ;height: 400px;left: 100px;display: block;"></canvas>
+
       </div>
+
     </div>
 
-    <div><tab style="display: block"> Sin Map</tab></div>
-    <div id="map" style="width: 900px; height: 500px; left: 300px">
+    <div>
+      <tab style="display: block"> Sin Map</tab>
+    </div>
+    <div style="position: absolute;width: 100%;top: 60%;left: 0px;">
+      <div id="map">
+      </div>
       <div class="title">
       </div>
     </div>
@@ -154,7 +165,7 @@
           function mapSetting() {
               var data = new google.visualization.DataTable();
               data.addColumn('string', 'Country');
-              data.addColumn('number', 'Degree of '+ request_sin);
+              data.addColumn('number', 'Degree of ' + request_sin);
               {#data.addRows([#}
               {#    ['New South Wales', 0.3],#}
               {#    ['Queensland', 0.4],#}
@@ -179,8 +190,8 @@
                   sizeAxis: {minValue: 1, maxValue: 1, minSize: 10, maxSize: 10},
                   region: 'AU',
                   keepAspectRatio: true,
-                  width: 1400,
-                  height: 600,
+                  width: 800,
+                  height: 500,
                   magnifyingGlass: {enable: true, zoomFactor: 7.5}
               };
               var chart = new google.visualization.GeoChart(document.getElementById('map'));
@@ -194,12 +205,15 @@
        * draw chart, either bar chart or radar chart
        */
       function drawChart() {
-
+          if (Window.bar != undefined)
+              Window.bar.destroy();
+          if (Window.radar != undefined)
+              Window.radar.destroy();
           let radarRadio = $('#radar');
           let barRadio = $('#bar');
-          let canvas = document.getElementById("chartCanvas");
-          let ctx = getctx("chartCanvas");
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          {#let canvas = document.getElementById("barChartCanvas");#}
+          {#let ctx = getctx("barChartCanvas");#}
+          {#ctx.clearRect(0, 0, canvas.width, canvas.height);#}
           if (barRadio.is(':checked')) {
 
               console.log("Barchart")
@@ -214,21 +228,13 @@
       let states_name = Object.values(STATES_DICT);
       let states_code = Object.keys(STATES_DICT);
 
-      window.chartColors = {
-          red: 'rgb(255, 99, 132)',
-          orange: 'rgb(255, 159, 64)',
-          yellow: 'rgb(255, 205, 86)',
-          green: 'rgb(75, 192, 192)',
-          blue: 'rgb(54, 162, 235)',
-          purple: 'rgb(153, 102, 255)',
-          grey: 'rgb(231,233,237)'
-      };
 
       /**
        * draw radar chart
        *
        ***/
       function drawRadar() {
+
           let sins_degree = {};
           let sins = Object.keys(data_to_visualise);
           let degree;
@@ -240,7 +246,7 @@
               sins_degree[state] = degree;
           }
 
-          let ctx = getctx("chartCanvas");
+          let ctx = getctx("radarChartCanvas");
           let data = {
               labels: sins,
               datasets: [{
@@ -305,11 +311,14 @@
                   'samples-filler-analyser': {
                       target: 'chart-analyser'
                   }
+              },
+              title: {
+                  display: true,
               }
           };
 
 
-          let chart = new Chart(ctx, {
+          Window.radar = new Chart(ctx, {
               type: 'radar',
               data: data,
               options: options
@@ -327,7 +336,7 @@
        * Draw Barchart
        */
       function drawBarChart() {
-          let ctx = getctx("chartCanvas");
+          let ctx = getctx("barChartCanvas");
           let data = data_to_visualise[request_sin];
           {#-----sort data --------#}
           let sorted_data = [];
@@ -349,7 +358,7 @@
           }
           {#----end of sorting--------#}
 
-          new Chart(ctx, {
+          Window.bar = new Chart(ctx, {
               type: 'bar',
               data: {
                   // areas location
