@@ -3,6 +3,7 @@
 # flask app
 
 from flask import Flask, render_template, jsonify, request
+import utils.database_utils
 
 app = Flask(__name__, instance_relative_config=True)
 
@@ -43,11 +44,8 @@ def search():
         keyword_list = request.json["keywords"]
         sin = request.json["sin"]
         state = request.json["state"]
-        database_list = request.json["databases"]
-        chart = request.json["chart"]
-        print(str(keyword_list))
-        print(str(database_list))
-        print(sin + " " + chart + " " + state)
+        database = request.json["database"]
+
     except Exception as e:
         print(e)
     return jsonify()
