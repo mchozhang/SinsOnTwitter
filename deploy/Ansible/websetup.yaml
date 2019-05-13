@@ -1,9 +1,0 @@
----
-- name: Setup Web Server
-  hosts: webserver
-  gather_facts: yes
-  vars_files:
-    - variables/gitDetails.yaml
-  roles:
-    - role: setupWebServer
-  

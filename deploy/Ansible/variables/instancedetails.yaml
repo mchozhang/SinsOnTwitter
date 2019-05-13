@@ -1,13 +1,13 @@
 #Set Current User Name (Linux User)
 local_user: relientm96
 
-# Common Vars
+# Availability Zone
 availability_zone: melbourne-qh2-uom
 
 # Key Pair Name
 ansible_key_name: key_from_ansible
 
-#Volumes 
+#Volumes (Cannot show in demo)
 # List of volumes to be created,
 # --- vol_name: name of volume
 # --- vol_size: in GB
@@ -29,8 +29,6 @@ security_groups:
     description: "HTTP Access via port 80"
   - name: ansible_CouchDB
     description: "Opening Ports for CouchDB Access"
-  - name: ansible_Web
-    description: "Open Port 5000 to access web application"
 
 #----List of Custom Rules for a specified Security Group----#
 
@@ -75,20 +73,16 @@ internal_rules:
 
 #----Instances To be Created----#
 #(Add Instances to list here to be created)
-
-# Worker Servers
-# -- Worker servers must have the substring "worker" in instance_name
-# -- Master would be the last instance on the list
-
-# Web Servers
-# -- Web Servers must have the name "web_server"
+# - Master Node would be the last one on the list
 
 instance_list: 
   - name: worker_one
     instance_name: worker_one 
     instance_image: afccf48a-9426-4618-86dc-0ceb636f0169 #Ubuntu 18.04 Bionic amd64
     instance_flavor: uom.general.1c4g
-  - name: worker_two_web 
-    instance_name: worker_two_web
+    #volume_name: demo_vol_one
+  - name: master_node
+    instance_name: master_node
     instance_image: afccf48a-9426-4618-86dc-0ceb636f0169 #Ubuntu 18.04 Bionic amd64
     instance_flavor: uom.general.1c4g
+    #volume_name: demo_vol_two

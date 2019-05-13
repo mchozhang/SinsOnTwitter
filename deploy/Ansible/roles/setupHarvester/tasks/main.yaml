@@ -30,13 +30,8 @@
 - name: Download textblob corpus data
   become: yes
   command: python3 -m textblob.download_corpora
-  register: whatishere
   environment:
     NLTK_DATA: /home/ubuntu/nltk_data
-
-- name: Print out output
-  debug:
-    msg: "{{ whatishere }}"
 
 - name: Remove default constants.py file to apply Twitter Credentials in variables/twitterdetails.yaml
   become: yes
@@ -48,7 +43,11 @@
     src: templates/constants.py
     dest: /home/ubuntu/SinsOnTwitter/src/tweet_collector/constants.py
 
-- name: Run Twitter Harvesters in Background
+- name: Copy Harvester Files to home directory
   become: yes
-  shell: nohup python3 /home/ubuntu/SinsOnTwitter/src/tweet_collector/collect_sin_streaming.py {{couchdb_url}} {{couchdb_user}} {{couchdb_pass}} > /dev/null 2>&1 &
+  command: cp -a /home/ubuntu/SinsOnTwitter/src/tweet_collector/. /home/ubuntu
 
+- name: Run Harvester
+  become: yes
+  shell: nohup python3 collect_sin_search.py > /dev/null 2>&1 &
+ 
