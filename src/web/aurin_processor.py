@@ -1,19 +1,32 @@
 # -*- encoding: utf-8 -*-
 #
-# 1.clean aurin database
-# 2.import aurin data into couchdb
+# 1.clean Aurin database
+# 2.read Aurin data from resources file
+# 3.import Aurin data into couchdb
 
 import csv
 import os
 import couchdb
+from configparser import ConfigParser
 from collections import Counter
-from utils.config import *
 from utils.geo_utils import LgaMapper, Sa4Mapper
 
 basedir = os.path.dirname(os.path.abspath(__file__))
+config = ConfigParser()
+config.read(os.path.join(basedir, 'utils/config.ini'))
 
-couch = couchdb.Server(COUCHDB_URL)
-couch.resource.credentials = (COUCHDB_USER, COUCHDB_PW)
+db_url = config.get('database', "COUCHDB_URL")
+db_user = config.get('database', "COUCHDB_USER")
+db_pw = config.get('database', "COUCHDB_PW")
+couch = couchdb.Server(db_url)
+couch.resource.credentials = (db_user, db_pw)
+
+db_adult_health = config.get('database', "DATABASE_ADULT_HEALTH")
+db_domestic_violence = config.get('database', "DATABASE_DOMESTIC_VIOLENCE")
+db_crime_rate = config.get('database', "DATABASE_CRIME_RATE")
+db_personal_income = config.get('database', "DATABASE_PERSONAL_INCOME")
+db_aurin = config.get('database', "DATABASE_AURIN")
+
 
 FILE_ADULT_HEALTH = "resources/adult_health_risk_factor_estimates.csv"
 FILE_CRIME_RATE = "resources/crime_rate_2011_for_south_australia.csv"
@@ -51,15 +64,15 @@ if __name__ == "__main__":
     lga_mapper = LgaMapper()
     sa4_mapper = Sa4Mapper()
 
-    if DATABASE_AURIN in couch:
-        couch.delete(DATABASE_AURIN)
-    aurin_db = couch.create(DATABASE_AURIN)
+    if db_aurin in couch:
+        couch.delete(db_aurin)
+    aurin_db = couch.create(db_aurin)
 
     # adult health database
     with open(os.path.join(basedir, FILE_ADULT_HEALTH)) as file:
-        if DATABASE_ADULT_HEALTH in couch:
-            couch.delete(DATABASE_ADULT_HEALTH)
-        db = couch.create(DATABASE_ADULT_HEALTH)
+        if db_adult_health in couch:
+            couch.delete(db_adult_health)
+        db = couch.create(db_adult_health)
 
         sloth_count = Counter()
         total_population = Counter()
@@ -93,9 +106,9 @@ if __name__ == "__main__":
 
     # personal income database
     with open(os.path.join(basedir, FILE_PERSONAL_INCOME)) as file:
-        if DATABASE_PERSONAL_INCOME in couch:
-            couch.delete(DATABASE_PERSONAL_INCOME)
-        db = couch.create(DATABASE_PERSONAL_INCOME)
+        if db_personal_income in couch:
+            couch.delete(db_personal_income)
+        db = couch.create(db_personal_income)
         reader = csv.reader(file)
         head_row = next(reader)
         for row in reader:
@@ -117,9 +130,9 @@ if __name__ == "__main__":
 
     # domestic violence database
     with open(os.path.join(basedir, FILE_DOMESTIC_VIOLENCE)) as file:
-        if DATABASE_DOMESTIC_VIOLENCE in couch:
-            couch.delete(DATABASE_DOMESTIC_VIOLENCE)
-        db = couch.create(DATABASE_DOMESTIC_VIOLENCE)
+        if db_domestic_violence in couch:
+            couch.delete(db_domestic_violence)
+        db = couch.create(db_domestic_violence)
 
         state = "New South Wales"
         violence_count = 0
@@ -149,9 +162,9 @@ if __name__ == "__main__":
 
     # crime rate database
     with open(os.path.join(basedir, FILE_CRIME_RATE)) as file:
-        if DATABASE_CRIME_RATE in couch:
-            couch.delete(DATABASE_CRIME_RATE)
-        db = couch.create(DATABASE_CRIME_RATE)
+        if db_crime_rate in couch:
+            couch.delete(db_crime_rate)
+        db = couch.create(db_crime_rate)
         state = "South Australia"
         reader = csv.reader(file)
         head_row = next(reader)

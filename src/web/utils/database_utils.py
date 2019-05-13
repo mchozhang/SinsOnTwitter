@@ -3,16 +3,34 @@ utility to get data from database by specifying keywords, state and polarity
 """
 
 import couchdb
-from .config import *
+import os
+from configparser import ConfigParser
 
-couch = couchdb.Server(COUCHDB_URL)
-couch.resource.credentials = (COUCHDB_USER, COUCHDB_PW)
+basedir = os.path.dirname(os.path.abspath(__file__))
 
+config = ConfigParser()
+config.read(os.path.join(basedir, 'config.ini'))
 
-index_database = couch[DB_INDEX]
-tweet_database = couch[DB_TWEET]
-aurin_database = couch[DATABASE_AURIN]
-wordlist_database = couch[DATABASE_WORDLIST_RESULT]
+# get database info from configuration file
+db_url = config.get('database', "COUCHDB_URL")
+db_user = config.get('database', "COUCHDB_USER")
+db_pw = config.get('database', "COUCHDB_PW")
+view_text_index = config.get('database', "VIEW_TEXT_INDEX")
+view_nsw = config.get('database', "VIEW_STATE_NSW")
+view_queensland = config.get('database', "VIEW_STATE_QUEENSLAND")
+view_sa = config.get('database', "VIEW_STATE_SA")
+view_wa = config.get('database', "VIEW_STATE_WA")
+view_vic = config.get('database', "VIEW_STATE_VIC")
+view_tas = config.get('database', "VIEW_STATE_TASMANIA")
+view_tweet_info = config.get('database', "VIEW_TWEET_INFO")
+
+couch = couchdb.Server(db_url)
+couch.resource.credentials = (db_user, db_pw)
+
+index_database = couch[config.get('database', "DB_INDEX")]
+tweet_database = couch[config.get('database', "DB_TWEET")]
+aurin_database = couch[config.get('database', "DATABASE_AURIN")]
+wordlist_database = couch[config.get('database', "DATABASE_WORDLIST_RESULT")]
 
 
 def get_tweet_rate(keywords, state, sentiment):
@@ -48,7 +66,7 @@ def get_tweets_by_words(keywords):
     :return: list of tweet ids
     """
     tweet_id_list = []
-    view = index_database.view(VIEW_TEXT_INDEX)
+    view = index_database.view(view_text_index)
     for word in keywords:
         view_result = view[word]
         if len(view_result.rows) > 0:
@@ -65,24 +83,24 @@ def get_view_url(state):
     :return: view url
     """
     if state == "New South Wales":
-        return VIEW_STATE_NSW
+        return view_nsw
 
     if state == "Queensland":
-        return VIEW_STATE_QUEENSLAND
+        return view_queensland
 
     if state == "South Australia":
-        return VIEW_STATE_SA
+        return view_sa
 
     if state == "Western Australia":
-        return VIEW_STATE_WA
+        return view_wa
 
     if state == "Victoria":
-        return VIEW_STATE_VIC
+        return view_vic
 
     if state == "Tasmania":
-        return VIEW_STATE_TASMANIA
+        return view_tas
 
-    return VIEW_TWEET_INFO
+    return view_tweet_info
 
 
 def get_aurin_data(key, state):
