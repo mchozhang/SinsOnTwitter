@@ -16,7 +16,8 @@ def count_tweets_based_on_words(word):
     db = couchserver[dbname]
     tweet_id_holder = {}
     items = db.view('_design/frontEnd/_view/text_idList')
-    for i in items[word]:
+    a = items[word]
+    for i in a:
         tweet_id_holder[i.id] = i.value
 
     dbname = "tweet_database"
