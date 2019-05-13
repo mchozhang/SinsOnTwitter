@@ -2,6 +2,12 @@
 
 REQUEST LINKS:
 - Database Fauxton Link (no need vpn): https://0c02c19f.ngrok.io/_utils
+- For front-end just use "http://localhost:5984/tweet_database/_design/<DESIGN_DOC_NAME>/_view/<VIEW_NAME>" (as each website lives on a CouchDB cluster node)
+- Ansible Vault Password: group68
+
+# System Architecture
+
+![alt text](images/systemarchitecture.png)
 
 # Todo:
 
@@ -15,7 +21,10 @@ REQUEST LINKS:
 - [x] Creating a script that also runs twitter harvesters.
 - [X] Include Script to run web server
 - [X] Test overall script 
+- [X] Did a draft on video
+- [] Docker Swarm Feature
 - [] Write Deployment Steps in Report
+- [] Write Report on system architecture and design
 
 # Deployment Setup (running orchestration setup from scratch)
 1. Ensure that ansible is installed on your linux machine
@@ -34,11 +43,10 @@ REQUEST LINKS:
 		- Add the desired security groups you would want to add to each instance on the security_groups list
 		(Currently, our script creates security groups that are required in our system, you can more security groups into your instances as long as you define their configuration in roles/createSecurityGroups)
 		- Configure the instances you want to create (append to list if you want more)
-			* To create worker servers (Harvesters and CouchDB) make sure substring "worker" exists in instance_name (eg worker_one, node_worker...)
-			* To create web servers make sure substring "web" exists in instance_name
-			  (eg web_server, web_one)
-			* Set your desired instance_image ID 
+			* Set your desired server instance_names
+			* Set your desired instance_image ID
 			* Set your desired instance_flavor
+3. Use Ansible-Vault to create and encrypt the passwords.yaml file and place it in the variables folder			(remember vault password)
 3. Once all variables/parameters are set, run `sudo bash run.sh` and enter your sudo and openstack password
 4. Check that everything is installed (ip addresses can be found in the inventory.ini file):
 	- Worker Severs:
