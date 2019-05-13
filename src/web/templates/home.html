@@ -110,13 +110,13 @@
         <tab>Twitter data Vs Aurin data</tab>
       </div>
       <div id="content" style="position: relative;width: 80%;height: 80%;left:30px ">
-        <canvas id="chartCanvas" ></canvas>
+        <canvas id="chartCanvas"></canvas>
       </div>
     </div>
 
+    <div><tab style="display: block"> Sin Map</tab></div>
     <div id="map" style="width: 900px; height: 500px; left: 300px">
       <div class="title">
-        <tab style="display: block"> Map</tab>
       </div>
     </div>
 
@@ -154,7 +154,7 @@
           function mapSetting() {
               var data = new google.visualization.DataTable();
               data.addColumn('string', 'Country');
-              data.addColumn('number', 'Value');
+              data.addColumn('number', 'Degree of '+ request_sin);
               {#data.addRows([#}
               {#    ['New South Wales', 0.3],#}
               {#    ['Queensland', 0.4],#}
@@ -214,6 +214,16 @@
       let states_name = Object.values(STATES_DICT);
       let states_code = Object.keys(STATES_DICT);
 
+      window.chartColors = {
+          red: 'rgb(255, 99, 132)',
+          orange: 'rgb(255, 159, 64)',
+          yellow: 'rgb(255, 205, 86)',
+          green: 'rgb(75, 192, 192)',
+          blue: 'rgb(54, 162, 235)',
+          purple: 'rgb(153, 102, 255)',
+          grey: 'rgb(231,233,237)'
+      };
+
       /**
        * draw radar chart
        *
@@ -231,49 +241,55 @@
           }
 
           let ctx = getctx("chartCanvas");
-          let colors = [];
           let data = {
               labels: sins,
               datasets: [{
-                  {#backgroundColor: "red",#}
-                  borderColor: "red",
+                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                  borderColor: 'rgba(255,99,132,1)',
                   data: sins_degree[states_code[0]],
                   label: states_name[0],
-                  fill: false
+                  boarderWidth: 1,
+                  fill: true
               }, {
-                  {#backgroundColor: "blue",#}
-                  borderColor: "blue",
+                  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                  borderColor: 'rgba(54, 162, 235, 1)',
                   data: sins_degree[states_code[1]],
                   label: states_name[1],
-                  fill: false
+                  boarderWidth: 1,
+                  fill: true
               }, {
-                  {#backgroundColor: "yellow",#}
-                  borderColor: "yellow",
+                  backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                  borderColor: 'rgba(255, 206, 86, 1)',
                   data: sins_degree[states_code[2]],
+                  boarderWidth: 1,
                   label: states_name[2],
-                  fill: false
+                  fill: true
               }, {
-                  {#backgroundColor: "orange",#}
-                  borderColor: "green",
+                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                  borderColor: 'rgba(75, 192, 192, 1)',
                   data: sins_degree[states_code[3]],
                   label: states_name[3],
-                  fill: false
+                  boarderWidth: 1,
+                  fill: true
               }, {
-                  {#backgroundColor: "gray",#}
-                  borderColor: "green",
+                  backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                  borderColor: 'rgba(153, 102, 255, 1)',
                   data: sins_degree[states_code[4]],
                   label: states_name[4],
-                  fill: false
+                  boarderWidth: 1,
+                  fill: true
               }, {
-                  {#backgroundColor: "#134",#}
-                  borderColor: "#134",
+                  backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                  borderColor: 'rgba(255, 159, 64, 1)',
                   data: sins_degree[states_code[5]],
                   label: states_name[5],
-                  fill: false
+                  boarderWidth: 1,
+                  fill: true
               }]
           };
 
-          var options = {
+
+          let options = {
               maintainAspectRatio: false,
               responsive: true,
               spanGaps: false,
@@ -292,12 +308,12 @@
               }
           };
 
-          var chart = new Chart(ctx, {
+
+          let chart = new Chart(ctx, {
               type: 'radar',
               data: data,
               options: options
-          });
-
+          })
       }
 
       function getctx(canvas) {
