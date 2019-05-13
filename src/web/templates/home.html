@@ -110,11 +110,11 @@
         <tab>Twitter data Vs Aurin data</tab>
       </div>
       <div id="content" style="position: relative;width: 80%;height: 80%;left:30px ">
-        <canvas id="chartCanvas"></canvas>
+        <canvas id="chartCanvas" ></canvas>
       </div>
     </div>
 
-    <div id="map">
+    <div id="map" style="width: 900px; height: 500px; left: 300px">
       <div class="title">
         <tab style="display: block"> Map</tab>
       </div>
@@ -128,27 +128,42 @@
   {# ----------------------- Map visualization part -----------------------------------------#}
   <script src='http://www.google.com/jsapi'></script>
   <script>
-      google.load('visualization', '1', {'packages': ['geochart']});
+
+      let STATES_DICT = {
+          "vic": "Victoria", "nsw": "New South Wales", "que": "Queensland", "tas": "Tasmania"
+          , "west_au": "Western Australia", "south_au": "South Australia"
+      };
+
+
+      google.load('visualization', '1', {
+          'packages': ['geochart'], 'mapsApiKey': 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'
+      },);
 
       function drawMap() {
-          google.setOnLoadCallback(mapSetting())
+          let map_data = [];
+          console.log("requ_sin", request_sin);
+          for (let state in STATES_DICT) {
+              console.log(data_to_visualise[request_sin][state], state)
+              map_data.push([STATES_DICT[state], data_to_visualise[request_sin][state]["percentage_of_tweets"]]);
+
+          }
+          map_data.push(["Northern Territory", 0]);
+          console.log("map_data666:", map_data);
+          google.setOnLoadCallback(mapSetting());
 
           function mapSetting() {
               var data = new google.visualization.DataTable();
               data.addColumn('string', 'Country');
               data.addColumn('number', 'Value');
-
-
-              data.addRows([
-                  ['New South Wales', 0.3],
-                  ['Queensland', 0.4],
-                  ['South Australia', 0.7],
-                  ['Tasmania', 0.2],
-                  ['Victoria', 0.4],
-                  ['Western Australia', 0.5],
-                  ['Northern Territory', 0.6]]);
-
-
+              {#data.addRows([#}
+              {#    ['New South Wales', 0.3],#}
+              {#    ['Queensland', 0.4],#}
+              {#    ['South Australia', 0.7],#}
+              {#    ['Tasmania', 0.2],#}
+              {#    ['Victoria', 0.4],#}
+              {#    ['Western Australia', 0.5],#}
+              {#    ['Northern Territory', 0.6]]);#}
+              data.addRows(map_data);
               var options = {
                   backgroundColor: {fill: '#FFFFFF', stroke: '#FFFFFF', strokeWidth: 0},
                   colorAxis: {
@@ -164,11 +179,11 @@
                   sizeAxis: {minValue: 1, maxValue: 1, minSize: 10, maxSize: 10},
                   region: 'AU',
                   keepAspectRatio: true,
-                  width: 1000,
-                  height: 450,
+                  width: 1400,
+                  height: 600,
+                  magnifyingGlass: {enable: true, zoomFactor: 7.5}
               };
               var chart = new google.visualization.GeoChart(document.getElementById('map'));
-
               chart.draw(data, options);
           }
       }
@@ -185,7 +200,6 @@
           let canvas = document.getElementById("chartCanvas");
           let ctx = getctx("chartCanvas");
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          console.log("clear canvas")
           if (barRadio.is(':checked')) {
 
               console.log("Barchart")
@@ -197,58 +211,75 @@
           }
       }
 
+      let states_name = Object.values(STATES_DICT);
+      let states_code = Object.keys(STATES_DICT);
+
       /**
        * draw radar chart
        *
        ***/
       function drawRadar() {
           let sins_degree = {};
-          let sins = [];
-          for (let state in STATE_LIST) {
-              let degree = [];
+          let sins = Object.keys(data_to_visualise);
+          let degree;
+          for (let state in STATES_DICT) {
+              degree = [];
               for (let sin in data_to_visualise) {
-                  degree.push(data_to_visualise[sin][request_state]["percentage_of_tweets"]);
-                  sins.push(sin);
+                  degree.push(data_to_visualise[sin][state]["percentage_of_tweets"]);
               }
               sins_degree[state] = degree;
           }
-          console.log("sins_degree", sins_degree);
+
           let ctx = getctx("chartCanvas");
+          let colors = [];
           let data = {
               labels: sins,
               datasets: [{
-                  backgroundColor: "red",
+                  {#backgroundColor: "red",#}
                   borderColor: "red",
-                  data: [10, 12, 12],
-                  label: 'D0',
+                  data: sins_degree[states_code[0]],
+                  label: states_name[0],
                   fill: false
               }, {
-                  backgroundColor: "blue",
+                  {#backgroundColor: "blue",#}
                   borderColor: "blue",
-                  data: [20, 22, 12],
-                  label: 'D1',
+                  data: sins_degree[states_code[1]],
+                  label: states_name[1],
                   fill: false
               }, {
-                  backgroundColor: "yellow",
+                  {#backgroundColor: "yellow",#}
                   borderColor: "yellow",
-                  data: [13, 32, 12],
-                  label: 'D2',
+                  data: sins_degree[states_code[2]],
+                  label: states_name[2],
                   fill: false
               }, {
-                  backgroundColor: "green",
+                  {#backgroundColor: "orange",#}
                   borderColor: "green",
-                  data: [15, 7, 43],
-                  label: 'D3',
+                  data: sins_degree[states_code[3]],
+                  label: states_name[3],
+                  fill: false
+              }, {
+                  {#backgroundColor: "gray",#}
+                  borderColor: "green",
+                  data: sins_degree[states_code[4]],
+                  label: states_name[4],
+                  fill: false
+              }, {
+                  {#backgroundColor: "#134",#}
+                  borderColor: "#134",
+                  data: sins_degree[states_code[5]],
+                  label: states_name[5],
                   fill: false
               }]
           };
 
           var options = {
-              maintainAspectRatio: true,
+              maintainAspectRatio: false,
+              responsive: true,
               spanGaps: false,
               elements: {
                   line: {
-                      tension: 0.000001
+                      tension: 0.00000001
                   }
               },
               plugins: {
@@ -275,11 +306,6 @@
           return ctx
       }
 
-      let STATE_LIST = {
-          "vic": "Victoria", "nsw": "New South Wales", "que": "Queenalsnd", "tas": "Tasmania"
-          , "south_au": "Southern Australia", "west_au": "Western Australia"
-      }
-
 
       /**
        * Draw Barchart
@@ -295,14 +321,13 @@
           let sorted = sorted_data.sort(function (x, y) {
               return x[1] - y[1]
           });
-          console.log("sort result: ", sorted);
           let sorted_aurin = [];
           let sorted_states = [];
           let twitter_data = [];
           for (let i = 0; i < sorted.length; i++) {
               let state = sorted[i][0];
               let aurin = sorted[i][1];
-              sorted_states.push(STATE_LIST[state]);
+              sorted_states.push(STATES_DICT[state]);
               sorted_aurin.push(aurin);
               twitter_data.push(data[state]["percentage_of_tweets"])
           }
@@ -313,7 +338,6 @@
               data: {
                   // areas location
                   labels: sorted_states,
-                  {#nsw, Queensland, Tasmania, west_au, south_au, vic #}
 
                   datasets: [{
                       label: "Percentage of " + request_sin + " Tweets",
@@ -372,7 +396,7 @@
               if (item.sin === selectedSin) {
                   for (let j in item.states) {
                       let state = item.states[j];
-                      let state_name = STATE_LIST[state];
+                      let state_name = STATES_DICT[state];
                       stateSelector.append($('<option/>', {'value': state, 'text': state_name}));
                   }
 
