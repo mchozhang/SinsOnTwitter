@@ -6,8 +6,9 @@ import couchdb
 from config import *
 
 tweet_index = set()
-couch = couchdb.Server("http://SinsOnTwitter:group68@172.26.38.38:5984")
-# couch = couchdb.Server("http://admin:admin@localhost:5984")
+couch = couchdb.Server(COUCHDB_URL)
+couch.resource.credentials = (COUCHDB_USER, COUCHDB_PW)
+
 
 tweet_database = couch[DB_TWEET]
 rows_NSW = tweet_database.view(VIEW_STATE_NSW)
@@ -122,7 +123,6 @@ if __name__ == "__main__":
     print("Total tweets based on Greed")
     wordlist_result_database["Greed"] = ratio_based_on_states(
         count_sin_twitter("../resources/sin_wordlists/money_greedy_wordlist", True, False))
-
     print("Total tweets based on Lust")
     wordlist_result_database["Lust"] = ratio_based_on_states(
         count_sin_twitter("../resources/sin_wordlists/SexualDirty_Lust_Wordlist", False, False))

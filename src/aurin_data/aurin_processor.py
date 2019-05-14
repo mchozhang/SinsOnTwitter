@@ -16,7 +16,6 @@ from collections import Counter
 from utils.config import *
 from utils.geo_utils import LgaMapper, Sa4Mapper
 
-
 couch = couchdb.Server(COUCHDB_URL)
 couch.resource.credentials = (COUCHDB_USER, COUCHDB_PW)
 

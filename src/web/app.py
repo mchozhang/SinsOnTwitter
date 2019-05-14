@@ -28,7 +28,10 @@ def home():
     home page
     :return: html template
     """
-    return render_template("home.html", option_list=option_list, state_list=get_state_list())
+    return render_template("home.html",
+                           option_list=option_list,
+                           state_list=get_state_list(),
+                           radar_result=search_radar_data())
 
 
 @app.route('/search', methods=['POST'])
@@ -73,7 +76,6 @@ def search_database(sin, keyword_list, state, database, sentiment):
     :param database: database name
     :return: (tweet rate, aurin data rate)
     """
-
     # if keyword is not provided, use the default word list
     if len(keyword_list) > 0:
         tweet_rate = get_tweet_rate(keyword_list, state, sentiment)
@@ -83,6 +85,24 @@ def search_database(sin, keyword_list, state, database, sentiment):
     aurin_data = get_aurin_data(database, state)
 
     return tweet_rate, aurin_data
+
+
+def search_radar_data():
+    """
+    get all the word list data to display the radar chart
+    :return:
+    """
+    result = {
+        "Wrath": {},
+        "Lust": {},
+        "Sloth": {},
+        "Greed": {},
+    }
+    for sin in result.keys():
+        for state in get_state_list():
+            result[sin][state] = get_wordlist_data(sin, state)
+    print(result)
+    return result
 
 
 if __name__ == '__main__':
