@@ -10,8 +10,8 @@ ACCESS_SECRET = "gvS8dNimn9aXEy4XlRGUixYelR6g6tqRyDVAgCe39wCnM"
 
 # couchdb
 COUCHDB_URL = "http://127.0.0.1:5984"
-COUCHDB_USER = "admin"
-COUCHDB_PW = "admin"
+COUCHDB_USER = "SinsOnTwitter"
+COUCHDB_PW = "group68"
 DB_TWEET = "tweet_database"
 DB_INDEX = "index_database"
 

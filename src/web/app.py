@@ -1,15 +1,18 @@
 # -*- encoding: utf-8 -*-
 #
 # flask app
+import sys
+import os
+
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+APP_STATIC = os.path.join(APP_ROOT, 'static')
+sys.path.append(os.path.join(APP_ROOT, ".."))
 
 from flask import Flask, render_template, jsonify, request
 from utils.database_utils import get_tweet_rate, get_aurin_data, get_wordlist_data
 from utils.geo_utils import get_state_list
 import json
-import os
 
-APP_ROOT = os.path.dirname(os.path.abspath(__file__))  # refers to application_top
-APP_STATIC = os.path.join(APP_ROOT, 'static')
 
 app = Flask(__name__, instance_relative_config=True)
 
@@ -59,7 +62,6 @@ def search():
             }
     except Exception as e:
         print(e)
-    print(result)
     return jsonify(result)
 
 
