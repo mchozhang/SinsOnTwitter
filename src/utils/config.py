@@ -15,6 +15,13 @@ COUCHDB_USER = "admin"
 COUCHDB_PW = "admin"
 DB_TWEET = "tweet_database"
 DB_INDEX = "index_database"
+
+DATABASE_ADULT_HEALTH = "adult_health"
+DATABASE_DOMESTIC_VIOLENCE = "domestic_violence"
+DATABASE_CRIME_RATE = "crime_rate"
+DATABASE_PERSONAL_INCOME = "personal_income"
+DATABASE_AURIN = "aurin_database"
+
 VIEW_TEXT_INDEX = "_design/frontEnd/_view/text_idList"
 VIEW_STATE_VIC = "_design/frontEnd/_view/state_VIC"
 VIEW_STATE_NSW = "_design/frontEnd/_view/state_NSW"

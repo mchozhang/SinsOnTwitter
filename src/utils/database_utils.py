@@ -5,17 +5,18 @@ utility to get data from database by specifying keywords, state and polarity
 import couchdb
 from .config import *
 
-# couch = couchdb.Server('http://localhost:5984/')
-# couch.resource.credentials = ("admin", "admin")
-couch = couchdb.Server('http://45.113.235.192:5984/')
-couch.resource.credentials = ("SinsOnTwitter", "group68")
+couch = couchdb.Server('http://localhost:5984/')
+couch.resource.credentials = ("admin", "admin")
+# couch = couchdb.Server('http://45.113.235.192:5984/')
+# couch.resource.credentials = ("SinsOnTwitter", "group68")
 
 
 index_database = couch[DB_INDEX]
 tweet_database = couch[DB_TWEET]
+aurin_database = couch[DATABASE_AURIN]
 
 
-def get_tweet_rate(keywords, state, polarity):
+def get_tweet_rate(keywords, state, polarity=0.5):
     """
     get the rate of tweets relevant with the keywords
     :param keywords: list of keywords
@@ -37,8 +38,7 @@ def get_tweet_rate(keywords, state, polarity):
             if tweet_polarity < polarity:
                 count += 1
 
-    result = float(count / total_tweet_number)
-    print(result)
+    result = float(count / total_tweet_number) * 100
     return result
 
 
@@ -84,3 +84,14 @@ def get_view_url(state):
         return VIEW_STATE_TASMANIA
 
     return VIEW_TWEET_INFO
+
+
+def get_aurin_data(key, state):
+    """
+    get data from aurin database
+    :param key: key in database
+    :param state: name of state
+    :return: aurin data
+    """
+    doc = aurin_database.get(key)
+    return doc.get(state) * 100
