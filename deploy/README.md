@@ -22,9 +22,8 @@ REQUEST LINKS:
 - [X] Include Script to run web server
 - [X] Test overall script 
 - [X] Did a draft on video
-- [] Docker Swarm Feature
 - [] Write Deployment Steps in Report
-- [] Write Report on system architecture and design
+- [x] Write Report on system architecture and design
 
 # Deployment Setup (running orchestration setup from scratch)
 1. Ensure that ansible is installed on your linux machine
