@@ -3,7 +3,7 @@
 ![alt text](images/systemarchitecture.png)
 
 # Deployment Setup (running orchestration setup of our system)
-=======
+
 # Todo:
 
 - [x] Create a security group for networking between the instances (openning port 5984,5986,9100-9200 and 4369)
@@ -17,7 +17,7 @@
 - [X] Include Script to run web server
 - [X] Test overall script 
 - [X] Did a draft on video
-- [] Write Deployment Steps in Report
+- [x] Write Deployment Steps in Report
 - [x] Write Report on system architecture and design
 
 # Deployment Setup (running orchestration setup from scratch)
