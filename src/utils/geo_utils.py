@@ -5,6 +5,8 @@ read LGA_StateMapping.csv, map lga to state
 import csv
 from collections import Counter
 
+states = ["Western Australia", "Queensland", "Tasmania",
+          "Victoria", "New South Wales", "South Australia"]
 
 class LgaMapper:
     def __init__(self):
@@ -39,7 +41,10 @@ class LgaMapper:
         :param lga_name: lga name
         :return: state name
         """
-        return self.state_name_dict.get(lga_name)
+        name = self.state_name_dict.get(lga_name)
+        if is_state(name):
+            return name
+        return None
 
     def get_state_code(self, lga_name):
         """
@@ -55,7 +60,7 @@ class LgaMapper:
         :param lga_name: lga name
         :return: LGA population
         """
-        return self.lga_population_dict.get(lga_name)
+        return self.lga_population_dict.get(lga_name, 0)
 
     def get_state_population(self, state_name):
         """
@@ -95,3 +100,11 @@ class Sa4Mapper:
         :return: state code
         """
         return self.state_code_dict.get(sa4_name)
+
+
+def is_state(name):
+    return name in states
+
+
+def get_state_list():
+    return states

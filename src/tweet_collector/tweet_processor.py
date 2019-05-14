@@ -390,6 +390,7 @@ class TweetProcessor:
         """
         with self.lock:
             doc = self.index_db.get(word)
+
         # if this word is not in the index database yet: create a new doc
         if doc is None:
             ids_dict = dict()
@@ -398,11 +399,13 @@ class TweetProcessor:
             self.index_db[word] = ids_dict
             self.debug_print("New word '" + word + "' has been registered, dealt with " + str(counter) + " words.")
             return
+
         # tweet_ids_in_memory = self.index[doc["_id"]]
         # avoid I/O if no change
         if set(doc.keys()) - TweetProcessor.KEYS_IGNORE == id_set:
             self.debug_print("No change for word '" + word + "', dealt with " + str(counter) + " words.")
             return
+
         # if the word is in index database and the list of ids are changed, update the database
         ids_to_be_updated = id_set - set(doc.keys())
         for tweet_id in ids_to_be_updated:
