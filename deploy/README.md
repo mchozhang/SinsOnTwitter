@@ -2,7 +2,27 @@
 
 ![alt text](images/systemarchitecture.png)
 
+<<<<<<< HEAD
 # Deployment Setup (running orchestration setup of our system)
+=======
+# Todo:
+
+- [x] Create a security group for networking between the instances (openning port 5984,5986,9100-9200 and 4369)
+- [x] Create three instances acting as three different nodes.
+- [x] Created and attached volumes (60 GB each) to each instance.
+- [x] Install DOCKER on each instance.
+- [x] Change sudo permisions on instance (Avoid running docker commands on sudo all the time).
+- [x] Run docker and run curl commands to setup couchdb cluster.
+- [x] Created Ansible Script to create CouchDB Instance.
+- [x] Creating a script that also runs twitter harvesters.
+- [X] Include Script to run web server
+- [X] Test overall script 
+- [X] Did a draft on video
+- [] Write Deployment Steps in Report
+- [x] Write Report on system architecture and design
+
+# Deployment Setup (running orchestration setup from scratch)
+>>>>>>> 150d54e7ee9e3401443a33d94558cd0731fef78d
 1. Ensure that ansible is installed on your linux machine
 2. Adjust/Set the following parameters in the variables folder (do not change anything else):
 	- couchdbDetails.yaml

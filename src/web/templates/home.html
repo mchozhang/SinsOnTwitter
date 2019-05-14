@@ -47,19 +47,6 @@
       </select>
     </li>
 
-    <!-- state selector -->
-    <li class="nav-item active">
-      <a class="nav-link">
-        <i class="fas fa-fw fa-globe-asia"></i>
-        <span>State in Australia</span>
-      </a>
-      <select class="custom-select" id="state-select" name="state-select">
-        {% for state in option_list[0].states %}
-          <option value="{{ state }}" class="dropdown-item">{{ state }}</option>
-        {% endfor %}
-      </select>
-    </li>
-
     <!-- database selector -->
     <li class="nav-item active">
       <a class="nav-link">
@@ -69,34 +56,52 @@
       <div class="radio-group" id="database-radio">
         {% for database in option_list[0].databases %}
           <div>
-            <input type="radio" id="{{ database }}" name="database">
-            <label for="{{ database }}">{{ database }}</label>
+            <label>
+              <input type="radio" name="database" id="{{ database.id }}"
+                     onclick="onDatabaseSelectChange('{{ database.name }}')"/>
+              {{ database.name }}
+            </label>
           </div>
         {% endfor %}
       </div>
     </li>
 
-    <hr class="sidebar-divider">
+    <!-- state selector -->
+    <li class="nav-item active">
+      <a class="nav-link">
+        <i class="fas fa-fw fa-globe-asia"></i>
+        <span>State</span>
+      </a>
+      <select class="custom-select" id="state-select" name="state-select">
+        {% for state in option_list[0].databases[0].states %}
+          <option value="{{ state }}" class="dropdown-item">{{ state }}</option>
+        {% endfor %}
+      </select>
+    </li>
 
     <!-- chart select -->
     <li class="nav-item active">
       <a class="nav-link">
-        <i class="fas fa-fw fa-chart-area"></i>
-        <span>Chart Type</span>
+        <i class="fas fa-fw fa-heartbeat"></i>
+        <span>Sentiment Value</span>
       </a>
-      <div class="radio-group" id="chart-radio">
-        <div>
-          <input type="radio" id="bar" name="chart" value="bar" checked>
-          <label for="bar">Bar Chart</label>
-        </div>
-        <div>
-          <input type="radio" id="radar" name="chart" value="radar">
-          <label for="radar">Radar Chart</label>
-        </div>
+      <div class="d-flex justify-content-center my-4">
+        <span class="font-weight-bold mr-2 mt-1 text-white">0</span>
+        <form class="range-field w-75">
+          <input type="range" class="custom-range" min="0" max="100" id="sentiment-slide" step="1">
+        </form>
+        <span class="font-weight-bold text-white ml-2 mt-1">100</span>
       </div>
     </li>
+
     <button class="btn btn-light" id="searchBtn" onclick="search()">
       Search
+    </button>
+
+    <hr class="sidebar-divider">
+
+    <button class="btn btn-light" id="radarBtn" onclick="showRadar()">
+      Display Sins Comparison of States
     </button>
 
   </ul>
@@ -107,377 +112,423 @@
   <div name="visualize" style="width: 80%; position: relative; left: 20px;top: 20px;">
     <div id="chartArea" style="height: 500px">
       <div id="title">
-        <tab>Twitter data Vs Aurin data</tab>
+        <tab>Twitter data VS Aurin data</tab>
       </div>
-      <div id="content" style="position: relative;width: 80%;height: 80%;left:30px ">
-        <canvas id="chartCanvas"></canvas>
+      <div id="content" style="position: relative;width: 50%;height: 80%;left:30px">
+        <canvas id="barChartCanvas"
+                style="position: absolute;width: 378px; top: -40px ;height: 400px;left: 150px;display: block;"></canvas>
       </div>
     </div>
 
-    <div id="map">
+    <!-- map -->
+    <div>
+      <tab id="map-header" style="display: block;position: absolute;top:50%"> Sin Map</tab>
+    </div>
+
+    <div style="position: absolute;width: 100%;top: 55%;left: 0px;">
+      <div id="map">
+      </div>
       <div class="title">
-        <tab style="display: block"> Map</tab>
       </div>
     </div>
+  </div>
 
+  <div id="radar-dialog" class="modal fade">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" style="height: 40rem">
+        <div style="height: 40rem">
+          <canvas id="radarChartCanvas"
+                  style="position: absolute;width: 378px; top: 0 ;height: 400px;left: 0;display: block;">
+          </canvas>
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock %}
 
 {% block javascript %}
   {{ super() }}
-  {# ----------------------- Map visualization part -----------------------------------------#}
   <script src='http://www.google.com/jsapi'></script>
   <script>
-      google.load('visualization', '1', {'packages': ['geochart']});
+    $(function () {
+      checkFirstDatabaseItem();
+      search();
+    });
 
-      function drawMap() {
-          google.setOnLoadCallback(mapSetting())
+    google.load('visualization', '1', {
+      'packages': ['geochart'], 'mapsApiKey': 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'
+    },);
 
-          function mapSetting() {
-              var data = new google.visualization.DataTable();
-              data.addColumn('string', 'Country');
-              data.addColumn('number', 'Value');
+    function drawMap(result, sin) {
+      $("#map-header").val("Sin Map - " + sin);
+      let map_data = [];
+      let states = {{ state_list|tojson }};
 
-
-              data.addRows([
-                  ['New South Wales', 0.3],
-                  ['Queensland', 0.4],
-                  ['South Australia', 0.7],
-                  ['Tasmania', 0.2],
-                  ['Victoria', 0.4],
-                  ['Western Australia', 0.5],
-                  ['Northern Territory', 0.6]]);
-
-
-              var options = {
-                  backgroundColor: {fill: '#FFFFFF', stroke: '#FFFFFF', strokeWidth: 0},
-                  colorAxis: {
-                      minValue: 0,
-                      maxValue: 1,
-                      colors: ['#e6ffe6', '#003300']
-                  },
-                  legend: 'Map of Sin On Twitter',
-                  backgroundColor: {fill: '#FFFFFF', stroke: '#FFFFFF', strokeWidth: 0},
-                  displayMode: 'region',
-                  enableRegionInteractivity: 'true',
-                  resolution: 'provinces',
-                  sizeAxis: {minValue: 1, maxValue: 1, minSize: 10, maxSize: 10},
-                  region: 'AU',
-                  keepAspectRatio: true,
-                  width: 1000,
-                  height: 450,
-              };
-              var chart = new google.visualization.GeoChart(document.getElementById('map'));
-
-              chart.draw(data, options);
+      for (let i in states) {
+        let state = states[i];
+        let tweet_rate = 0;
+        if (result[sin].hasOwnProperty(state)) {
+          tweet_rate = result[sin][state]["tweet_rate"];
+          if (state === "Tasmania") {
+            state = "AU-TAS";
           }
+        }
+        map_data.push([state, tweet_rate]);
       }
 
-      {#------------ Chart visualzation part---------------------------------------------- #}
+      map_data.push(["Northern Territory", 0]);
 
-      /**
-       * draw chart, either bar chart or radar chart
-       */
-      function drawChart() {
+      google.setOnLoadCallback(mapSetting());
 
-          let radarRadio = $('#radar');
-          let barRadio = $('#bar');
-          let canvas = document.getElementById("chartCanvas");
-          let ctx = getctx("chartCanvas");
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          console.log("clear canvas")
-          if (barRadio.is(':checked')) {
+      function mapSetting() {
+        let data = new google.visualization.DataTable();
+        data.addColumn('string', 'Country');
+        data.addColumn('number', 'Degree of ' + sin);
+        data.addRows(map_data);
+        let options = {
+          backgroundColor: {fill: '#FFFFFF', stroke: '#FFFFFF', strokeWidth: 0},
+          colorAxis: {
+            minValue: 0,
+            maxValue: 1,
+            colors: ['#e6ffe6', '#003300']
+          },
+          legend: 'Map of Sin On Twitter',
+          displayMode: 'region',
+          enableRegionInteractivity: 'true',
+          resolution: 'provinces',
+          sizeAxis: {minValue: 1, maxValue: 1, minSize: 10, maxSize: 10},
+          region: 'AU',
+          keepAspectRatio: true,
+          width: 800,
+          height: 500,
+          magnifyingGlass: {enable: true, zoomFactor: 7.5}
+        };
+        let chart = new google.visualization.GeoChart(document.getElementById('map'));
+        chart.draw(data, options);
+      }
+    }
 
-              console.log("Barchart")
-              drawBarChart();
-
-          } else if (radarRadio.is(':checked')) {
-              console.log("radarChart");
-              drawRadar();
-          }
+    /**
+     * draw radar chart
+     */
+    function drawRadar(result) {
+      if (Window.radar !== undefined) {
+        Window.radar.destroy();
       }
 
-      /**
-       * draw radar chart
-       *
-       ***/
-      function drawRadar() {
-          let sins_degree = {};
-          let sins = [];
-          for (let state in STATE_LIST) {
-              let degree = [];
-              for (let sin in data_to_visualise) {
-                  degree.push(data_to_visualise[sin][request_state]["percentage_of_tweets"]);
-                  sins.push(sin);
-              }
-              sins_degree[state] = degree;
+      let sins_degree = {};
+      let states = {{ state_list|tojson }};
+      let sins = Object.keys(result);
+      let degree;
+      for (let i in states) {
+        let state = states[i];
+        degree = [];
+        for (let sin in result) {
+          degree.push(result[sin][state]);
+        }
+        sins_degree[state] = degree;
+      }
+
+      let ctx = getCtx("radarChartCanvas");
+      let data = {
+        labels: sins,
+        datasets: [{
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255,99,132,1)',
+          data: sins_degree[states[0]],
+          label: states[0],
+          boarderWidth: 1,
+          fill: true
+        }, {
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          data: sins_degree[states[1]],
+          label: states[1],
+          boarderWidth: 1,
+          fill: true
+        }, {
+          backgroundColor: 'rgba(255, 206, 86, 0.2)',
+          borderColor: 'rgba(255, 206, 86, 1)',
+          data: sins_degree[states[2]],
+          label: states[2],
+          boarderWidth: 1,
+          fill: true
+        }, {
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          data: sins_degree[states[3]],
+          label: states[3],
+          boarderWidth: 1,
+          fill: true
+        }, {
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          borderColor: 'rgba(153, 102, 255, 1)',
+          data: sins_degree[states[4]],
+          label: states[4],
+          boarderWidth: 1,
+          fill: true
+        }, {
+          backgroundColor: 'rgba(255, 159, 64, 0.2)',
+          borderColor: 'rgba(255, 159, 64, 1)',
+          data: sins_degree[states[5]],
+          label: states[5],
+          boarderWidth: 1,
+          fill: true
+        }]
+      };
+
+      let options = {
+        scale: {
+          ticks: {
+            beginAtZero: true,
           }
-          console.log("sins_degree", sins_degree);
-          let ctx = getctx("chartCanvas");
-          let data = {
-              labels: sins,
-              datasets: [{
-                  backgroundColor: "red",
-                  borderColor: "red",
-                  data: [10, 12, 12],
-                  label: 'D0',
-                  fill: false
-              }, {
-                  backgroundColor: "blue",
-                  borderColor: "blue",
-                  data: [20, 22, 12],
-                  label: 'D1',
-                  fill: false
-              }, {
-                  backgroundColor: "yellow",
-                  borderColor: "yellow",
-                  data: [13, 32, 12],
-                  label: 'D2',
-                  fill: false
-              }, {
-                  backgroundColor: "green",
-                  borderColor: "green",
-                  data: [15, 7, 43],
-                  label: 'D3',
-                  fill: false
+        },
+        maintainAspectRatio: false,
+        responsive: true,
+        spanGaps: false,
+        elements: {
+          line: {
+            tension: 0.00000001
+          }
+        },
+        plugins: {
+          filler: {
+            propagate: false
+          },
+          'samples-filler-analyser': {
+            target: 'chart-analyser'
+          }
+        },
+        title: {
+          display: true,
+        }
+      };
+
+      Window.radar = new Chart(ctx, {
+        type: 'radar',
+        data: data,
+        options: options
+      })
+    }
+
+    /**
+     * Draw bar chart
+     */
+    function drawBarChart(result, sin, database_name) {
+      if (Window.bar !== undefined) {
+        Window.bar.destroy();
+      }
+
+      let ctx = getCtx('barChartCanvas');
+      let state_data = result[sin];
+      let sorted_data = [];
+      for (let state in state_data) {
+        sorted_data.push([state, state_data[state]["aurin_data"]]);
+      }
+      let sorted = sorted_data.sort(function (x, y) {
+        return x[1] - y[1]
+      });
+      let sorted_aurin = [];
+      let sorted_states = [];
+      let twitter_data = [];
+      for (let i = 0; i < sorted.length; i++) {
+        let state = sorted[i][0];
+        let aurin = sorted[i][1];
+        sorted_states.push(state);
+        sorted_aurin.push(aurin);
+        twitter_data.push(state_data[state]["tweet_rate"])
+      }
+
+      Window.bar = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          // areas location
+          labels: sorted_states,
+
+          datasets: [
+            {
+              label: "Rate of " + sin + " Tweets",
+              backgroundColor: "#3e95cd",
+              yAxisID: 'A',
+              data: twitter_data,
+              boarderWidth: 1
+            },
+            {
+              label: database_name,
+              backgroundColor: "#8e5ea2",
+              yAxisID: 'B',
+              data: sorted_aurin,
+              boarderWidth: 1
+            }
+          ]
+        },
+        options: {
+          mode: 'index',
+          label: true,
+          maintainAspectRatio: false,
+          responsive: true,
+          legend: {display: true},
+          title: {
+            display: true,
+          },
+          scales: {
+            yAxes: [
+              {
+                id: 'A',
+                position: 'left',
+                display: true,
+                ticks: {
+                  beginAtZero: true
+                }
+              },
+              {
+                id: 'B',
+                position: 'right',
+                display: true,
+                ticks: {
+                  beginAtZero: true
+                }
               }]
-          };
-
-          var options = {
-              maintainAspectRatio: true,
-              spanGaps: false,
-              elements: {
-                  line: {
-                      tension: 0.000001
-                  }
-              },
-              plugins: {
-                  filler: {
-                      propagate: false
-                  },
-                  'samples-filler-analyser': {
-                      target: 'chart-analyser'
-                  }
-              }
-          };
-
-          var chart = new Chart(ctx, {
-              type: 'radar',
-              data: data,
-              options: options
-          });
-
-      }
-
-      function getctx(canvas) {
-
-          let ctx = document.getElementById(canvas).getContext('2d');
-          return ctx
-      }
-
-      let STATE_LIST = {
-          "vic": "Victoria", "nsw": "New South Wales", "que": "Queenalsnd", "tas": "Tasmania"
-          , "south_au": "Southern Australia", "west_au": "Western Australia"
-      }
-
-
-      /**
-       * Draw Barchart
-       */
-      function drawBarChart() {
-          let ctx = getctx("chartCanvas");
-          let data = data_to_visualise[request_sin];
-          {#-----sort data --------#}
-          let sorted_data = [];
-          for (let state in data) {
-              sorted_data.push([state, data[state]["aurin_data"]]);
           }
-          let sorted = sorted_data.sort(function (x, y) {
-              return x[1] - y[1]
-          });
-          console.log("sort result: ", sorted);
-          let sorted_aurin = [];
-          let sorted_states = [];
-          let twitter_data = [];
-          for (let i = 0; i < sorted.length; i++) {
-              let state = sorted[i][0];
-              let aurin = sorted[i][1];
-              sorted_states.push(STATE_LIST[state]);
-              sorted_aurin.push(aurin);
-              twitter_data.push(data[state]["percentage_of_tweets"])
-          }
-          {#----end of sorting--------#}
-
-          new Chart(ctx, {
-              type: 'bar',
-              data: {
-                  // areas location
-                  labels: sorted_states,
-                  {#nsw, Queensland, Tasmania, west_au, south_au, vic #}
-
-                  datasets: [{
-                      label: "Percentage of " + request_sin + " Tweets",
-                      backgroundColor: "#3e95cd",
-                      data: twitter_data,
-                      boarderWidth: 1
-                  },
-                      {
-                          label: request_aurin,
-                          backgroundColor: "#8e5ea2",
-                          data: sorted_aurin,
-                          boarderWidth: 1
-                      }
-                  ]
-              },
-              options: {
-
-                  mode: 'index',
-                  label: true,
-                  maintainAspectRatio: false,
-                  responsive: true,
-                  legend: {display: true},
-                  title: {
-                      display: true,
-                  }
-
-              }
-          });
-
-
-      }
-
-
-      {# Get data #}
-
-
-      $(function () {
-          onSinSelectChange();
-          checkFirstDatabaseItem();
-          search();
+        }
       });
 
-      /**
-       * sin selector changed, dynamically change the state and database options
-       */
-      function onSinSelectChange() {
-          let options = {{ option_list|tojson }};
-          let selectedSin = $("#sin-select").val();
-          let stateSelector = $("#state-select");
-          let databaseRadios = $("#database-radio");
+    }
 
-          stateSelector.empty();
-          databaseRadios.empty();
-          for (let i in options) {
-              let item = options[i];
-              if (item.sin === selectedSin) {
-                  for (let j in item.states) {
-                      let state = item.states[j];
-                      let state_name = STATE_LIST[state];
-                      stateSelector.append($('<option/>', {'value': state, 'text': state_name}));
-                  }
+    function getCtx(canvas) {
+      return document.getElementById(canvas).getContext('2d');
+    }
 
-                  for (let j in item.databases) {
-                      let database = item.databases[j];
+    /**
+     * sin selector changed, dynamically change the state and database options
+     */
+    function onSinSelectChange() {
+      let options = {{ option_list|tojson }};
+      let selectedSin = $("#sin-select").val();
+      let stateSelector = $("#state-select");
+      let databaseRadios = $("#database-radio");
 
-                      // use database name as element id
-                      let radio = "<div>" +
-                          "<input type='radio' name='database' id='" + database + "'></input>" +
-                          "<label for='" + database + "'>" + database + "</label>" +
-                          "</div>";
-                      databaseRadios.append(radio);
-                  }
-                  checkFirstDatabaseItem();
-              }
+      stateSelector.empty();
+      databaseRadios.empty();
+      for (let i in options) {
+        let item = options[i];
+        if (item.sin === selectedSin) {
+          // database group
+          for (let j in item.databases) {
+            let database = item.databases[j];
+            let radio = "<div>" + "<label>" +
+                "<input type='radio' name='database' id='" + database.id +
+                "' onclick=\"onDatabaseSelectChange('" + database.name + "')\"></input>" +
+                database.name +
+                "</label>" + "</div>";
+            databaseRadios.append(radio);
           }
+          checkFirstDatabaseItem();
+
+          // state selector
+          for (let j in item.databases[0].states) {
+            let state = item.databases[0].states[j];
+            stateSelector.append($('<option/>', {'value': state, 'text': state}));
+          }
+          break;
+        }
       }
+    }
 
-      let request_state = "";
-      let request_sin = "";
-      let request_aurin = "";
-      let data_to_visualise = {};
+    function onDatabaseSelectChange(name) {
+      let options = {{ option_list|tojson }};
+      let selectedSin = $("#sin-select").val();
+      let stateSelector = $("#state-select");
 
-      /**
-       * click search button,
-       * submit form data by ajax
-       */
-      function search() {
-          let databaseGroup = $('#database-checkboxs');
-          let chartRadioGroup = $('#chart-radio');
-
-          let data = {
-              keywords: $("#keywords").tagsinput("items"),
-              sin: $("#sin-select").val(),
-              state: $("#state-select").val(),
-              database: getRadioValByName(databaseGroup, 'database'),
-              field: "test_field",
-              chart: getRadioValByName(chartRadioGroup, 'chart'),
-          };
-          request_sin = $("#sin-select").val();
-          request_state = $("#state-select").val()
-          request_aurin = getRadioValByName(databaseGroup, 'database')
-
-          let options = {
-              url: "{{ url_for('search') }}",
-              dataType: "json",
-              contentType: "application/json",
-              type: "post",
-              data: JSON.stringify(data),
-          };
-
-          $.ajax(options)
-              .done(function (responseText) {
-                  data_to_visualise = responseText;
-                  console.log(data_to_visualise);
-                  drawChart();
-                  drawMap();
-              });
-
+      stateSelector.empty();
+      for (let i in options) {
+        if (selectedSin === options[i].sin) {
+          for (let j in options[i].databases) {
+            let database = options[i].databases[j];
+            if (database.name === name) {
+              for (let k in database.states) {
+                let state = database.states[k];
+                stateSelector.append($('<option/>', {'value': state, 'text': state}));
+              }
+            }
+          }
+        }
       }
+    }
 
-      /**
-       * get value of the radio in the form
-       * get value of the radio in the form
-       * @param element radio group
-       * @param name name of the radio
-       * @returns value of the radio
-       */
-      function getRadioValByName(element, name) {
-          let val;
-          let radios = $('[name=' + name + ']');
+    function showRadar() {
+      $('#radar-dialog').modal("show");
+      let result = {{ radar_result|tojson }};
+      drawRadar(result);
+    }
 
-          for (let i = 0, len = radios.length; i < len; i++) {
-              if (radios[i].checked) {
-                  val = radios[i].value;
+    /**
+     * click search button,
+     * submit form data by ajax
+     */
+    function search() {
+      let selectedSin = $("#sin-select").val();
+      let selectedState = $("#state-select").val();
+      let selectedDatabase = getRadioValByName("database-radio", 'database');
+      let sentiment = $("#sentiment-slide").val();
+
+      let data = {
+        keywords: $("#keywords").tagsinput("items"),
+        sin: selectedSin,
+        state: selectedState,
+        database: selectedDatabase,
+        sentiment: sentiment,
+      };
+
+      let options = {
+        url: "{{ url_for('search') }}",
+        dataType: "json",
+        contentType: "application/json",
+        type: "post",
+        data: JSON.stringify(data),
+      };
+
+      $.ajax(options)
+          .done(function (responseText) {
+            let result = responseText;
+            let options = {{ option_list|tojson }};
+            let database_name = "";
+
+            for (let i in options) {
+              for (let j in options[i].databases) {
+                let database = options[i].databases[j];
+                if (database.id === selectedDatabase) {
+                  database_name = database.name;
                   break;
+                }
               }
-          }
-          return val;
-      }
+            }
 
-      /**
-       * get the list of selected databases
-       * @param element checkbox group
-       * @returns {Array} list of database name
-       */
-      function getSelectedCheckboxs(element) {
-          let checkboxs = $('[type=checkbox]');
-          let selectedList = [];
+            drawBarChart(result, selectedSin, database_name);
+            drawMap(result, selectedSin);
+          });
+    }
 
-          for (let i = 0, len = checkboxs.length; i < len; i++) {
-              if (checkboxs[i].checked) {
-                  selectedList.push($(checkboxs[i]).attr('id'));
-              }
-          }
-          return selectedList;
-      }
+    /**
+     * get value of the radio in the radio group
+     * @param element radio group
+     * @param name name of the radio
+     * @returns id of the radio
+     */
+    function getRadioValByName(element, name) {
+      let val;
+      let radio = $('[name=' + name + ']:checked');
+      val = radio.attr('id');
+      return val;
+    }
 
-      /**
-       * automaticalluy check the first radio button of the database list
-       */
-      function checkFirstDatabaseItem() {
-          let radios = $('[name=database]');
-          radios[0].checked = true;
-      }
+    /**
+     * automaticalluy check the first radio button of the database list
+     */
+    function checkFirstDatabaseItem() {
+      let radios = $('[name=database]');
+      radios[0].checked = true;
+    }
 
   </script>
 {% endblock %}
