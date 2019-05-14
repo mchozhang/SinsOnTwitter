@@ -1,10 +1,25 @@
 # -*- encoding: utf-8 -*-
 #
 # flask app
+import sys
+import os
+
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+APP_STATIC = os.path.join(APP_ROOT, 'static')
+sys.path.append(os.path.join(APP_ROOT, ".."))
 
 from flask import Flask, render_template, jsonify, request
+from utils.database_utils import get_tweet_rate, get_aurin_data, get_wordlist_data
+from utils.geo_utils import get_state_list
+import json
+
 
 app = Flask(__name__, instance_relative_config=True)
+
+# load json file to get options data
+with open(os.path.join(APP_STATIC, 'home_page_options.json')) as file:
+    options_json = json.load(file)
+    option_list = options_json["option_list"]
 
 
 @app.route('/')
@@ -13,138 +28,81 @@ def home():
     home page
     :return: html template
     """
-    # option_list = get_aurin_databases();
-    option_list = [
-        {"sin": "Wrath", "states": ["nsw"], "databases": ["Domestic Violence"]},
-        {"sin": "Greed", "states": ["south_au"],
-         "databases": [" Robbery And Extortion Offences Rate per 1000 Population"]},
-        {"sin": "Lust", "states": ["south_au"], "databases": ["Sexual Assaults Rate per 1000 Population"]},
-        {"sin": "Sloth", "states": ["all"],
-         "databases": ["Estimated Number of People Who Did Low or No Exercise – ASR per 100 Population"]},
-        {"sin": "Greed", "states": ["all"], "databases": ["Income Imbalance P80/P20"]},
-
-    ];
-
-    option = [
-        {"sin": "Wrath", "datasets": [{"states": "nsw", "database": ["Domestic Violence"]},
-                                      {"states": "south_au", "database": "Person assault"}]},
-
-        {"sin": "Greed", "datasets": [{"states": "south_au", "database": [" All Robbery And Extortion Offences"]}]},
-
-        {"sin": "Lust",
-         "datasets": [{"states": "south_au", "database": ["Sexual Assaults Rate per 1000 Population"]}]},
-
-        {"sin": "Sloth", "datasets": [{"states": "all", "database": [
-            "Estimated Number of People Who Did Low or No Exercise – ASR per 100 Population"]}]},
-
-    ];
-
-
-    return render_template("home.html", option_list=option_list)
-
-
-@app.route('/sin', methods=['GET'])
-def get_options():
-    """
-    get state and aurin database name option by choosing sin
-    :return:
-    """
-    result = dict()
-    try:
-        sin = request.json["sin"]
-    except Exception as e:
-        print(e)
-    return jsonify(result)
+    return render_template("home.html",
+                           option_list=option_list,
+                           state_list=get_state_list(),
+                           radar_result=search_radar_data())
 
 
 @app.route('/search', methods=['POST'])
 def search():
+    result = {
+        "Wrath": {},
+        "Lust": {},
+        "Sloth": {},
+        "Greed": {},
+    }
+
     try:
         keyword_list = request.json["keywords"]
         sin = request.json["sin"]
         state = request.json["state"]
         database = request.json["database"]
-        field = request.json["field"]
-        chart = request.json["chart"]
-
-        print(str(keyword_list))
-        print(str(database))
-        print(sin + " " + chart + " " + state)
-        return_data = {}
-
-        # get_aurin_data(database, field)
+        sentiment = request.json["sentiment"]
+        sentiment = float(sentiment) * 2 / 100 - 1
+        if state == 'All':
+            for state in get_state_list():
+                tweet_rate, aurin_data = search_database(sin, keyword_list, state, database, sentiment)
+                result[sin][state] = {
+                    "tweet_rate": tweet_rate,
+                    "aurin_data": aurin_data,
+                }
+        else:
+            tweet_rate, aurin_data = search_database(sin, keyword_list, state, database, sentiment)
+            result[sin][state] = {
+                "tweet_rate": tweet_rate,
+                "aurin_data": aurin_data,
+            }
     except Exception as e:
         print(e)
-    return_data = {
-        "Wrath": {
-            "vic":
-                {"percentage_of_tweets": 0.19, "aurin_data": 0.2},
-            "nsw":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.1},
-            "que":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.3},
-            "tas":
-                {"percentage_of_tweets": 0.2, "aurin_data": 0.3},
-            "west_au":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.5},
-            "south_au":
-                {"percentage_of_tweets": 0.09, "aurin_data": 0.8}},
+    return jsonify(result)
 
-        "Lust": {
-            "vic":
-                {"percentage_of_tweets": 0.19, "aurin_data": 0.4},
-            "nsw":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.23},
-            "que":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.6},
-            "tas":
-                {"percentage_of_tweets": 0.2, "aurin_data": 0.21},
-            "west_au":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.56},
-            "south_au":
-                {"percentage_of_tweets": 0.09, "aurin_data": 0.11}},
-        "Sloth":
-            {
-                "vic":
-                    {"percentage_of_tweets": 0.19, "aurin_data": 0.2},
-                "nsw":
-                    {"percentage_of_tweets": 0.5, "aurin_data": 0.03},
-                "que":
-                    {"percentage_of_tweets": 0.5, "aurin_data": 0.32},
-                "tas":
-                    {"percentage_of_tweets": 0.2, "aurin_data": 0.67},
-                "west_au":
-                    {"percentage_of_tweets": 0.5, "aurin_data": 0.5},
-                "south_au":
-                    {"percentage_of_tweets": 0.09, "aurin_data": 0.53}},
-        "Greed": {
-            "vic":
-                {"percentage_of_tweets": 0.19, "aurin_data": 0.62},
-            "nsw":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.16},
-            "que":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.43},
-            "tas":
-                {"percentage_of_tweets": 0.2, "aurin_data": 0.6},
-            "west_au":
-                {"percentage_of_tweets": 0.5, "aurin_data": 0.52},
-            "south_au":
-                {"percentage_of_tweets": 0.09, "aurin_data": 0.13}}
+
+def search_database(sin, keyword_list, state, database, sentiment):
+    """
+    call database utils to do the searching by specifying the factor
+    :param keyword_list: list of words
+    :param state: state name
+    :param database: database name
+    :return: (tweet rate, aurin data rate)
+    """
+    # if keyword is not provided, use the default word list
+    if len(keyword_list) > 0:
+        tweet_rate = get_tweet_rate(keyword_list, state, sentiment)
+    else:
+        tweet_rate = get_wordlist_data(sin, state)
+
+    aurin_data = get_aurin_data(database, state)
+
+    return tweet_rate, aurin_data
+
+
+def search_radar_data():
+    """
+    get all the word list data to display the radar chart
+    :return:
+    """
+    result = {
+        "Wrath": {},
+        "Lust": {},
+        "Sloth": {},
+        "Greed": {},
     }
-
-    return jsonify(return_data)
-
-
-
-@app.route('/geoChart')
-def geoChart():
-    return render_template("geoChart.html", key="AIzaSyCCenQXMA4w-cRUrMjs8AhK3_CqHy-E-SI")
-
-
-@app.route('/bar_chart')
-def bar():
-    return render_template("home.html", content="this is a testing")
-
+    for sin in result.keys():
+        for state in get_state_list():
+            result[sin][state] = get_wordlist_data(sin, state)
+    print(result)
+    return result
 
 
 if __name__ == '__main__':

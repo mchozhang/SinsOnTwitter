@@ -1,0 +1,65 @@
+{
+  "option_list": [
+    {
+      "sin": "Wrath",
+      "databases": [
+        {
+          "states": [
+            "New South Wales"
+          ],
+          "name": "Domestic Violence Rate",
+          "id": "violence_rate"
+        },
+        {
+          "states": [
+            "South Australia"
+          ],
+          "name": "Person Assault Rate",
+          "id": "person_offences_rate"
+        }
+      ]
+    },
+    {
+      "sin": "Greed",
+      "databases": [
+        {
+          "states": [
+            "South Australia"
+          ],
+          "name": "Robbery And Extortion Offences Rate",
+          "id": "robbery_rate"
+        }
+      ]
+    },
+    {
+      "sin": "Lust",
+      "databases": [
+        {
+          "states": [
+            "South Australia"
+          ],
+          "name": "Sexual Assault Rate",
+          "id": "sexual_offences_rate"
+        }
+      ]
+    },
+    {
+      "sin": "Sloth",
+      "databases": [
+        {
+          "states": [
+            "All",
+            "New South Wales",
+            "Queensland",
+            "South Australia",
+            "Tasmania",
+            "Victoria",
+            "Western Australia"
+          ],
+          "name": "Rate of People Did Low or No Exercise",
+          "id": "sloth_rate"
+        }
+      ]
+    }
+  ]
+}
