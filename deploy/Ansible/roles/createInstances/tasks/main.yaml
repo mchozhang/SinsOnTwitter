@@ -1,9 +1,13 @@
+# These tasks handle instance creation on Nectar using parameters from variables/instancedetails.yaml
+# (Referred from Alwyn's Code on Demo from Lectures)
 ---
-- name: Print Out the Details of the Instances Details to be Created
+
+- name: Printing out our to be created instances
   debug:
     msg: 'Creating: {{ item }}'
   loop: '{{ instance_list }}'
 
+# Creating our instances on Nectar using the os_server module
 - name: Create all instances
   os_server:
     name: '{{ item.instance_name }}'
@@ -20,6 +24,7 @@
   with_items: '{{ instance_list }}'
   register: 'instances'
 
+# Inserting created instance's IP addressed into our inventory file
 - name: Insert all created instances into workerservers variable in inventory file
   become: yes
   lineinfile: 

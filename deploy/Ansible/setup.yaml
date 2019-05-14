@@ -1,5 +1,5 @@
+# Playbook that sets up all common installations required for all machines
 ---
-#Playbook that Sets up common setup for all instances
 - name: Common Setup Tasks Between all Instances
   hosts: workerservers
   sudo: yes
