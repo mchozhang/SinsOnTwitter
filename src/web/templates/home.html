@@ -94,10 +94,14 @@
       </div>
     </li>
 
-    <hr class="sidebar-divider">
-
     <button class="btn btn-light" id="searchBtn" onclick="search()">
       Search
+    </button>
+
+    <hr class="sidebar-divider">
+
+    <button class="btn btn-light" id="radarBtn" onclick="showRadar()">
+      Display Sins Comparison of States
     </button>
 
   </ul>
@@ -108,35 +112,42 @@
   <div name="visualize" style="width: 80%; position: relative; left: 20px;top: 20px;">
     <div id="chartArea" style="height: 500px">
       <div id="title">
-        <tab>Twitter data Vs Aurin data</tab>
+        <tab>Twitter data VS Aurin data</tab>
       </div>
       <div id="content" style="position: relative;width: 50%;height: 80%;left:30px">
-
         <canvas id="barChartCanvas"
                 style="position: absolute;width: 378px; top: -40px ;height: 400px;left: 150px;display: block;"></canvas>
-
-        <canvas id="radarChartCanvas"
-                style="position: absolute;width: 378px; top: -40px ;height: 400px;left: 100px;display: block;"></canvas>
-
       </div>
     </div>
 
+    <!-- map -->
     <div>
       <tab id="map-header" style="display: block;position: absolute;top:50%"> Sin Map</tab>
     </div>
+
     <div style="position: absolute;width: 100%;top: 55%;left: 0px;">
       <div id="map">
       </div>
       <div class="title">
       </div>
     </div>
+  </div>
 
+  <div id="radar-dialog" class="modal fade">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" style="height: 40rem">
+        <div style="height: 40rem">
+          <canvas id="radarChartCanvas"
+                  style="position: absolute;width: 378px; top: 0 ;height: 400px;left: 0;display: block;">
+          </canvas>
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock %}
 
 {% block javascript %}
   {{ super() }}
-  {# ----------------------- Map visualization part -----------------------------------------#}
   <script src='http://www.google.com/jsapi'></script>
   <script>
     $(function () {
@@ -198,33 +209,22 @@
     }
 
     /**
-     * draw chart, either bar chart or radar chart
+     * draw radar chart
      */
-    function drawChart(result, sin, database_name) {
-      if (Window.bar !== undefined) {
-        Window.bar.destroy();
-      }
+    function drawRadar(result) {
       if (Window.radar !== undefined) {
         Window.radar.destroy();
       }
 
-      drawBarChart(result, sin, database_name);
-    }
-
-    let states_name = Object.values(STATES_DICT);
-    let states_code = Object.keys(STATES_DICT);
-
-    /**
-     * draw radar chart
-     */
-    function drawRadar(result, sin, database_name) {
       let sins_degree = {};
-      let sins = Object.keys(data_to_visualise);
+      let states = {{ state_list|tojson }};
+      let sins = Object.keys(result);
       let degree;
-      for (let state in STATES_DICT) {
+      for (let i in states) {
+        let state = states[i];
         degree = [];
-        for (let sin in data_to_visualise) {
-          degree.push(data_to_visualise[sin][state]["tweet_rate"]);
+        for (let sin in result) {
+          degree.push(result[sin][state]);
         }
         sins_degree[state] = degree;
       }
@@ -235,49 +235,54 @@
         datasets: [{
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderColor: 'rgba(255,99,132,1)',
-          data: sins_degree[states_code[0]],
-          label: states_name[0],
+          data: sins_degree[states[0]],
+          label: states[0],
           boarderWidth: 1,
           fill: true
         }, {
           backgroundColor: 'rgba(54, 162, 235, 0.2)',
           borderColor: 'rgba(54, 162, 235, 1)',
-          data: sins_degree[states_code[1]],
-          label: states_name[1],
+          data: sins_degree[states[1]],
+          label: states[1],
           boarderWidth: 1,
           fill: true
         }, {
           backgroundColor: 'rgba(255, 206, 86, 0.2)',
           borderColor: 'rgba(255, 206, 86, 1)',
-          data: sins_degree[states_code[2]],
+          data: sins_degree[states[2]],
+          label: states[2],
           boarderWidth: 1,
-          label: states_name[2],
           fill: true
         }, {
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
           borderColor: 'rgba(75, 192, 192, 1)',
-          data: sins_degree[states_code[3]],
-          label: states_name[3],
+          data: sins_degree[states[3]],
+          label: states[3],
           boarderWidth: 1,
           fill: true
         }, {
           backgroundColor: 'rgba(153, 102, 255, 0.2)',
           borderColor: 'rgba(153, 102, 255, 1)',
-          data: sins_degree[states_code[4]],
-          label: states_name[4],
+          data: sins_degree[states[4]],
+          label: states[4],
           boarderWidth: 1,
           fill: true
         }, {
           backgroundColor: 'rgba(255, 159, 64, 0.2)',
           borderColor: 'rgba(255, 159, 64, 1)',
-          data: sins_degree[states_code[5]],
-          label: states_name[5],
+          data: sins_degree[states[5]],
+          label: states[5],
           boarderWidth: 1,
           fill: true
         }]
       };
 
       let options = {
+        scale: {
+          ticks: {
+            beginAtZero: true,
+          }
+        },
         maintainAspectRatio: false,
         responsive: true,
         spanGaps: false,
@@ -299,7 +304,6 @@
         }
       };
 
-
       Window.radar = new Chart(ctx, {
         type: 'radar',
         data: data,
@@ -311,6 +315,10 @@
      * Draw bar chart
      */
     function drawBarChart(result, sin, database_name) {
+      if (Window.bar !== undefined) {
+        Window.bar.destroy();
+      }
+
       let ctx = getCtx('barChartCanvas');
       let state_data = result[sin];
       let sorted_data = [];
@@ -448,6 +456,12 @@
       }
     }
 
+    function showRadar() {
+      $('#radar-dialog').modal("show");
+      let result = {{ radar_result|tojson }};
+      drawRadar(result);
+    }
+
     /**
      * click search button,
      * submit form data by ajax
@@ -490,7 +504,7 @@
               }
             }
 
-            drawChart(result, selectedSin, database_name);
+            drawBarChart(result, selectedSin, database_name);
             drawMap(result, selectedSin);
           });
     }
