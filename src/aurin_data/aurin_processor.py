@@ -3,16 +3,22 @@
 # 1.clean aurin database
 # 2.import aurin data into couchdb
 
+
+import sys
+import os
+
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(APP_ROOT, ".."))
+
 import csv
 import couchdb
 from collections import Counter
 from utils.config import *
 from utils.geo_utils import LgaMapper, Sa4Mapper
 
-couch = couchdb.Server('http://localhost:5984/')
-couch.resource.credentials = ("admin", "admin")
-# couch = couchdb.Server('http://45.113.235.192:5984/')
-# couch.resource.credentials = ("SinsOnTwitter", "group68")
+
+couch = couchdb.Server(COUCHDB_URL)
+couch.resource.credentials = (COUCHDB_USER, COUCHDB_PW)
 
 FILE_ADULT_HEALTH = "../resources/adult_health_risk_factor_estimates.csv"
 FILE_CRIME_RATE = "../resources/crime_rate_2011_for_south_australia.csv"

@@ -5,10 +5,8 @@ utility to get data from database by specifying keywords, state and polarity
 import couchdb
 from .config import *
 
-couch = couchdb.Server('http://localhost:5984/')
-couch.resource.credentials = ("admin", "admin")
-# couch = couchdb.Server('http://45.113.235.192:5984/')
-# couch.resource.credentials = ("SinsOnTwitter", "group68")
+couch = couchdb.Server(COUCHDB_URL)
+couch.resource.credentials = (COUCHDB_USER, COUCHDB_PW)
 
 
 index_database = couch[DB_INDEX]

@@ -6,9 +6,8 @@ import couchdb
 from config import *
 
 tweet_index = set()
-# couchserver = couchdb.Server("http://SinsOnTwitter:group68@172.26.38.38:5984")
-# couchserver = couchdb.Server("http://SinsOnTwitter:group68@45.113.235.192:5984")
-couch = couchdb.Server("http://admin:admin@localhost:5984")
+couch = couchdb.Server("http://SinsOnTwitter:group68@172.26.38.38:5984")
+# couch = couchdb.Server("http://admin:admin@localhost:5984")
 
 tweet_database = couch[DB_TWEET]
 rows_NSW = tweet_database.view(VIEW_STATE_NSW)
