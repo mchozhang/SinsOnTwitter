@@ -79,25 +79,23 @@
       </select>
     </li>
 
-    <hr class="sidebar-divider">
-
     <!-- chart select -->
     <li class="nav-item active">
       <a class="nav-link">
-        <i class="fas fa-fw fa-chart-area"></i>
-        <span>Chart Type</span>
+        <i class="fas fa-fw fa-heartbeat"></i>
+        <span>Sentiment Value</span>
       </a>
-      <div class="radio-group" id="chart-radio">
-        <div>
-          <input type="radio" id="bar" name="chart" value="bar" checked>
-          <label for="bar">Bar Chart</label>
-        </div>
-        <div>
-          <input type="radio" id="radar" name="chart" value="radar">
-          <label for="radar">Radar Chart</label>
-        </div>
+      <div class="d-flex justify-content-center my-4">
+        <span class="font-weight-bold mr-2 mt-1 text-white">0</span>
+        <form class="range-field w-75">
+          <input type="range" class="custom-range" min="0" max="100" id="sentiment-slide" step="1">
+        </form>
+        <span class="font-weight-bold text-white ml-2 mt-1">100</span>
       </div>
     </li>
+
+    <hr class="sidebar-divider">
+
     <button class="btn btn-light" id="searchBtn" onclick="search()">
       Search
     </button>
@@ -121,7 +119,6 @@
                 style="position: absolute;width: 378px; top: -40px ;height: 400px;left: 100px;display: block;"></canvas>
 
       </div>
-
     </div>
 
     <div>
@@ -154,7 +151,6 @@
     function drawMap(result, sin) {
       $("#map-header").val("Sin Map - " + sin);
       let map_data = [];
-
       let states = {{ state_list|tojson }};
 
       for (let i in states) {
@@ -162,6 +158,9 @@
         let tweet_rate = 0;
         if (result[sin].hasOwnProperty(state)) {
           tweet_rate = result[sin][state]["tweet_rate"];
+          if (state === "Tasmania") {
+            state = "AU-TAS";
+          }
         }
         map_data.push([state, tweet_rate]);
       }
@@ -209,14 +208,7 @@
         Window.radar.destroy();
       }
 
-      let radarRadio = $('#radar');
-      let barRadio = $('#bar');
-
-      if (barRadio.is(':checked')) {
-        drawBarChart(result, sin, database_name);
-      } else if (radarRadio.is(':checked')) {
-        drawRadar(result);
-      }
+      drawBarChart(result, sin, database_name);
     }
 
     let states_name = Object.values(STATES_DICT);
@@ -345,15 +337,18 @@
           // areas location
           labels: sorted_states,
 
-          datasets: [{
-            label: "Rate of " + sin + " Tweets",
-            backgroundColor: "#3e95cd",
-            data: twitter_data,
-            boarderWidth: 1
-          },
+          datasets: [
+            {
+              label: "Rate of " + sin + " Tweets",
+              backgroundColor: "#3e95cd",
+              yAxisID: 'A',
+              data: twitter_data,
+              boarderWidth: 1
+            },
             {
               label: database_name,
               backgroundColor: "#8e5ea2",
+              yAxisID: 'B',
               data: sorted_aurin,
               boarderWidth: 1
             }
@@ -367,9 +362,29 @@
           legend: {display: true},
           title: {
             display: true,
+          },
+          scales: {
+            yAxes: [
+              {
+                id: 'A',
+                position: 'left',
+                display: true,
+                ticks: {
+                  beginAtZero: true
+                }
+              },
+              {
+                id: 'B',
+                position: 'right',
+                display: true,
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
           }
         }
       });
+
     }
 
     function getCtx(canvas) {
@@ -441,12 +456,14 @@
       let selectedSin = $("#sin-select").val();
       let selectedState = $("#state-select").val();
       let selectedDatabase = getRadioValByName("database-radio", 'database');
+      let sentiment = $("#sentiment-slide").val();
 
       let data = {
         keywords: $("#keywords").tagsinput("items"),
         sin: selectedSin,
         state: selectedState,
         database: selectedDatabase,
+        sentiment: sentiment,
       };
 
       let options = {
