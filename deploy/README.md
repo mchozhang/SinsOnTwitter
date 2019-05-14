@@ -2,7 +2,6 @@
 
 ![alt text](images/systemarchitecture.png)
 
-<<<<<<< HEAD
 # Deployment Setup (running orchestration setup of our system)
 =======
 # Todo:
@@ -22,7 +21,6 @@
 - [x] Write Report on system architecture and design
 
 # Deployment Setup (running orchestration setup from scratch)
->>>>>>> 150d54e7ee9e3401443a33d94558cd0731fef78d
 1. Ensure that ansible is installed on your linux machine
 2. Adjust/Set the following parameters in the variables folder (do not change anything else):
 	- couchdbDetails.yaml
