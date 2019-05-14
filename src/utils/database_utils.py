@@ -14,14 +14,15 @@ couch.resource.credentials = ("admin", "admin")
 index_database = couch[DB_INDEX]
 tweet_database = couch[DB_TWEET]
 aurin_database = couch[DATABASE_AURIN]
+wordlist_database = couch[DATABASE_WORDLIST_RESULT]
 
 
-def get_tweet_rate(keywords, state, polarity=0.5):
+def get_tweet_rate(keywords, state, sentiment):
     """
     get the rate of tweets relevant with the keywords
     :param keywords: list of keywords
     :param state: state name
-    :param polarity: maximum sentimental value, in range of (-1, 1)
+    :param sentiment: maximum sentimental value, in range of (-1, 1)
     :return: rate in percentage
     """
     tweet_id_list = get_tweets_by_words(keywords)
@@ -35,7 +36,7 @@ def get_tweet_rate(keywords, state, polarity=0.5):
         view_result = view[tweets_id]
         if len(view_result.rows) > 0:
             tweet_polarity = view_result.rows[0].value[3]
-            if tweet_polarity < polarity:
+            if tweet_polarity < sentiment:
                 count += 1
 
     result = float(count / total_tweet_number) * 100
@@ -95,3 +96,14 @@ def get_aurin_data(key, state):
     """
     doc = aurin_database.get(key)
     return doc.get(state) * 100
+
+
+def get_wordlist_data(sin, state):
+    """
+    get result of the tweet rate containing word of the default word list
+    :param sin: sin name
+    :param state: state name
+    :return: tweet rate
+    """
+    return wordlist_database[sin][state] * 100
+

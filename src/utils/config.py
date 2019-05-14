@@ -1,21 +1,21 @@
 """
-a file containing constants used by the project
+configuration infomation
 """
 
-
-# used by Twitter API
+# Twitter API
 CONSUMER_KEY = "byUjJi1Lei5neEtXKSu5fXF2V"
 CONSUMER_SECRET = "YMIwosYvlXLGWTGjvcanIrY8CS0VMALe4gTzHW9NwBFp1EN19Q"
 ACCESS_TOKEN = "936234839644049408-tijdNM5WHobuVOOhLAd3sXftJ16ktZM"
 ACCESS_SECRET = "gvS8dNimn9aXEy4XlRGUixYelR6g6tqRyDVAgCe39wCnM"
 
-# used by couchdb, this is for local testing.
+# couchdb
 COUCHDB_URL = "http://127.0.0.1:5984"
 COUCHDB_USER = "admin"
 COUCHDB_PW = "admin"
 DB_TWEET = "tweet_database"
 DB_INDEX = "index_database"
 
+DATABASE_WORDLIST_RESULT = "wordlist_results"
 DATABASE_ADULT_HEALTH = "adult_health"
 DATABASE_DOMESTIC_VIOLENCE = "domestic_violence"
 DATABASE_CRIME_RATE = "crime_rate"

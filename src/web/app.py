@@ -3,12 +3,12 @@
 # flask app
 
 from flask import Flask, render_template, jsonify, request
-from utils.database_utils import get_tweet_rate, get_aurin_data
+from utils.database_utils import get_tweet_rate, get_aurin_data, get_wordlist_data
 from utils.geo_utils import get_state_list
 import json
 import os
 
-APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))  # refers to application_top
 APP_STATIC = os.path.join(APP_ROOT, 'static')
 
 app = Flask(__name__, instance_relative_config=True)
@@ -42,16 +42,17 @@ def search():
         sin = request.json["sin"]
         state = request.json["state"]
         database = request.json["database"]
-        print(database)
+        sentiment = request.json["sentiment"]
+        sentiment = float(sentiment) * 2 / 100 - 1
         if state == 'All':
             for state in get_state_list():
-                tweet_rate, aurin_data = search_database(keyword_list, state, database)
+                tweet_rate, aurin_data = search_database(sin, keyword_list, state, database, sentiment)
                 result[sin][state] = {
                     "tweet_rate": tweet_rate,
                     "aurin_data": aurin_data,
                 }
         else:
-            tweet_rate, aurin_data = search_database(keyword_list, state, database)
+            tweet_rate, aurin_data = search_database(sin, keyword_list, state, database, sentiment)
             result[sin][state] = {
                 "tweet_rate": tweet_rate,
                 "aurin_data": aurin_data,
@@ -62,7 +63,7 @@ def search():
     return jsonify(result)
 
 
-def search_database(keyword_list, state, database):
+def search_database(sin, keyword_list, state, database, sentiment):
     """
     call database utils to do the searching by specifying the factor
     :param keyword_list: list of words
@@ -73,9 +74,9 @@ def search_database(keyword_list, state, database):
 
     # if keyword is not provided, use the default word list
     if len(keyword_list) > 0:
-        tweet_rate = get_tweet_rate(keyword_list, state)
+        tweet_rate = get_tweet_rate(keyword_list, state, sentiment)
     else:
-        tweet_rate = 0.2
+        tweet_rate = get_wordlist_data(sin, state)
 
     aurin_data = get_aurin_data(database, state)
 
