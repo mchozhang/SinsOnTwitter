@@ -1,4 +1,7 @@
+# Tasks here are used to setup the web server on each instance
+
 ---
+
 - name: Update Machine 
   become: yes
   apt:

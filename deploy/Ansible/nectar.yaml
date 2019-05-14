@@ -1,4 +1,5 @@
-# Deploying instances and security groups
+# Playbook to deploy and create instances on Nectar
+---
 - name: Creating Instances On Nectar
   hosts: localhost
   sudo: yes

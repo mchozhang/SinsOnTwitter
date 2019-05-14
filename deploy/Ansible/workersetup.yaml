@@ -1,5 +1,7 @@
+#Playbook to set up Each Worker Node (some including master)
 ---
-#Playbook that Sets up the CouchDB and twitter harvester instances
+
+# Play to Set up common CouchDB configurations on all CouchDB nodes
 - name: Setting Up Common Configurations on CouchDB Nodes
   hosts: workerservers
   vars_files:
@@ -10,9 +12,10 @@
   roles:
      - role: configureCouchDB_Common
 
-#Perform UUID curl commands to have same UUIDs for cookie authentication
+# Perform UUID curl commands to have same UUIDs for cookie authentication
 - name: Configuring UUIDs for each node
-  hosts: localhost #Running Curl Commands from local machine to get common UUIDs across
+  #Running Curl Commands from local machine making request to master to have common UUIDs
+  hosts: localhost 
   vars_files:
     - variables/couchdbDetails.yaml
     - variables/passwords.yaml
@@ -20,7 +23,7 @@
   roles:
      - role: configureCouchDB_UUIDS
 
-#Set the first IP in dbservers as the Master and run cluster setup
+# Run Cluster Setup Commands on the Master Node
 - name: Configuring Cluster Setup from Master Node
   hosts: workerservers[0] #We choose this as master node
   vars_files:
@@ -31,7 +34,7 @@
   roles:
      - role: configureCouchDB_Cluster
 
-#Setup and run Twitter Harvester on Master Node
+# Setup and run Twitter Harvester on Master Node
 - name: Setup and Run Twitter Harvesters
   hosts: workerservers[0] #We choose this as master node
   vars_files:
@@ -43,7 +46,7 @@
   roles:
     - role: setupHarvester
 
-#Set Web Servers on each worker node
+# Set Web Servers on every node
 - name: Setup Web Servers
   hosts: workerservers
   gather_facts: yes
@@ -52,3 +55,13 @@
     - variables/passwords.yaml
   roles:
     - role: setupWebServer
+
+# Print output messages for successful cluster setup
+- name: Print Successful Cluster Setup
+  hosts: workerservers
+  vars_files:
+    - variables/couchdbDetails.yaml
+    - variables/gitDetails.yaml
+    - variables/passwords.yaml
+  roles:
+    - role: clusterOutput
