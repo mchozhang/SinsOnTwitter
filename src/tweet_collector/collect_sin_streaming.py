@@ -6,16 +6,23 @@ command line arguments:
 """
 
 import sys
-
+import logging
+import os
 from sin_collector import SinCollector
-from constants import *
-from log import Log
+from configparser import ConfigParser
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+config_path = os.path.join(basedir, "config/logging.ini")
+logging.basicConfig(filename=config_path, level=logging.DEBUG)
+logger = logging.getLogger()
+
+config = ConfigParser()
+config.read(os.path.join(basedir, 'config/collector.ini'))
 
 sin_collector = None
-db_url = COUCHDB_URL
-db_user = COUCHDB_USER
-db_pw = COUCHDB_PW
+db_url = config.get('database', "COUCHDB_URL")
+db_user = config.get('database', "COUCHDB_USER")
+db_pw = config.get('database', "COUCHDB_PW")
 
 try:
     if len(sys.argv) <= 1:
@@ -25,15 +32,15 @@ try:
         # when given db information
         _, db_url, db_user, db_pw = sys.argv
     else:
-        raise Exception("Wrong number of arguments. See ReadMe.")
+        raise Exception("Wrong arguments")
 
-    sin_collector = SinCollector(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_SECRET,
-                                 db_url, db_user, db_pw, TWEET_DB_NAME, INDEX_DB_NAME)
+    sin_collector = SinCollector(db_url, db_user, db_pw)
 
     if sin_collector:
-        sin_collector.start_streaming_location(AUSTRALIA_GEO)
+        locations = [float(x) for x in config.get('geo', 'AUSTRALIA_GEO').split(",")]
+        sin_collector.start_streaming_location(locations)
     else:
-        raise Exception("collector creation failed.")
+        raise Exception("Failed to create collector")
 except Exception as error:
     print(repr(error))
-    Log.write_log(repr(error))
+    logger.info(repr(error))

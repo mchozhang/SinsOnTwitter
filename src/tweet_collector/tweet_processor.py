@@ -11,6 +11,9 @@ import re
 import threading
 import csv
 import json
+import os
+
+basedir = os.path.dirname(os.path.abspath(__file__))
 
 
 class DatabaseNotFoundError(Exception):
@@ -162,7 +165,7 @@ class TweetProcessor:
         coordinate1x = polygon_coordinates[1][0]
         coordinate2x = polygon_coordinates[2][0]
         coordinate3x = polygon_coordinates[3][0]
-        # x= a+(b-a/2)
+        # x = a + (b - a / 2)
         return coordinate0x + (coordinate1x - coordinate0x) / 2
 
     @staticmethod
@@ -176,19 +179,19 @@ class TweetProcessor:
         coordinate1y = polygon_coordinates[1][1]
         coordinate2y = polygon_coordinates[2][1]
         coordinate3y = polygon_coordinates[3][1]
-        # y=a+(c-a/2)
+        # y = a + (c - a / 2)
         return coordinate0y + (coordinate2y - coordinate0y) / 2
 
     def load_lga_info(self):
         """
         load lga information from file
         """
-        with open("resources/LGA_Codes_and_Names.csv", "r", encoding='utf-8') as fd:
+        with open(os.path.join(basedir, "resources/LGA_Codes_and_Names.csv")) as fd:
             reader = csv.reader(fd)
             for row in reader:
                 self.lga_codes_and_names[row[1]] = row[0]
 
-        with open("resources/aus_lga.geojson", "rb") as f:
+        with open(os.path.join(basedir, "resources/aus_lga.geojson"), "rb") as f:
             line = f.read()
             line = line.decode('utf-8')
             load_line = json.loads(line)
@@ -197,7 +200,7 @@ class TweetProcessor:
                 self.lga_coordinate_holder[list_of_lgajson[i]['properties']['Name']] = \
                     list_of_lgajson[i]['geometry']['coordinates'][0][0]
 
-        with open("resources/LGA_StateMapping.csv", "r", encoding='utf-8') as fd:
+        with open(os.path.join(basedir, "resources/LGA_StateMapping.csv")) as fd:
             reader = csv.reader(fd)
             for row in reader:
                 self.statename_lganame[row[2]] = row[0]  # {lganame:statename}

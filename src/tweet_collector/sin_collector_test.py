@@ -4,12 +4,19 @@ a test file for SinCollector
 
 
 from sin_collector import SinCollector
-from constants import *
+from configparser import ConfigParser
 import datetime
+import os
 
+basedir = os.path.abspath(os.path.dirname(__file__))
 
-sin_collector = SinCollector(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_SECRET,
-                             COUCHDB_URL, COUCHDB_USER, COUCHDB_PW, TWEET_DB_NAME, INDEX_DB_NAME)
+config = ConfigParser()
+config.read(os.path.join(basedir, 'config/collector.ini'))
+
+db_url = config.get('database', "COUCHDB_URL")
+db_user = config.get('database', "COUCHDB_USER")
+db_pw = config.get('database', "COUCHDB_PW")
+sin_collector = SinCollector(db_url, db_user, db_pw)
 
 
 def test_timeline():
@@ -23,7 +30,8 @@ def test_streaming_keywords():
 
 
 def test_streaming_location():
-    sin_collector.start_streaming_location(AUSTRALIA_GEO)
+    locations = [float(x) for x in config.get('geo', 'AUSTRALIA_GEO').split(",")]
+    sin_collector.start_streaming_location(locations)
 
 
 def test_get_place_id():
@@ -58,14 +66,7 @@ def test_views():
 
 
 def run_tests():
-    # test_timeline()
-    # test_streaming_keywords()
-    # test_streaming_location()
-    # test_get_place_id()
-    # test_search_location()
-    # test_iterate()
-    test_build_index()
-    # test_views()
+    test_search_location()
 
 
 start_time = datetime.datetime.now()

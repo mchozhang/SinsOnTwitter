@@ -43,7 +43,8 @@ pip install -r requirements.txt
 ### run docker for couchdb
 run docker couchdb image to have couchdb container run 
 ```
-docker run --name sin_database -v <custom_empty_folder>:/opt/couchdb/data -p 5984:5984 -d couchdb
+mkdir -f /home/couchdb/data
+docker run --name sin_database -v /home/couchdb/data:/opt/couchdb/data -p 5984:5984 -d couchdb
 ```
 
 ### tweet harvester
