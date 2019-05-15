@@ -2,11 +2,16 @@
 utility class
 read LGA_StateMapping.csv, map lga to state
 """
+
 import csv
 from collections import Counter
+import os
+
+basedir = os.path.dirname(os.path.abspath(__file__))
 
 states = ["Western Australia", "Queensland", "Tasmania",
           "Victoria", "New South Wales", "South Australia"]
+
 
 class LgaMapper:
     def __init__(self):
@@ -15,7 +20,7 @@ class LgaMapper:
         self.lga_population_dict = dict()
         self.state_population_counter = Counter()
 
-        with open("../resources/LGA_StateMapping.csv") as file:
+        with open(os.path.join(basedir, "../resources/LGA_StateMapping.csv")) as file:
             reader = csv.reader(file)
             head_row = next(reader)
             for row in reader:
@@ -24,7 +29,7 @@ class LgaMapper:
                 # map LGA name to state code, e.g. { "melbourne" : "2" }
                 self.state_code_dict[row[2]] = row[1]
 
-        with open("../resources/LGA_Codes_and_Names.csv") as file:
+        with open(os.path.join(basedir, "../resources/LGA_Codes_and_Names.csv")) as file:
             reader = csv.reader(file)
             head_row = next(reader)
             for row in reader:
@@ -75,7 +80,7 @@ class Sa4Mapper:
     def __init__(self):
         self.state_name_dict = dict()
         self.state_code_dict = dict()
-        with open("../resources/SA4_2016_AUST.csv") as file:
+        with open(os.path.join(basedir, "../resources/SA4_2016_AUST.csv")) as file:
             reader = csv.reader(file)
             head_row = next(reader)
             for row in reader:

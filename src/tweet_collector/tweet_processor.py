@@ -17,7 +17,6 @@ class DatabaseNotFoundError(Exception):
     """
     raise when database is None
     """
-
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
 
@@ -106,8 +105,10 @@ class TweetProcessor:
         if blob is None:
             return {TweetProcessor.POLARITY: 0, TweetProcessor.SUBJECTIVITY: 0}
         else:
-            return {TweetProcessor.POLARITY: blob.sentiment.polarity,
-                    TweetProcessor.SUBJECTIVITY: blob.sentiment.subjectivity}
+            return {
+                TweetProcessor.POLARITY: blob.sentiment.polarity,
+                TweetProcessor.SUBJECTIVITY: blob.sentiment.subjectivity
+            }
 
     @staticmethod
     def deep_copy_dict(from_dict: dict, to_dict: dict):
@@ -182,13 +183,12 @@ class TweetProcessor:
         """
         load lga information from file
         """
-        with open("LGA_Codes_and_Names.csv", "r", encoding='utf-8') as fd:
+        with open("resources/LGA_Codes_and_Names.csv", "r", encoding='utf-8') as fd:
             reader = csv.reader(fd)
             for row in reader:
                 self.lga_codes_and_names[row[1]] = row[0]
-        # print(self.lga_codes_and_names)
 
-        with open("aus_lga.geojson", "rb") as f:
+        with open("resources/aus_lga.geojson", "rb") as f:
             line = f.read()
             line = line.decode('utf-8')
             load_line = json.loads(line)
@@ -196,20 +196,17 @@ class TweetProcessor:
             for i in range(len(list_of_lgajson)):
                 self.lga_coordinate_holder[list_of_lgajson[i]['properties']['Name']] = \
                     list_of_lgajson[i]['geometry']['coordinates'][0][0]
-        print("LGA info loaded into memory")
 
-        with open("LGA_StateMapping.csv", "r", encoding='utf-8') as fd:
+        with open("resources/LGA_StateMapping.csv", "r", encoding='utf-8') as fd:
             reader = csv.reader(fd)
             for row in reader:
                 self.statename_lganame[row[2]] = row[0]  # {lganame:statename}
                 self.statename_statecode[row[0]] = row[1]  # {state_name:state_code}
-        print("Loaded States info")
 
     def load_index_db(self):
         """
         load index db into memory
         """
-        print("loading index database to memory...")
         db = self.index_db
         if not db:
             raise DatabaseNotFoundError("Index database is None.")
@@ -226,7 +223,6 @@ class TweetProcessor:
                     continue
                 self.index[word].add(tweet_id)
                 self.seen.add(tweet_id)
-        print("loaded index database into memory.")
 
     def get_blob(self, tweet):
         """
