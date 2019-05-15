@@ -3,26 +3,22 @@
 # 1.clean aurin database
 # 2.import aurin data into couchdb
 
-
-import sys
-import os
-
-APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(APP_ROOT, ".."))
-
 import csv
+import os
 import couchdb
 from collections import Counter
 from utils.config import *
 from utils.geo_utils import LgaMapper, Sa4Mapper
 
+basedir = os.path.dirname(os.path.abspath(__file__))
+
 couch = couchdb.Server(COUCHDB_URL)
 couch.resource.credentials = (COUCHDB_USER, COUCHDB_PW)
 
-FILE_ADULT_HEALTH = "../resources/adult_health_risk_factor_estimates.csv"
-FILE_CRIME_RATE = "../resources/crime_rate_2011_for_south_australia.csv"
-FILE_DOMESTIC_VIOLENCE = "../resources/domestic_violence_incidents_by_location.csv"
-FILE_PERSONAL_INCOME = "../resources/estimates_of_personal_income.csv"
+FILE_ADULT_HEALTH = "resources/adult_health_risk_factor_estimates.csv"
+FILE_CRIME_RATE = "resources/crime_rate_2011_for_south_australia.csv"
+FILE_DOMESTIC_VIOLENCE = "resources/domestic_violence_incidents_by_location.csv"
+FILE_PERSONAL_INCOME = "resources/estimates_of_personal_income.csv"
 
 
 def get_violence_rate(value):
@@ -60,7 +56,7 @@ if __name__ == "__main__":
     aurin_db = couch.create(DATABASE_AURIN)
 
     # adult health database
-    with open(FILE_ADULT_HEALTH, encoding='utf-8') as file:
+    with open(os.path.join(basedir, FILE_ADULT_HEALTH)) as file:
         if DATABASE_ADULT_HEALTH in couch:
             couch.delete(DATABASE_ADULT_HEALTH)
         db = couch.create(DATABASE_ADULT_HEALTH)
@@ -96,7 +92,7 @@ if __name__ == "__main__":
         aurin_db["sloth_rate"] = sloth_rate
 
     # personal income database
-    with open(FILE_PERSONAL_INCOME) as file:
+    with open(os.path.join(basedir, FILE_PERSONAL_INCOME)) as file:
         if DATABASE_PERSONAL_INCOME in couch:
             couch.delete(DATABASE_PERSONAL_INCOME)
         db = couch.create(DATABASE_PERSONAL_INCOME)
@@ -120,7 +116,7 @@ if __name__ == "__main__":
             db.save(doc)
 
     # domestic violence database
-    with open(FILE_DOMESTIC_VIOLENCE) as file:
+    with open(os.path.join(basedir, FILE_DOMESTIC_VIOLENCE)) as file:
         if DATABASE_DOMESTIC_VIOLENCE in couch:
             couch.delete(DATABASE_DOMESTIC_VIOLENCE)
         db = couch.create(DATABASE_DOMESTIC_VIOLENCE)
@@ -152,7 +148,7 @@ if __name__ == "__main__":
         aurin_db["violence_rate"] = {state: violence_rate}
 
     # crime rate database
-    with open(FILE_CRIME_RATE) as file:
+    with open(os.path.join(basedir, FILE_CRIME_RATE)) as file:
         if DATABASE_CRIME_RATE in couch:
             couch.delete(DATABASE_CRIME_RATE)
         db = couch.create(DATABASE_CRIME_RATE)

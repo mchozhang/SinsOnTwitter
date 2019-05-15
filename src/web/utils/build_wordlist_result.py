@@ -3,7 +3,11 @@ get the tweet rate result based on the default wordlist
 """
 
 import couchdb
+import os
 from config import *
+
+basedir = os.path.dirname(os.path.abspath(__file__))
+
 
 tweet_index = set()
 couch = couchdb.Server(COUCHDB_URL)
@@ -77,7 +81,7 @@ def count_sin_twitter(file_path, positve_sentiment, negative_sentiment):
     """
     info = {}
     tweet_index.clear()
-    with open(file_path) as fd:
+    with open(os.path.join(basedir,file_path)) as fd:
         for word in fd:
             word_state_list = count_tweets_based_on_words(word.strip().lower(), positve_sentiment, negative_sentiment)
             for key, values in word_state_list.items():
