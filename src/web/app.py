@@ -3,8 +3,8 @@
 # flask app
 
 from flask import Flask, render_template, jsonify, request
-from web.utils.database_utils import get_tweet_rate, get_aurin_data, get_wordlist_data
-from web.utils.geo_utils import get_state_list
+from utils.database_utils import get_tweet_rate, get_aurin_data, get_wordlist_data
+from utils.geo_utils import get_state_list
 import json
 import os
 
