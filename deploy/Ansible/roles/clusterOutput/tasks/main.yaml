@@ -1,0 +1,15 @@
+# Prints the sucessful cluster setup nodes
+
+---
+
+- name: Get Membership Details
+  uri: 
+    url: http://{{couchdb_user}}:{{couchdb_pass}}@{{masternode}}:5984/_membership/
+    method: GET
+    user: '{{couchdb_user}}'
+    password: '{{couchdb_pass}}'
+  register: membership_response
+
+- name: Print Successful Membership Response
+  debug:
+    msg: "{{ membership_response.json }}" 

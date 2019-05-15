@@ -1,9 +1,14 @@
-# Setting Up A CouchDB Node and Adding to the Cluster
+# Setting Up CouchDB on each node
+
+# Running the Docker Container with configurations on each node
 - name: Running Docker CouchDb Container 
   command: "{{ item }}"
   with_items:
+    # Run commented code if volumes are available, and have been mounted
+    #- docker run -d -p 5984:5984 -p 9100-9200:9100-9200 -p 5986:5986 -p 4369:4369 -e COUCHDB_USER={{couchdb_user}} -e COUCHDB_PASSWORD={{couchdb_pass}} -v {{couchdb_data_mount_path}}:/opt/couchdb/data --name couchdb {{couchdb_image}}
     - docker run -d -p 5984:5984 -p 9100-9200:9100-9200 -p 5986:5986 -p 4369:4369 -e COUCHDB_USER={{couchdb_user}} -e COUCHDB_PASSWORD={{couchdb_pass}} --name couchdb {{couchdb_image}}
 
+# Append to apply cluster configurations to each node
 - name: Appending Configurations in vm.args
   command: "{{ item }}"
   with_items:
@@ -19,8 +24,10 @@
   pause:
     seconds: 20
 
+# Bind to all IP addresses
 - name: Bind Clustered Interface to all IP Addresses
   command: "{{ item }}"
   with_items:
     - curl -X PUT "http://{{couchdb_user}}:{{couchdb_pass}}@localhost:5984/_node/_local/_config/chttpd/bind_address" -d '"0.0.0.0"'
     - curl -X PUT "http://{{couchdb_user}}:{{couchdb_pass}}@localhost:5984/_node/_local/_config/httpd/bind_address" -d '"0.0.0.0"'
+

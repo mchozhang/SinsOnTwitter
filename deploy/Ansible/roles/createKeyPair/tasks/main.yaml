@@ -1,5 +1,10 @@
-#Creates a Key Pair and stores it in localhost 
+# Creates a Key Pair and stores it in localhost 
+# NOTE : - Please ensure that this key DOES NOT exist on Nectar Dashboard 
+#        - Please ensure that this key DOES NOT exist in current playbook directory
+#        - Ensure that inventory.ini does not have the line "ansible_ssh_private_key_file=<keyname>.pem" 
+
 ---
+
 - name: Creating a Key Pair
   os_keypair:
     state: present
