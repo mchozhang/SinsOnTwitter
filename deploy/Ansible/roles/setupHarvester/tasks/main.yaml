@@ -1,9 +1,13 @@
+# This role runs and sets up our twitter harvester from our git project repository
+
 ---
+
 - name: Update System
   become: yes
   apt:
     update_cache: yes
 
+# Required for textblob
 - name: Install Enchant 
   become: yes
   apt:
@@ -21,11 +25,11 @@
     name: '{{ item }}'
     executable: pip3
   loop:
-    - tweepy
-    - CouchDB
-    - inflection
-    - pyenchant
-    - textblob
+   - tweepy
+   - CouchDB
+   - inflection
+   - pyenchant
+   - textblob
 
 - name: Download textblob corpus data
   become: yes
@@ -35,7 +39,9 @@
 
 - name: Remove default constants.py file to apply Twitter Credentials in variables/twitterdetails.yaml
   become: yes
-  command: rm /home/ubuntu/SinsOnTwitter/src/tweet_collector/constants.py
+  file:
+     path: "/home/ubuntu/SinsOnTwitter/src/tweet_collector/constants.py"
+     state: absent
 
 - name: Template the new constants.py with new twitter Credentials
   become: yes
@@ -43,11 +49,6 @@
     src: templates/constants.py
     dest: /home/ubuntu/SinsOnTwitter/src/tweet_collector/constants.py
 
-- name: Copy Harvester Files to home directory
-  become: yes
-  command: cp -a /home/ubuntu/SinsOnTwitter/src/tweet_collector/. /home/ubuntu
-
 - name: Run Harvester
-  become: yes
-  shell: nohup python3 collect_sin_search.py > /dev/null 2>&1 &
- 
+  shell: cd /home/ubuntu/SinsOnTwitter/src/tweet_collector; nohup python3 collect_sin_search.py > /dev/null 2>&1 &
+

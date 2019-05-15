@@ -1,3 +1,6 @@
+# Tasks here ensure that the host local machine has the required depedencies to run openstack 
+# and to interface with Nectar
+# (Referred from Alywn's Code in Demo Lecture)
 ---
 # Install Dependencies on the host
 - name: Install pip

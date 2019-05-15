@@ -1,3 +1,6 @@
+# These are the steps taken to run on each newly created instance 
+# This ensure proper configurations for proxy and connection to internet
+# Also mounts volumes if created 
 ---
 - name: Appending Proxy Configurations to Environment File
   become: yes
