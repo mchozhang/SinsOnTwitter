@@ -23,5 +23,10 @@
     dest: /home/ubuntu/SinsOnTwitter/
     version: '{{ branch }}'
 
+- name: Installing Enchant library for text analysis
+  become: yes
+  apt:
+    name: enchant
+    state: latest
 
 

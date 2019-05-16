@@ -14,14 +14,14 @@ from sin_collector import SinCollector
 import os
 from configparser import ConfigParser
 
-
 basedir = os.path.abspath(os.path.dirname(__file__))
-config_path = os.path.join(basedir, "config/logging.ini")
-logging.basicConfig(filename=config_path, level=logging.DEBUG)
-logger = logging.getLogger()
 
 config = ConfigParser()
 config.read(os.path.join(basedir, 'config/collector.ini'))
+
+log_path = os.path.join(basedir, config.get("log", "FILE_NAME"))
+logging.basicConfig(filename=log_path, level=logging.DEBUG)
+logger = logging.getLogger()
 
 sin_collector = None
 db_url = config.get('database', "COUCHDB_URL")

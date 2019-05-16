@@ -1,0 +1,29 @@
+{
+    "views": {
+      "state_NSW": {
+        "map": "function (doc) {\r\n  if (doc.state_code === 1)\r\n    emit(doc._id, [doc.full_text, doc.state_name, doc.state_code, doc.polarity, doc.subjectivity, doc.LGA_code, doc.LGA_name]);\r\n}\r\n"
+      },"state_Queensland": {
+        "map": "function (doc) {\r\n  if (doc.state_code === 3)\r\n    emit(doc._id, [doc.full_text, doc.state_name, doc.state_code, doc.polarity, doc.subjectivity, doc.LGA_code, doc.LGA_name]);\r\n}"
+      },
+      "state_SouthAustralia": {
+        "map": "function (doc) {\r\n  if(doc.state_code==4)\r\n   emit(doc._id,[doc.full_text,doc.state_name,doc.state_code,doc.polarity,doc.subjectivity,doc.LGA_code,doc.LGA_name]);\r\n}"
+      },
+      "state_Tasmania": {
+        "map": "function (doc) {\r\n  if (doc.state_code === 6)\r\n    emit(doc._id, [doc.full_text, doc.state_name, doc.state_code, doc.polarity, doc.subjectivity, doc.LGA_code, doc.LGA_name]);\r\n}"
+      },
+      "state_VIC": {
+        "map": "function (doc) {\r\n  if (doc.state_code === 2)\r\n    emit(doc._id, [doc.full_text, doc.state_name, doc.state_code, doc.polarity, doc.subjectivity, doc.LGA_code, doc.LGA_name]);\r\n}\r\n"
+      },
+      "state_WesternAustralia": {
+        "map": "function (doc) {\r\n  if (doc.state_code === 5)\r\n    emit(doc._id, [doc.full_text, doc.state_name, doc.state_code, doc.polarity, doc.subjectivity, doc.LGA_code, doc.LGA_name]);\r\n}\r\n"
+      },
+      "total_tweets": {
+        "map": "function (doc) {\r\n  emit(doc._id, 1);\r\n}",
+        "reduce": "_count"
+      },
+      "tweet_info": {
+        "map": "function (doc) {\r\n  emit(doc._id, [doc.full_text, doc.state_name, doc.state_code, doc.polarity, doc.subjectivity]);\r\n}\r\n"
+      }
+    }
+}
+  

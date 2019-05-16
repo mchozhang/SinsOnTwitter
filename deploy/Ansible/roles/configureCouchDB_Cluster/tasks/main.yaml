@@ -35,7 +35,9 @@
     - personal_income
     - adult_health
 
-#- name: Uploading Our Defined Views to the CouchDB Cluster
-#  command: curl -XPUT "http://localhost:5984/_design/"
+
+
+
+
 
 

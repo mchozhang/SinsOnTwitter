@@ -1,0 +1,7 @@
+{
+  "views": {
+    "text_idList": {
+      "map": "function (doc) {\r\n  var list_tags=Object.keys(doc)\r\n  delete list_tags[0];\r\n  delete list_tags[1];\r\n    var filtered = list_tags.filter(function (el) { \r\n return el != null; \r\n});\r\n  emit(doc._id,filtered);\r\n}"
+    }
+  }
+}

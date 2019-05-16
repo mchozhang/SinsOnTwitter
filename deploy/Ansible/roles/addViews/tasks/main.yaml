@@ -1,0 +1,35 @@
+# Adds the corresponding views to the newly created system
+# Only add views on the master
+---
+
+# Create a directory to store views
+- name: Creating directory to store our views
+  become: yes
+  file:
+    path: /home/ubuntu/couchdb_views
+    state: directory
+
+# Template views across to remote hosts
+- name: Template Necessary Views to remote server
+  become: yes
+  template:
+    src: templates/{{ item }}.json
+    dest: /home/ubuntu/couchdb_views/{{ item }}.json
+  loop:
+    - state_views
+    - text_idList
+
+# Create datbases index_database and tweet_database
+- name: Create database
+  command: curl -XPUT "http://{{couchdb_user}}:{{couchdb_pass}}@localhost:5984/{{item}}"
+  loop:
+    - tweet_database
+    - index_database
+
+# Perform the necessary uploading of our views to tweet_database
+- name: Uploading Our Defined State related Views to the CouchDB Cluster
+  command: curl -X PUT -d @couchdb_views/state_views.json --header "Content-Type:application/json" "http://{{couchdb_user}}:{{couchdb_pass}}@localhost:5984/tweet_database/_design/frontEnd"
+
+# Uploading view to index_database
+- name: Uploading Our Defined index related Views to the CouchDB Cluster
+  command: curl -X PUT -d @couchdb_views/text_idList.json --header "Content-Type:application/json" "http://{{couchdb_user}}:{{couchdb_pass}}@localhost:5984/index_database/_design/frontEnd"

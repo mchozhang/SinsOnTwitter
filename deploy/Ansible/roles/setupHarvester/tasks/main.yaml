@@ -7,13 +7,6 @@
   apt:
     update_cache: yes
 
-# Required for textblob
-- name: Install Enchant 
-  become: yes
-  apt:
-    name: enchant
-    state: latest
-
 - name: Create nltk_data directory in /home/ubuntu
   file:
     path: /home/ubuntu/nltk_data
@@ -37,18 +30,53 @@
   environment:
     NLTK_DATA: /home/ubuntu/nltk_data
 
-- name: Remove default constants.py file to apply Twitter Credentials in variables/twitterdetails.yaml
+- name: Remove default collector.ini file to apply Twitter Credentials in variables/passwords.yaml
   become: yes
   file:
-     path: "/home/ubuntu/SinsOnTwitter/src/tweet_collector/constants.py"
+     path: "/home/ubuntu/SinsOnTwitter/src/tweet_collector/config/collector.ini"
      state: absent
 
-- name: Template the new constants.py with new twitter Credentials
+- name: Template the twitter Credentials defined over to remote machine
   become: yes
   template:
-    src: templates/constants.py
-    dest: /home/ubuntu/SinsOnTwitter/src/tweet_collector/constants.py
+    src: templates/collector.ini
+    dest: /home/ubuntu/SinsOnTwitter/src/tweet_collector/config/collector.ini
 
 - name: Run Harvester
-  shell: cd /home/ubuntu/SinsOnTwitter/src/tweet_collector; nohup python3 collect_sin_search.py > /dev/null 2>&1 &
+  become: yes
+  shell: nohup python3 collect_sin_search.py  > /dev/null 2>&1 &
+  args:
+    chdir: /home/ubuntu/SinsOnTwitter/src/tweet_collector
+  async: 10
+  poll: 0
 
+- name: Pause Execution for 20 
+  pause:
+    seconds: 20
+
+- name: Get running search harvester
+  shell: "ps -ef | grep -v grep | grep -w collect_sin_search.py | awk '{print $2}'"
+  register: running_processes
+
+- name: Kill search API harvester
+  become: yes
+  shell: "kill {{ item }}"
+  with_items: "{{ running_processes.stdout_lines }}"
+
+- name: Build word index
+  become: yes
+  command: python3 process_existing_tweet_db.py
+  args:
+    chdir: /home/ubuntu/SinsOnTwitter/src/tweet_collector
+
+- name: Build Aurin Database using script 
+  become: yes
+  command: python3 aurin_processor.py
+  args:
+    chdir: /home/ubuntu/SinsOnTwitter/src/web
+
+- name: Build Sin WordList using script 
+  become: yes
+  command: python3 build_wordlist_result.py
+  args:
+    chdir: /home/ubuntu/SinsOnTwitter/src/web/utils

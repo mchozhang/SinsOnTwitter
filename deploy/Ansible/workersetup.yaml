@@ -46,6 +46,16 @@
   roles:
     - role: setupHarvester
 
+# Add the necessary views only through Master Node
+- name: Add Views to the Cluster
+  gather_facts: yes
+  hosts: workerservers[0]
+  vars_files:
+    - variables/couchdbDetails.yaml
+    - variables/passwords.yaml
+  roles:
+    - role: addViews
+
 # Set Web Servers on every node
 - name: Setup Web Servers
   hosts: workerservers

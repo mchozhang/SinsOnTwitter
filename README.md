@@ -1,7 +1,7 @@
 # Sins on Twitter
 
 # Team Information
-group 68  
+Group 68  
 Darren Pinto, 1033936  
 Matthew Yong, 765353  
 Mengzhu Long, 943089  
@@ -9,15 +9,11 @@ Wenhao Zhang, 970012
 Yang Liu, 837689  
 
 ## Website Link
-- NGROK LINK: http://df003e4a.ngrok.io/
-
 - http://172.26.38.38/app/ 
 - http://172.26.37.231/app/
 - http://172.26.38.62/app/
 
-- Test server: http://172.26.38.51/app/
-
-## project directory
+## Project Directory
 ```bash
 ├── deploy                // ansible and deployment configuration
 └── src                   // source code root
@@ -32,42 +28,36 @@ Yang Liu, 837689
 
 ```
 
-## development setup
-### install packages
-install python packages including couchdb, flask, etc
+# Deployment Setup (running Ansible Script from deploy/Ansible)
+1. Ensure that ansible is installed on your linux machine
 
-```
-pip install -r requirements.txt
-```
+2. Adjust/Set the following parameters in the variables folder (do not change anything else):
+	- couchdbDetails.yaml
+		- Set desired user and password
+		- Set desired couchDB version (leave it as couchdb for 'latest')
+		- Set desired node count in couchdb cluster
+	- instancedetails.yaml
+		- Set the local_user field to the user of your local linux machine (for file permission changes)
+		- Set the SSH key name to be created in the ansible_key_name variable
+		(NOTE make sure that this key does not exist in Nectar, or it will return an empty private key)
+		- Set the desired volumes to be created to volumes list
+		- Add the desired security groups you would want to add to each instance on the security_groups list
+		(Currently, our script creates security groups that are required in our system, you can more security groups into your instances as long as you define their configuration in roles/createSecurityGroups)
+		- Configure the instances you want to create (append to list if you want more)
+			* Set your desired server instance_names
+			* Set your desired instance_image ID
+			* Set your desired instance_flavor
+		- Note: Last one on instance_list would be set as the master node 
+	- Decrypt the current Ansible-Vault guarded variables/passwords.yaml file by running
+	`ansible-vault decrypt variables/passwords.yaml`
+		- Type in "group68" to decrypt when asked for vault password
 
-### run docker for couchdb
-run docker couchdb image to have couchdb container run 
-```
-mkdir -f /home/couchdb/data
-docker run --name sin_database -v /home/couchdb/data:/opt/couchdb/data -p 5984:5984 -d couchdb
-```
+3. Add in your Twitter API Keys, couchDB password and git account password and then lock it by running `ansible-vault encrypt variables/passwords.yaml`. Then, choose a suitable password and remember it.
 
-### tweet harvester
-start collecting new tweet
-```
-python src/tweet_collector/collect_sin_streaming.py
-```
+4. Once all variables/parameters are set, run `sudo bash run.sh` and enter your sudo and openstack password
 
-start collecting tweet in past 7 day
-```
-python src/tweet_collect/collect_sin_search.py
-```
-
-### aurin data
-import collected aurin data into couchdb
-
-```
-python src/web/aurin_processor.py
-```
-
-### flask web application
-run flask web app on `localhost:5000`
-
-```
-python src/web/app.py
-```
+5. Check that everything is installed (IP addresses can be found in the inventory.ini file):
+	* Check Membership Details to confirm cluster setup (all_nodes match cluster_nodes):
+	`curl -XGET "http://<NODE_UP>:5984/_membership"`
+	* Check that the harvester is running by loging onto fauxton (http://<NODE_IP>:5984/_utils) and check that tweet_database is being populated by refreshing.
+	* Checkout web application through (http://<NODE_IP>/app)

@@ -21,23 +21,23 @@
   become: yes
   command: pip3 install Flask
 
+- name: Install necessary requirements from requiremnts file
+  become: yes
+  command: pip3 install -r /home/ubuntu/SinsOnTwitter/requirements.txt -t /usr/local/lib/python3.6/dist-packages
+
 - name: Create Directory in /var/www containing the directory FlaskApp
   become: yes
   command: mkdir -p /var/www/FlaskApp
 
-- name: Create Directory in /var/wwww/FlaskApp/FlaskApp containing our website files
+- name: Copy web files from Repository to /var/www/FlaskApp/
   become: yes
-  command: mkdir -p /var/www/FlaskApp/FlaskApp
-
-- name: Copy Website files from Repository to /var/www/FlaskApp/FlaskApp
-  become: yes
-  command: cp -a /home/ubuntu/SinsOnTwitter/src/. /var/www/FlaskApp/FlaskApp
+  command:  cp -a /home/ubuntu/SinsOnTwitter/src/. /var/www/FlaskApp/
 
 - name: Template the app.wsgi file to web server
   become: yes
   template:
     src: templates/app.wsgi
-    dest: /var/www/FlaskApp/FlaskApp/web/app.wsgi
+    dest: /var/www/FlaskApp/web/app.wsgi
 
 - name: Template FlaskApp.conf file to /etc/apache2/sites-available/
   become: yes

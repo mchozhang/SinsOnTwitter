@@ -5,7 +5,7 @@ local_user: relientm96
 availability_zone: melbourne-qh2-uom
 
 # Key Pair Name
-ansible_key_name: key_from_ansible
+ansible_key_name: an_example_key
 
 #Volumes (Cannot show in demo)
 # List of volumes to be created,
