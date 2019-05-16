@@ -111,7 +111,7 @@ def get_aurin_data(key, state):
     :return: aurin data
     """
     doc = aurin_database.get(key)
-    return doc.get(state) * 100
+    return doc.get(state, 0) * 100
 
 
 def get_wordlist_data(sin, state):
@@ -121,5 +121,7 @@ def get_wordlist_data(sin, state):
     :param state: state name
     :return: tweet rate
     """
-    return wordlist_database[sin][state] * 100
+    if wordlist_database.get("sin") is not None:
+        return wordlist_database["sin"].get("state", 0) * 100
+    return 0
 

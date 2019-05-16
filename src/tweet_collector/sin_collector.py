@@ -18,8 +18,11 @@ from sin_listener import SinListener
 from configparser import ConfigParser
 
 basedir = os.path.dirname(os.path.abspath(__file__))
-log_config_path = os.path.join(basedir, "config/logging.ini")
-logging.basicConfig(filename=log_config_path, level=logging.DEBUG)
+config = ConfigParser()
+config.read(os.path.join(basedir, 'config/collector.ini'))
+
+log_path = os.path.join(basedir, config.get("log", "FILE_NAME"))
+logging.basicConfig(filename=log_path, level=logging.DEBUG)
 logger = logging.getLogger()
 
 
