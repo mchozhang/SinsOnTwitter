@@ -46,7 +46,11 @@ def search():
         state = request.json["state"]
         database = request.json["database"]
         sentiment = request.json["sentiment"]
+
+        # scale sentiment value to (-1, 1)
         sentiment = float(sentiment) * 2 / 100 - 1
+
+        # search all the states
         if state == 'All':
             for state in get_state_list():
                 tweet_rate, aurin_data = search_database(sin, keyword_list, state, database, sentiment)
@@ -54,6 +58,7 @@ def search():
                     "tweet_rate": tweet_rate,
                     "aurin_data": aurin_data,
                 }
+        # search specific state
         else:
             tweet_rate, aurin_data = search_database(sin, keyword_list, state, database, sentiment)
             result[sin][state] = {
@@ -71,6 +76,7 @@ def search_database(sin, keyword_list, state, database, sentiment):
     :param keyword_list: list of words
     :param state: state name
     :param database: database name
+    :param sentiment: sentiment value
     :return: (tweet rate, aurin data rate)
     """
     # if keyword is not provided, use the default word list
