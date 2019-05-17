@@ -12,8 +12,16 @@ import threading
 import csv
 import json
 import os
+import logging
+from configparser import ConfigParser
 
 basedir = os.path.dirname(os.path.abspath(__file__))
+config = ConfigParser()
+config.read(os.path.join(basedir, 'config/collector.ini'))
+
+log_path = os.path.join(basedir, config.get("log", "FILE_NAME"))
+logging.basicConfig(filename=log_path, level=logging.DEBUG)
+logger = logging.getLogger()
 
 
 class DatabaseNotFoundError(Exception):
@@ -47,9 +55,9 @@ class TweetProcessor:
 
     # multi-thread switches, for debugging
     # currently turned-off as it seems there are problems that occurs when large database + multi-threading
-    THREADING_PARSING = False
-    THREADING_WRITE_INDEX = False
-    THREADING_WRITE_TWEET = False
+    THREADING_PARSING = True
+    THREADING_WRITE_INDEX = True
+    THREADING_WRITE_TWEET = True
 
     def __init__(self, tweet_db, index_db, ignore, dictionary, ascii_only=True):
         """
@@ -325,7 +333,8 @@ class TweetProcessor:
                         th = threading.Thread(target=self.parse_tweet, args=(tweet,))
                         threads.append(th)
                         th.start()
-                except Exception:
+                except Exception as e:
+                    logger.info(str(e))
                     continue
                 counter += 1
                 self.debug_print("parsed " + tweet["_id"] + ". Finished " + str(counter) + " entries.")
@@ -354,7 +363,8 @@ class TweetProcessor:
                     th = threading.Thread(target=self.write_index_for_one_word, args=(word, id_set, counter,))
                     threads_idx.append(th)
                     th.start()
-            except Exception:
+            except Exception as e:
+                logger.info(repr(e))
                 continue
 
         for thread in threads_idx:
@@ -374,7 +384,8 @@ class TweetProcessor:
                                           args=(tweet_id, extra_fields_dict, counter,))
                     threads_extra_field.append(th)
                     th.start()
-            except Exception:
+            except Exception as e:
+                logger.info(repr(e))
                 continue
         for thread in threads_extra_field:
             thread.join()

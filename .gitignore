@@ -105,7 +105,7 @@ venv.bak/
 
 .DS_Store
 .idea
-sin_log.txt
+log.txt
 sin_couchdb/
 
 KeyPairTest.pem
