@@ -2,9 +2,6 @@
 
 This is the GitHub repository for Group68's Assignment 2 for the subject Cluster and Cloud Computing (COMP90024). 
 
-## System Architecture
-# ![alt text](deploy/images/systemarchitecture.png)
-
 # Team Information
 ## Group 68  
 * Darren Pinto, 1033936  
@@ -101,3 +98,6 @@ ansible-vault encrypt variables/passwords.yaml
 	```
 	* Check that the harvester is running by loging onto fauxton (http://<NODE_IP>:5984/_utils) and check that tweet_database is being populated by refreshing.
 	* Checkout web application through (http://<NODE_IP>/app)
+
+## System Architecture
+# ![alt text](deploy/images/systemarchitecture.png)
