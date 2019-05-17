@@ -7,7 +7,7 @@
     - variables/instancedetails.yaml
   gather_facts: true
   roles:
-   - role: hostPreInstall
+   #- role: hostPreInstall
    - role: createKeyPair
    - role: createSecurityGroups
    #- role: createVolumes
