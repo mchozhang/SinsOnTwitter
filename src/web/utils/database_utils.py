@@ -121,7 +121,6 @@ def get_wordlist_data(sin, state):
     :param state: state name
     :return: tweet rate
     """
-    if wordlist_database.get("sin") is not None:
-        return wordlist_database["sin"].get("state", 0) * 100
+    if wordlist_database.get(sin) is not None:
+        return wordlist_database[sin].get(state, 0) * 100
     return 0
-
