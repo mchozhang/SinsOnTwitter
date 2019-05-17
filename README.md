@@ -41,11 +41,17 @@ This is the GitHub repository for Group68's Assignment 2 for the subject Cluster
 1. Ensure that ansible is installed on your linux machine
 
 2. Adjust/Set the following parameters in the variables folder (do not change anything else):
+
 	- couchdbDetails.yaml
+	
 		- Set desired user and password
+		
 		- Set desired couchDB version (leave it as couchdb for 'latest')
+		
 		- Set desired node count in couchdb cluster
+		
 	- instancedetails.yaml
+	
 		- Set the local_user field to the user of your local linux machine (for file permission changes)
 
 		- Set the SSH key name to be created in the ansible_key_name variable
@@ -59,7 +65,7 @@ This is the GitHub repository for Group68's Assignment 2 for the subject Cluster
 			``` 
 			* Add in this line in inventory.ini file after [all:vars]
 			```yaml
-			ansible_ssh_private_key_file=<Your Key Name>
+			ansible_ssh_private_key_file='<Local Machine's Path to Your Private Key>'
 			``` 
 		- Set the desired volumes to be created to volumes list
 
