@@ -38,7 +38,11 @@ This is the GitHub repository for Group68's Assignment 2 for the subject Cluster
 # Deployment Guide 
 ## Script located at deploy/Ansible
 
-1. Ensure that ansible is installed on your linux machine
+1. Ensure that ansible is installed on your linux machine with the following dependencies:
+```
+ansible 2.7.10
+python version = 2.7.15rc1 (default, Nov 12 2018, 14:31:15) [GCC 7.3.0]
+```
 
 2. Adjust/Set the following parameters in the variables folder (do not change anything else):
 
