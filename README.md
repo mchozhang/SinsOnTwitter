@@ -12,13 +12,13 @@ This is the GitHub repository for Group68's Assignment 2 for the subject Cluster
 
 ## Website Links
 
+### Smaller Dataset Instances (Faster Response Time)
+- http://45.113.235.192/app/
+- http://45.113.234.144/app/
 ### From Project Dashboard
 - http://172.26.38.38/app/ 
 - http://172.26.37.231/app/
 - http://172.26.38.62/app/
-### Test Instances
-- http://45.113.235.192/app/
-- http://45.113.234.144/app/
 
 ## Project Directory
 ```bash
