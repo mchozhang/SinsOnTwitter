@@ -10,7 +10,7 @@ This is the GitHub repository for Group68's Assignment 2 for the subject Cluster
 * Wenhao Zhang, 970012  
 * Yang Liu, 837689  
 
-## Website Links
+## Website Links (Required to be in University of Melbourne's Network)
 
 ### Smaller Dataset Instances (Faster Response Time)
 - http://45.113.235.192/app/
