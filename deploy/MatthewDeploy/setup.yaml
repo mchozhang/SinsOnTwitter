@@ -1,0 +1,16 @@
+# Playbook that sets up all common installations required for all machines
+---
+- name: Common Setup Tasks Between all Instances
+  hosts: workerservers
+  sudo: yes
+  gather_facts: yes
+  vars_files:
+     - variables/gitDetails.yaml
+     - variables/passwords.yaml
+  pre_tasks:
+     - name: Wait until connection is reachable on remote hosts
+       wait_for_connection:
+  roles:
+     - role: vmSetup
+     - role: installingSoftware
+     - role: configureDocker

@@ -1,0 +1,60 @@
+# These tasks create the required security groups for our system 
+# - Parameters are taken from variables/instancedetails.yaml
+# (Referred from Alwyn's Demo Code in Lecture)
+
+---
+
+- name: Creating Security Groups from variables/instancedetails.yaml file
+  os_security_group:
+    name: '{{ item.name }}'
+    description: '{{ item.description }}'
+    state: present
+  loop: '{{ security_groups }}'
+
+# Adding Our Unfiltered TCP and UDP Rules for internal group
+- name: Adding Internal Rules to Ansible_Internal Group (except ICMP)
+  os_security_group_rule:
+    security_group: 'internal_ansible'
+    protocol: '{{ item.protocol }}'
+    direction: ingress
+    port_range_min: '{{ item.port_range_min }}'
+    port_range_max: '{{ item.port_range_max }}'
+    remote_group: '{{ item.remote_group }}'
+    state: present
+    ethertype: IPv4
+  loop: '{{ internal_rules }}'
+  when: "'icmp' not in item.protocol"
+
+# Adding Our Unfiltered ICMP Rule for internal group
+- name: Add ICMP Rule to ansible_internal 
+  os_security_group_rule:
+    security_group: 'internal_ansible'
+    protocol: '{{ item.protocol }}'
+    direction: ingress
+    remote_group: '{{ item.remote_group }}'
+    state: present
+    ethertype: IPv4
+  loop: '{{ internal_rules }}'
+  when: "'icmp' in item.protocol"
+
+# Adding CouchDB rules from variables/instancedetails.yaml into CouchDB security group
+- name: Adding couchDB_rules to ansible_CouchDB group
+  os_security_group_rule:
+    security_group: 'ansible_CouchDB'
+    protocol: '{{ item.protocol }}'
+    port_range_min: '{{ item.port_range_min }}'
+    port_range_max: '{{ item.port_range_max }}'
+    remote_ip_prefix: '{{ item.remote_ip_prefix }}'
+    state: present
+  loop: '{{ couchDB_rules }}'
+
+# Creating a list of security groups
+- name: Create a list of security group names
+  set_fact:
+    sg_names: '{{ sg_names|default([]) + [item.name] }}'
+  loop: '{{ security_groups }}'
+
+# Printing out Created Security Groups
+- name: Printing Created Security Groups...
+  debug:
+    msg: "Security Groups {{ sg_names }} have been created."

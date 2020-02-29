@@ -1,0 +1,55 @@
+# Tasks here are used to setup the web server on each instance
+
+---
+
+- name: Update Machine 
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Install Apache2
+  become: yes
+  apt:
+    name: apache2
+    state: latest
+
+- name: Install WSGI
+  become: yes
+  command: apt-get install libapache2-mod-wsgi-py3 python-dev -y
+  
+- name: Install Flask
+  become: yes
+  command: pip3 install Flask
+
+- name: Install necessary requirements from requiremnts file
+  become: yes
+  command: pip3 install -r /home/ubuntu/SinsOnTwitter/requirements.txt -t /usr/local/lib/python3.6/dist-packages
+
+- name: Create Directory in /var/www containing the directory FlaskApp
+  become: yes
+  command: mkdir -p /var/www/FlaskApp
+
+- name: Copy web files from Repository to /var/www/FlaskApp/
+  become: yes
+  command:  cp -a /home/ubuntu/SinsOnTwitter/src/. /var/www/FlaskApp/
+
+- name: Template the app.wsgi file to web server
+  become: yes
+  template:
+    src: templates/app.wsgi
+    dest: /var/www/FlaskApp/web/app.wsgi
+
+- name: Template FlaskApp.conf file to /etc/apache2/sites-available/
+  become: yes
+  template:
+    src: templates/FlaskApp.conf
+    dest: /etc/apache2/sites-available/FlaskApp.conf
+
+- name: Enable Site
+  become: yes
+  command: a2ensite FlaskApp.conf
+
+- name: Restart Apache Service to Apply Changes
+  become: yes
+  command: systemctl reload apache2
+

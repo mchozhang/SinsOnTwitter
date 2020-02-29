@@ -1,0 +1,32 @@
+# Tasks here run the common installations required for ALL instances
+
+---
+- name: Update Machine 
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Install Python3
+  become: yes
+  apt:
+    name: ['python3', 'python3-pip', 'curl']
+    state: latest
+
+- name: Install Docker
+  become: yes
+  apt:
+    name: docker.io
+
+- name: Clone Project Repository
+  git:
+    repo: https://{{gitUsername}}:{{gitPassword}}@{{gitProjectURL}}
+    dest: /home/ubuntu/SinsOnTwitter/
+    version: '{{ branch }}'
+
+- name: Installing Enchant library for text analysis
+  become: yes
+  apt:
+    name: enchant
+    state: latest
+
+

@@ -1,0 +1,43 @@
+---
+
+# Setup and run Twitter Harvester on Master Node
+- name: Setup and Run Twitter Harvesters
+  hosts: workerservers[0] #We choose this as master node
+  vars_files:
+    - variables/couchdbDetails.yaml
+    - variables/gitDetails.yaml
+    - variables/passwords.yaml
+  gather_facts: yes
+  sudo: yes
+  roles:
+    - role: setupHarvester
+
+# Add the necessary views only through Master Node
+- name: Add Views to the Cluster
+  gather_facts: yes
+  hosts: workerservers[0]
+  vars_files:
+    - variables/couchdbDetails.yaml
+    - variables/passwords.yaml
+  roles:
+    - role: addViews
+
+# Set Web Servers on every node
+- name: Setup Web Servers
+  hosts: workerservers
+  gather_facts: yes
+  vars_files:
+    - variables/gitDetails.yaml
+    - variables/passwords.yaml
+  roles:
+    - role: setupWebServer
+
+# Print output messages for successful cluster setup
+- name: Print Successful Cluster Setup
+  hosts: workerservers
+  vars_files:
+    - variables/couchdbDetails.yaml
+    - variables/gitDetails.yaml
+    - variables/passwords.yaml
+  roles:
+    - role: clusterOutput

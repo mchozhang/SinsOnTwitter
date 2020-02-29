@@ -1,0 +1,82 @@
+# This role runs and sets up our twitter harvester from our git project repository
+
+---
+
+- name: Update System
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Create nltk_data directory in /home/ubuntu
+  file:
+    path: /home/ubuntu/nltk_data
+    state: directory
+
+#- name: Install Required Modules
+ # become: yes
+ # pip: 
+ #   name: '{{ item }}'
+ #   executable: pip3
+ # loop:
+ #  - tweepy
+ #  - CouchDB
+ #  - inflection
+ #  - pyenchant
+ #  - textblob
+
+- name: Download textblob corpus data
+  become: yes
+  command: python3 -m textblob.download_corpora
+  environment:
+    NLTK_DATA: /home/ubuntu/nltk_data
+
+- name: Remove default collector.ini file to apply Twitter Credentials in variables/passwords.yaml
+  become: yes
+  file:
+     path: "/home/ubuntu/SinsOnTwitter/src/tweet_collector/config/collector.ini"
+     state: absent
+
+- name: Template the twitter Credentials defined over to remote machine
+  become: yes
+  template:
+    src: templates/collector.ini
+    dest: /home/ubuntu/SinsOnTwitter/src/tweet_collector/config/collector.ini
+
+- name: Run Harvester
+  become: yes
+  shell: nohup python3 collect_sin_search.py  > /dev/null 2>&1 &
+  args:
+    chdir: /home/ubuntu/SinsOnTwitter/src/tweet_collector
+  async: 10
+  poll: 0
+
+- name: Pause Execution for 60s
+  pause:
+    seconds: 60
+
+- name: Get running search harvester
+  shell: "ps -ef | grep -v grep | grep -w collect_sin_search.py | awk '{print $2}'"
+  register: running_processes
+
+- name: Kill search API harvester
+  become: yes
+  shell: "kill {{ item }}"
+  with_items: "{{ running_processes.stdout_lines }}"
+
+- name: Build word index
+  become: yes
+  command: python3 process_existing_tweet_db.py
+  args:
+    chdir: /home/ubuntu/SinsOnTwitter/src/tweet_collector
+
+- name: Build Aurin Database using script 
+  become: yes
+  command: python3 aurin_processor.py
+  args:
+    chdir: /home/ubuntu/SinsOnTwitter/src/web
+
+- name: Build Sin WordList using script 
+  become: yes
+  command: python3 build_wordlist_result.py
+  args:
+    chdir: /home/ubuntu/SinsOnTwitter/src/web/utils

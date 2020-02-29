@@ -1,0 +1,28 @@
+# Generates UUIDs from a Master node and adding them to each CouchDB node
+
+---
+# Generating the UUIDs
+- name: Generate UUID from the main node and store in variable
+  uri:
+    url: "http://{{couchdb_user}}:{{couchdb_pass}}@{{masternode}}:5984/_uuids?count=2"
+    method: GET
+  register: uuid_response
+
+# Storing given UUIDS 
+- name: Save UUIDs_one
+  set_fact:
+    uuid_one: '{{ uuid_response.json.uuids[0] }}'
+
+- name : Save UUID_two
+  set_fact:
+    uuid_two: '{{ uuid_response.json.uuids[1] }}'
+
+# Add first UUID to each node respectively
+- name: Add in First UUID
+  command: curl -X PUT http://{{couchdb_user}}:{{couchdb_pass}}@{{item}}:5984/_node/couchdb@{{item}}/_config/couchdb/uuid -d '"{{uuid_one}}"'
+  loop: "{{ groups['workerservers'] }}"
+
+# Second UUID added to each node for the Secret Password
+- name: Add in Second UUID
+  command: curl -X PUT http://{{couchdb_user}}:{{couchdb_pass}}@{{item}}:5984/_node/couchdb@{{item}}/_config/couch_httpd_auth/secret -d '"{{uuid_two}}"'
+  loop: "{{ groups['workerservers'] }}"

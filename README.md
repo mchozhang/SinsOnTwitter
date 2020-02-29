@@ -2,6 +2,8 @@
 
 This is the GitHub repository for Group68's Assignment 2 for the subject Cluster and Cloud Computing (COMP90024). 
 
+REDEPLOYED to show UI only : http://52.221.195.69/app/
+
 # Team Information
 ## Group 68  
 * Darren Pinto, 1033936  

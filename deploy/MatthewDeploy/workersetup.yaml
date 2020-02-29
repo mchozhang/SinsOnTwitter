@@ -1,0 +1,77 @@
+#Playbook to set up Each Worker Node (some including master)
+---
+
+# Play to Set up common CouchDB configurations on all CouchDB nodes
+- name: Setting Up Common Configurations on CouchDB Nodes
+  hosts: workerservers
+  vars_files:
+    - variables/couchdbDetails.yaml
+    - variables/passwords.yaml
+  gather_facts: yes
+  sudo: yes
+  roles:
+     - role: configureCouchDB_Common
+
+# Perform UUID curl commands to have same UUIDs for cookie authentication
+- name: Configuring UUIDs for each node
+  #Running Curl Commands from local machine making request to master to have common UUIDs
+  hosts: localhost 
+  vars_files:
+    - variables/couchdbDetails.yaml
+    - variables/passwords.yaml
+  gather_facts: yes
+  roles:
+     - role: configureCouchDB_UUIDS
+
+# Run Cluster Setup Commands on the Master Node
+- name: Configuring Cluster Setup from Master Node
+  hosts: workerservers[0] #We choose this as master node
+  vars_files:
+    - variables/couchdbDetails.yaml
+    - variables/passwords.yaml
+  gather_facts: yes
+  sudo: yes
+  roles:
+     - role: configureCouchDB_Cluster
+
+# Setup and run Twitter Harvester on Master Node
+- name: Setup and Run Twitter Harvesters
+  hosts: workerservers[0] #We choose this as master node
+  vars_files:
+    - variables/couchdbDetails.yaml
+    - variables/gitDetails.yaml
+    - variables/passwords.yaml
+  gather_facts: yes
+  sudo: yes
+  roles:
+    - role: setupHarvester
+
+# Add the necessary views only through Master Node
+- name: Add Views to the Cluster
+  gather_facts: yes
+  hosts: workerservers[0]
+  vars_files:
+    - variables/couchdbDetails.yaml
+    - variables/passwords.yaml
+  roles:
+    - role: addViews
+
+# Set Web Servers on every node
+- name: Setup Web Servers
+  hosts: workerservers
+  gather_facts: yes
+  vars_files:
+    - variables/gitDetails.yaml
+    - variables/passwords.yaml
+  roles:
+    - role: setupWebServer
+
+# Print output messages for successful cluster setup
+- name: Print Successful Cluster Setup
+  hosts: workerservers
+  vars_files:
+    - variables/couchdbDetails.yaml
+    - variables/gitDetails.yaml
+    - variables/passwords.yaml
+  roles:
+    - role: clusterOutput

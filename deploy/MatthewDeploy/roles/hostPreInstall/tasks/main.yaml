@@ -1,0 +1,24 @@
+# Tasks here ensure that the host local machine has the required depedencies to run openstack 
+# and to interface with Nectar
+# (Referred from Alywn's Code in Demo Lecture)
+---
+# Install Dependencies on the host
+- name: Install pip
+  become: yes
+  apt:
+    name: ['python-pip']
+    state: latest
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Update pip
+  become: yes
+  pip:
+    name: ['pip']
+    state: latest
+
+- name: Install openstacksdk
+  become: yes
+  pip:
+    name: ['openstacksdk']
+    state: latest

@@ -1,0 +1,88 @@
+#Set Current User Name (Linux User)
+local_user: relientm96
+
+# Availability Zone
+availability_zone: melbourne-qh2-uom
+
+# Key Pair Name
+ansible_key_name: an_example_key
+
+#Volumes (Cannot show in demo)
+# List of volumes to be created,
+# --- vol_name: name of volume
+# --- vol_size: in GB
+volumes:
+  - vol_name: demo_vol_one
+    vol_size: 5
+  - vol_name: demo_vol_two
+    vol_size: 5
+
+#---Security Groups Configuration---#
+
+#List of Security Groups to create on Nectar
+security_groups:
+  - name: internal_ansible 
+    description: "Unfiltered Communication between Nodes"
+  - name: ssh
+    description: "SSH Access via port 22"
+  - name: http
+    description: "HTTP Access via port 80"
+  - name: ansible_CouchDB
+    description: "Opening Ports for CouchDB Access"
+
+#----List of Custom Rules for a specified Security Group----#
+
+#Rules for the couchdb_ports group (CouchDB Ports and Firewall Configurations)
+couchDB_rules:
+  - name: ansible_Port 5984
+    protocol: tcp
+    port_range_min: 5984
+    port_range_max: 5984
+    remote_ip_prefix: 0.0.0.0/0
+  - name: ansible_Port 4369
+    protocol: tcp
+    port_range_min: 4369
+    port_range_max: 4369
+    remote_ip_prefix: 0.0.0.0/0
+  - name: ansible_Port 4369
+    protocol: tcp
+    port_range_min: 5986
+    port_range_max: 5986
+    remote_ip_prefix: 0.0.0.0/0
+  - name: ansible_Ports 9100-9200
+    protocol: tcp
+    port_range_min: 9100
+    port_range_max: 9200
+    remote_ip_prefix: 0.0.0.0/0
+
+#Rules for unfiltered communication between nodes
+internal_rules:
+  - name: Open all TCP 
+    protocol: tcp
+    remote_group: internal_ansible
+    port_range_min: 1
+    port_range_max: 65535
+  - name: Open all UDP
+    protocol: udp
+    remote_group: internal_ansible
+    port_range_min: 1
+    port_range_max: 65535
+  - name: Open all ICMP
+    protocol: icmp
+    remote_group: internal_ansible
+
+#----Instances To be Created----#
+#(Add Instances to list here to be created)
+# - Master Node would be the last one on the list
+
+instance_list: 
+  - name: worker_one
+    instance_name: worker_one 
+    instance_image: afccf48a-9426-4618-86dc-0ceb636f0169 #Ubuntu 18.04 Bionic amd64
+    instance_flavor: uom.general.1c4g
+    #volume_name: demo_vol_one
+  - name: master_node
+    instance_name: master_node
+    instance_image: afccf48a-9426-4618-86dc-0ceb636f0169 #Ubuntu 18.04 Bionic amd64
+    instance_flavor: uom.general.1c4g
+    #volume_name: demo_vol_two

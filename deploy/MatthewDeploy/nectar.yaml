@@ -1,0 +1,17 @@
+# Playbook to deploy and create instances on Nectar
+---
+- name: Creating Instances On Nectar
+  hosts: localhost
+  sudo: yes
+  vars_files:
+    - variables/instancedetails.yaml
+  gather_facts: true
+  roles:
+   #- role: hostPreInstall
+   - role: createKeyPair
+   - role: createSecurityGroups
+   #- role: createVolumes
+   - role: createInstances
+
+
+
