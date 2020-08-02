@@ -1,24 +1,12 @@
 # Sins on Twitter
 
-This is the GitHub repository for Group68's Assignment 2 for the subject Cluster and Cloud Computing (COMP90024). 
+A flask web app that analyses the tweet data in Australia relevant to the 7 deadly sins, and uses 
+ansible to deploy the system to 3 nodes to an openstack cluster and twitter streaming API to harvest
+tweet data.
 
-# Team Information
-## Group 68  
-* Darren Pinto, 1033936  
-* Matthew Yong, 765353  
-* Mengzhu Long, 943089  
-* Wenhao Zhang, 970012  
-* Yang Liu, 837689  
+[Youtube introduction link](https://www.youtube.com/channel/UC5s46Qw660NS0FOShCxEniw)
 
-## Website Links
-
-### From Project Dashboard
-- http://172.26.38.38/app/ 
-- http://172.26.37.231/app/
-- http://172.26.38.62/app/
-### Test Instances
-- http://45.113.235.192/app/
-- http://45.113.234.144/app/
+![front-end](docs/frontend.png)
 
 ## Project Directory
 ```bash
@@ -31,7 +19,6 @@ This is the GitHub repository for Group68's Assignment 2 for the subject Cluster
         ├── static        // front-end static file
         ├── templates     // front-end pages
         └── utils         // utility module
-
 
 ```
 

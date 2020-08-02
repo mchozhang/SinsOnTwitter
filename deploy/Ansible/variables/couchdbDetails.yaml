@@ -4,7 +4,7 @@
 #CouchDB Cluster Details (Adjust these)
 couchdb_user: SinsOnTwitter
 couchdb_image: couchdb:2.3.0
-node_count: 3
+node_count: 1
 couchdb_data_mount_path: /mnt/couchdb/data
 
 masternode: "{{ groups['workerservers'][0] }}"

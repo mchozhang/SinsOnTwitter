@@ -1,8 +1,9 @@
 #!/bin/bash
 
 echo Creating Instances
-. ./darren_pt-44443-openrc.sh; ansible-playbook nectar.yaml
+#. ./darren_pt-44443-openrc.sh; ansible-playbook nectar.yaml
 #. ./unimelb-comp90024-group-68-openrc.sh; ansible-playbook nectar.yaml
+. ./pt-45091-openrc.sh; ansible-playbook nectar.yaml
 
 echo Configuring and Setting Up Instances
 ansible-playbook -i inventory.ini -u ubuntu setup.yaml --ask-vault-pass

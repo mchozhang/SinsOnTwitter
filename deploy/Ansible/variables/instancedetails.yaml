@@ -1,5 +1,5 @@
 #Set Current User Name (Linux User)
-local_user: relientm96
+local_user: mcho
 
 # Availability Zone
 availability_zone: melbourne-qh2-uom
@@ -27,6 +27,8 @@ security_groups:
     description: "SSH Access via port 22"
   - name: http
     description: "HTTP Access via port 80"
+  - name: icmp
+    description: "Ping"
   - name: ansible_CouchDB
     description: "Opening Ports for CouchDB Access"
 
@@ -76,10 +78,10 @@ internal_rules:
 # - Master Node would be the last one on the list
 
 instance_list: 
-  - name: worker_one
-    instance_name: worker_one 
-    instance_image: afccf48a-9426-4618-86dc-0ceb636f0169 #Ubuntu 18.04 Bionic amd64
-    instance_flavor: uom.general.1c4g
+#  - name: worker_one
+#    instance_name: worker_one
+#    instance_image: afccf48a-9426-4618-86dc-0ceb636f0169 #Ubuntu 18.04 Bionic amd64
+#    instance_flavor: uom.general.1c4g
     #volume_name: demo_vol_one
   - name: master_node
     instance_name: master_node
