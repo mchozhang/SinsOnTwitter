@@ -6,7 +6,7 @@ tweet data.
 
 [Youtube introduction link](https://www.youtube.com/channel/UC5s46Qw660NS0FOShCxEniw)
 
-![front-end](docs/frontend.png)
+![front-end](images/frontend.png)
 
 ## Project Directory
 ```bash
@@ -19,20 +19,29 @@ tweet data.
         ├── static        // front-end static file
         ├── templates     // front-end pages
         └── utils         // utility module
-
 ```
 
 # Deployment Guide 
 ## Script located at deploy/Ansible
 
-1. Ensure that ansible is installed on your linux machine
+1. Ensure that ansible is installed on your linux machine with the following dependencies:
+```
+ansible 2.7.10
+python version = 2.7.15rc1 (default, Nov 12 2018, 14:31:15) [GCC 7.3.0]
+```
 
 2. Adjust/Set the following parameters in the variables folder (do not change anything else):
+
 	- couchdbDetails.yaml
+	
 		- Set desired user and password
+		
 		- Set desired couchDB version (leave it as couchdb for 'latest')
+		
 		- Set desired node count in couchdb cluster
+		
 	- instancedetails.yaml
+	
 		- Set the local_user field to the user of your local linux machine (for file permission changes)
 
 		- Set the SSH key name to be created in the ansible_key_name variable
@@ -46,7 +55,7 @@ tweet data.
 			``` 
 			* Add in this line in inventory.ini file after [all:vars]
 			```yaml
-			ansible_ssh_private_key_file=<Your Key Name>
+			ansible_ssh_private_key_file='<Local Machine's Path to Your Private Key>'
 			``` 
 		- Set the desired volumes to be created to volumes list
 
@@ -87,4 +96,4 @@ ansible-vault encrypt variables/passwords.yaml
 	* Checkout web application through (http://<NODE_IP>/app)
 
 ## System Architecture
-# ![alt text](deploy/images/systemarchitecture.png)
+# ![alt text](images/systemarchitecture.png)
